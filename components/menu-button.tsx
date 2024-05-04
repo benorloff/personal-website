@@ -1,0 +1,68 @@
+"use client"
+
+import { AlignRight, X } from "lucide-react"
+import { Button } from "./ui/button"
+import { useModal } from "@/hooks/use-modal-store"
+import { motion, AnimatePresence } from "framer-motion";
+
+
+export const MenuButton = () => {
+    const { onOpen, onClose, isOpen, type } = useModal();
+    const isModalOpen = isOpen && type === "menu";
+
+    return (
+        <AnimatePresence mode="popLayout">
+            { isModalOpen ? (
+                <motion.div
+                    layout
+                    key="menu-open"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full w-full overflow-hidden"
+                >
+                    <Button 
+                        variant="default"
+                        className="h-full w-full rounded-none p-1"
+                        onClick={() => !isOpen ? onOpen("menu") : onClose()}
+                    >
+                        <motion.div 
+                            layout
+                            className="flex items-center"
+                            initial={{ x: "calc(100%)", rotate: 180 }}
+                            animate={{ x: 0, rotate: 0 }}
+                            exit={{ x: "calc(100%)", rotate: 180 }}
+                        >
+                            <X className="min-h-5 max-h-7" />
+                        </motion.div>
+                    </Button>
+                </motion.div>
+            ) : (
+                <motion.div
+                    layout
+                    key="menu-closed"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="h-full w-full overflow-hidden"
+                >
+                    <Button 
+                        variant="ghost"
+                        className="h-full w-full rounded-none p-1"
+                        onClick={() => !isOpen ? onOpen("menu") : onClose()}
+                    >
+                        <motion.div 
+                            layout
+                            className="flex items-center"
+                            initial={{ x: "calc(-100%)" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "calc(-100%)" }}
+                        >
+                            <AlignRight className="min-h-5 max-h-7" />
+                        </motion.div>
+                    </Button>
+                </motion.div>
+            )}
+        </AnimatePresence>
+    )
+}
