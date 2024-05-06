@@ -58,7 +58,7 @@ export const ContactButton = () => {
                             animate={{ x: 0 }}
                             exit={{ x: "calc(-100%)" }}
                         >
-                            <MessageCircleMore className="min-h-5 max-h-7" />
+                            <MessageCircleMore className="w-6 h-6 lg:w-8 lg:h-8" />
                         </motion.div>
                     </Button>
                 </motion.div>
