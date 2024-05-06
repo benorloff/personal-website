@@ -1,9 +1,9 @@
-import { ModalProvider } from '@/components/providers/modal-provider'
+import { ModalProvider } from '@/components/providers/modal-provider';
 
-import { ThemeToggle } from "@/components/theme-toggle";
-import { NameButton } from "@/components/name-button";
-import { MenuButton } from "@/components/menu-button";
 import { ContactButton } from "@/components/contact-button";
+import { MenuButton } from "@/components/menu-button";
+import { NameButton } from "@/components/name-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function MainLayout({ 
     children
