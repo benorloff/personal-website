@@ -1,10 +1,24 @@
-// "use client"
+import { Frame } from "@/components/frame";
 
 const WorkPage = async () => {
 
     return (
         <div>
-            <h1 className="text-4xl font-semibold">Work</h1>
+            <Frame position="top">
+                top
+            </Frame>
+            <Frame position="left">
+                left
+            </Frame>
+            <Frame position="right">
+                right
+            </Frame>
+            <Frame position="bottom">
+                bottom
+            </Frame>
+            <Frame position="center">
+                <h1 className="text-4xl font-semibold">Work</h1>
+            </Frame>
         </div>
     )
 }
