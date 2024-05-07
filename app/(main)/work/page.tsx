@@ -1,11 +1,18 @@
-import { Frame } from "@/components/frame";
+"use client"
 
-const WorkPage = async () => {
+import { allProjects, Project } from 'contentlayer/generated';
+
+import { Frame } from "@/components/frame";
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+
+const WorkPage = () => {
+    const projects = allProjects.sort();
 
     return (
-        <div>
+        <>
             <Frame position="top">
-                top
+                Work
             </Frame>
             <Frame position="left">
                 left
@@ -16,10 +23,19 @@ const WorkPage = async () => {
             <Frame position="bottom">
                 bottom
             </Frame>
-            <Frame position="center">
-                <h1 className="text-4xl font-semibold">Work</h1>
-            </Frame>
-        </div>
+            <div className="flex flex-col h-full w-full overflow-scroll divide-y">                
+                {projects.map((project: Project, i) => (
+                    <Link key={i} href={`/work/${project._raw.flattenedPath.replace(/projects\/?/, '')}`}>
+                        <div 
+                            key={i} 
+                            className="flex container py-8 h-48 justify-between items-center"
+                        >
+                            <h2 className='text-4xl'>{project.title}</h2>
+                        </div>
+                    </Link>
+                ))}
+            </div>
+        </>
     )
 }
 
