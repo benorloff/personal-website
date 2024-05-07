@@ -15,11 +15,11 @@ export const Frame = ({
         <div 
             className={cn(
                 "fixed",
-                position === "top" && "fixed top-0 left-12 lg:left-16 right-12 lg:right-16 h-12 lg:h-16 border-b",
-                position === "left" && "fixed left-0 top-12 lg:top-16 bottom-12 lg:bottom-16 w-12 lg:w-16 border-r",
-                position === "right" && "fixed right-0 top-12 lg:top-16 bottom-12 lg:bottom-16 w-12 lg:w-16 border-l",
-                position === "bottom" && "fixed bottom-0 left-12 lg:left-16 right-12 lg:right-16 h-12 lg:h-16 border-t",
-                position === "center" && "absolute top-12 lg:top-16 right-12 lg:right-16 bottom-12 lg:bottom-16 left-12 lg:left-16",
+                position === "top" && "fixed top-[10px] left-[58px] right-[58px] h-[48px] border-b",
+                position === "left" && "fixed left-[10px] top-[58px] bottom-[58px] w-[48px] border-r",
+                position === "right" && "fixed right-[10px] top-[58px] bottom-[58px] w-[48px] border-l",
+                position === "bottom" && "fixed bottom-[10px] left-[58px] right-[58px] h-[48px] border-t",
+                position === "center" && "absolute top-[58px] right-[58px] bottom-[58px] left-[58px]",
                 className
             )}
         >

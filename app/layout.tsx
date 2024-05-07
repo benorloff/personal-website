@@ -26,7 +26,6 @@ export default function RootLayout({
           defaultTheme="dark"
           enableSystem={false}
         >
-          <Cursor />
           {children}
         </ThemeProvider>
       </body>

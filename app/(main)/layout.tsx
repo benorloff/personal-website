@@ -5,27 +5,31 @@ import { Frame } from "@/components/frame";
 import { MenuButton } from "@/components/menu-button";
 import { NameButton } from "@/components/name-button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Cursor } from "@/components/cursor";
+
 
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
-    <main>
-      <div className="fixed top-0 left-0 w-12 lg:w-16 aspect-square flex justify-center items-center border-b border-r">
+    <main className="fixed h-[calc(100vh-20px)] w-[calc(100vw-20px)] border m-[10px]">
+      <Cursor />
+      <div className="fixed top-[10px] left-[10px] w-[48px] aspect-square flex justify-center items-center border-b border-r">
         <NameButton />
       </div>
-      <div className="fixed top-0 right-0 w-12 lg:w-16 aspect-square flex justify-center items-center border-b border-l">
+      <div className="fixed top-[10px] right-[10px] w-[48px] aspect-square flex justify-center items-center border-b border-l">
         <MenuButton />
       </div>
-      <div className="fixed bottom-0 left-0 w-12 lg:w-16 aspect-square flex justify-center items-center border-t border-r">
+      <div className="fixed bottom-[10px] left-[10px] w-[48px] aspect-square flex justify-center items-center border-t border-r">
         <ThemeToggle />
       </div>
-      <div className="fixed bottom-0 right-0 w-12 lg:w-16 aspect-square flex justify-center items-center border-t border-l">
+      <div className="fixed bottom-[10px] right-[10px] w-[48px] aspect-square flex justify-center items-center border-t border-l">
         <ContactButton />
       </div>
-      <div className="fixed top-12 left-12 right-12 bottom-12 lg:top-16 lg:left-16 lg:right-16 lg:bottom-16">
+      <div className="fixed top-[58px] left-[58px] right-[58px] bottom-[58px]">
         <ModalProvider />
         {children}
       </div>

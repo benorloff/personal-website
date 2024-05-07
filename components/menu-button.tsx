@@ -5,7 +5,6 @@ import { Button } from "./ui/button"
 import { useModal } from "@/hooks/use-modal-store"
 import { motion, AnimatePresence } from "framer-motion";
 
-
 export const MenuButton = () => {
     const { onOpen, onClose, isOpen, type } = useModal();
     const isModalOpen = isOpen && type === "menu";

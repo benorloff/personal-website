@@ -1,7 +1,8 @@
 "use client"
 
+import { cn } from "@/lib/utils";
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const Cursor = () => {
 
@@ -12,31 +13,36 @@ export const Cursor = () => {
 
     const springConfig = {
         damping: 75,
-        stiffness: 800,
+        stiffness: 700,
+        mass: 0.5,
     }
 
     const xSpring = useSpring(position.x, springConfig);
     const ySpring = useSpring(position.y, springConfig);
 
-    const size = 40;
+    const size = 10;
+
+    const onMouseMove = (e: MouseEvent) => {
+        position.x.set(e.clientX-(size/2));
+        position.y.set(e.clientY-(size/2));
+    };
     
     useEffect(() => {
-        const moveCursor = (e: MouseEvent) => {
-            position.x.set(e.clientX-(size/2));
-            position.y.set(e.clientY-(size/2));
-        };
-        window.addEventListener("mousemove", moveCursor);
-        return () => window.removeEventListener("mousemove", moveCursor);
+        window.addEventListener("mousemove", onMouseMove);
+        return () => {
+            window.removeEventListener("mousemove", onMouseMove);
+        }
     }, []);
 
     return (
        <motion.div 
-            className="absolute w-[40px] h-[40px] rounded-full bg-background dark:bg-foreground mix-blend-difference pointer-events-none z-50"
+            className="absolute rounded-full bg-background dark:bg-foreground mix-blend-difference pointer-events-none z-50"
             style={{
                 translateX: xSpring,
                 translateY: ySpring,
+                width: size,
+                height: size,
             }}
-            
         />
     )
 }
