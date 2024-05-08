@@ -23,7 +23,7 @@ export const ThemeToggle = () => {
           <Button
             variant="ghost"
             onClick={() => setTheme("dark")}
-            className="h-full w-full rounded-none p-1"
+            className="h-full w-full rounded-none rounded-bl-sm p-1"
           >
             <motion.div 
                 layout
@@ -49,7 +49,7 @@ export const ThemeToggle = () => {
           <Button
             variant="ghost"
             onClick={() => setTheme("light")}
-            className="h-full w-full rounded-none p-1"
+            className="h-full w-full rounded-none rounded-bl-sm p-1"
           >
             <motion.div 
                 layout

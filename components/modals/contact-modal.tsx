@@ -43,7 +43,7 @@ const socials: Socials[] = [
 
 export const ContactModal = () => {
 
-    const { isOpen, onClose, type } = useModal();
+    const { isOpen, type } = useModal();
     const isModalOpen = isOpen && type === "contact";
 
     return (
@@ -56,7 +56,7 @@ export const ContactModal = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.5 }}
                 className={cn(
-                    "absolute z-10 top-0 left-0 inset-y w-full h-full bg-background overflow-scroll",
+                    "absolute z-10 top-0 left-0 inset-y w-full h-full backdrop-blur-3xl overflow-scroll",
                     isModalOpen ? "block" : "hidden"
                 )}
             >

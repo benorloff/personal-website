@@ -28,15 +28,15 @@ export const MenuModal = () => {
                 exit={{ opacity: 0 }}
                 transition={{ type: "linear", duration: 0.5 }}
                 className={cn(
-                    "absolute z-10 top-0 left-0 inset-y w-full h-full bg-background overflow-scroll",
+                    "absolute z-10 top-0 left-0 inset-y w-full h-full backdrop-blur-3xl overflow-scroll",
                     isModalOpen ? "block" : "hidden"
                 )}
             >
-                <div className="flex flex-row h-full divide-x divide-foreground-muted dark:divide-background-muted">
+                <div className="flex flex-row h-full divide-x divide-foreground-muted dark:divide-foreground/25">
                     <div className="flex-1 container py-8">
                         <h2 className="text-2xl font-semibold">Menu</h2>
                     </div>
-                    <div className="flex-1 grid auto-cols-auto h-full items-center divide-y divide-foreground-muted dark:divide-background-muted">
+                    <div className="flex-1 grid auto-cols-auto h-full items-center divide-y divide-foreground-muted dark:divide-foreground/25">
                         {routes.map((route, i) => (
                             <motion.div
                                 key={i}

@@ -22,7 +22,7 @@ export const MenuButton = () => {
                 >
                     <Button 
                         variant="default"
-                        className="h-full w-full rounded-none p-1"
+                        className="h-full w-full rounded-none rounded-tr-sm p-1"
                         onClick={() => !isOpen ? onOpen("menu") : onClose()}
                     >
                         <motion.div 
@@ -47,7 +47,7 @@ export const MenuButton = () => {
                 >
                     <Button 
                         variant="ghost"
-                        className="h-full w-full rounded-none p-1"
+                        className="h-full w-full rounded-none rounded-tr-sm p-1"
                         onClick={() => !isOpen ? onOpen("menu") : onClose()}
                     >
                         <motion.div 

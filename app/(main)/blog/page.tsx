@@ -11,13 +11,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const BlogCard = (post: Post) => {
     return (
         <Link href={post.url}>
-            <div className="container h-auto py-8 flex flex-col gap-4 bg-background">
+            <div className="container h-auto py-8 flex flex-col gap-4 bg-foreground/5 backdrop-blur-sm border custom-border-color rounded-sm">
                 <div className="relative">
                     <Image
                         src={post.heroImage}
                         alt={post.title}
                         width={800}
                         height={400}
+                        className="rounded-sm"
                     />
                     {post.category && (
                         <div className="absolute top-0 right-0 m-2">
@@ -34,9 +35,9 @@ const BlogCard = (post: Post) => {
                         </h2>
                     </div>
                     <div>
-                        <h2 className="text-muted-foreground">
+                        <p className="text-muted-foreground">
                             {post.excerpt}
-                        </h2>
+                        </p>
                     </div>
                     <div className="flex gap-2">
                         {post.tags?.map((tag, i) => (
@@ -78,7 +79,7 @@ const BlogPage = () => {
             <Frame position="bottom">
                 bottom
             </Frame>
-            <div className="h-full w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px] overflow-scroll bg-muted">
+            <div className="p-4 h-full w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-scroll">
                 {posts.map((post, i) => (
                     <BlogCard key={i} {...post} />
                 ))}

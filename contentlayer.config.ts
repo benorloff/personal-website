@@ -28,6 +28,14 @@ export const Project = defineDocumentType(() => ({
             type: 'string',
             required: true,
         },
+        year: {
+            type: 'number',
+            required: true,
+        },
+        heroImageUrl: {
+            type: 'string',
+            required: true,
+        },
         category: {
             type: 'list',
             of: { type: 'string'},

@@ -1,20 +1,24 @@
 "use client"
 
-import { AnimatePresence, motion, LayoutGroup } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { Weather } from "@/lib/weather"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useTheme } from "next-themes"
+import { Heart } from "lucide-react"
 
 export const WeatherBar = ({
     temperature,
     label,
     icon,
 }: Weather) => {
-    const [isHovered, setIsHovered] = useState<boolean>(false);
+    const [isExpanded, setIsExpanded] = useState<boolean>(false);
+
+    const { theme } = useTheme();
 
     const items = [
         {
             key: "location",
-            value: "Tucson, Arizona",
+            value: "Coding with 🖤 in Tucson, Arizona",
         },
         {
             key: "icon",
@@ -27,38 +31,56 @@ export const WeatherBar = ({
         {
             key: "temperature",
             value: `${temperature}°F`,
+        },
+        {
+            key: "time",
+            value: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         }
     ]
 
+    const container = {
+        hidden: { width: 48 },
+        show: { 
+            width: 500,
+            transition: {
+                duration: 0.5,
+                ease: "easeInOut",
+                delayChildren: 0.5,
+                staggerChildren: 0.2,
+            },
+        },
+    }
+
+    const content = {
+        hidden: { opacity: 0, y: 10 },
+        show: { opacity: 1, y: 0 },
+    }
+
     return (
-        <div 
-            className="flex h-full w-full justify-start items-center"
-        >
-                <div 
-                    className="flex h-full items-center justify-center border-r gap-4 p-4"
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
-                    <div>
-                        <img src="/spinning-globe.gif" width={24} height={24} />
-                    </div>
-                    <AnimatePresence mode="wait">
-                        {isHovered && (
-                            items.map((item, i) => (
-                                <motion.div
-                                    key={item.key}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: 10 }}
-                                    transition={{ delay: i * 0.2, ease: "easeInOut" }}
-                                    className="flex items-center gap-2"
-                                >
-                                    {item.value}
-                                </motion.div>
-                            ))
-                        )}
-                    </AnimatePresence>
-                </div>
-        </div>
+        <AnimatePresence mode="wait">
+            <motion.button 
+                className="flex h-full items-center justify-start border-r border-muted-foreground/50 gap-4 px-3 overflow-hidden"
+                onClick={() => setIsExpanded(!isExpanded)}
+                style={{ 
+                    width: isExpanded ? "50%" : 48,
+                    transition: "width 0.5s ease-in-out, background-color 0.5s ease-in-out",
+                }}
+            >
+                <img src={theme === "light" ? "/spinning-globe-dark.gif" : "/spinning-globe-light.gif"} width={24} height={24} />
+                {isExpanded && (
+                    items.map((item, i) => (
+                        <motion.div
+                            key={item.key}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5+(i * 0.2), ease: "easeInOut" }}
+                            className="flex items-center gap-2"
+                        >
+                            {item.value}
+                        </motion.div>
+                    ))
+                )}
+            </motion.button>
+        </AnimatePresence>
     )
 }
