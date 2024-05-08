@@ -32,7 +32,7 @@ export const MenuButton = () => {
                             animate={{ x: 0, rotate: 0 }}
                             exit={{ x: "calc(100%)", rotate: 180 }}
                         >
-                            <X className="w-6 h-6 lg:w-8 lg:h-8" />
+                            <X className="w-6 h-6" />
                         </motion.div>
                     </Button>
                 </motion.div>
@@ -57,7 +57,7 @@ export const MenuButton = () => {
                             animate={{ x: 0 }}
                             exit={{ x: "calc(-100%)" }}
                         >
-                            <AlignRight className="w-6 h-6 lg:w-8 lg:h-8" />
+                            <AlignRight className="w-6 h-6" />
                         </motion.div>
                     </Button>
                 </motion.div>

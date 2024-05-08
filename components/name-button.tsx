@@ -41,7 +41,7 @@ export const NameButton = () => {
                         animate={{ x: 0 }}
                         exit={{ x: "calc(-100%)" }}
                     >
-                        <LucideBold className="w-6 h-6 lg:w-8 lg:h-8" />
+                        <LucideBold className="w-6 h-6" />
                     </motion.div>
                 )}
             </Button>

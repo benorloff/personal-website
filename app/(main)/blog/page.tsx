@@ -33,6 +33,11 @@ const BlogCard = (post: Post) => {
                             </Link>
                         </h2>
                     </div>
+                    <div>
+                        <h2 className="text-muted-foreground">
+                            {post.excerpt}
+                        </h2>
+                    </div>
                     <div className="flex gap-2">
                         {post.tags?.map((tag, i) => (
                             <Badge key={i} variant="secondary">{tag}</Badge>
@@ -61,7 +66,7 @@ const BlogPage = () => {
         <>
             <Frame position="top">
                 <div className="container flex h-full items-center">
-                    <h1 className="text-4xl">Blog</h1>
+                    <h1 className="text-2xl">Blog</h1>
                 </div>
             </Frame>
             <Frame position="left">
