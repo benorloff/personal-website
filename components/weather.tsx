@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Weather } from "@/lib/weather"
 import { useState } from "react"
 import { useTheme } from "next-themes"
-import { Heart } from "lucide-react"
 
 export const WeatherBar = ({
     temperature,
@@ -38,31 +37,13 @@ export const WeatherBar = ({
         }
     ]
 
-    const container = {
-        hidden: { width: 48 },
-        show: { 
-            width: 500,
-            transition: {
-                duration: 0.5,
-                ease: "easeInOut",
-                delayChildren: 0.5,
-                staggerChildren: 0.2,
-            },
-        },
-    }
-
-    const content = {
-        hidden: { opacity: 0, y: 10 },
-        show: { opacity: 1, y: 0 },
-    }
-
     return (
         <AnimatePresence mode="wait">
             <motion.button 
-                className="flex h-full items-center justify-start border-r border-muted-foreground/50 gap-4 px-3 overflow-hidden"
+                className="flex h-full min-w-max items-center justify-start border-r border-muted-foreground/50 gap-4 px-3 overflow-hidden"
                 onClick={() => setIsExpanded(!isExpanded)}
                 style={{ 
-                    width: isExpanded ? "50%" : 48,
+                    width: isExpanded ? "100%" : 48,
                     transition: "width 0.5s ease-in-out, background-color 0.5s ease-in-out",
                 }}
             >
