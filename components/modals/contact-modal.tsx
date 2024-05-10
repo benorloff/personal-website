@@ -60,7 +60,7 @@ export const ContactModal = () => {
                     isModalOpen ? "block" : "hidden"
                 )}
             >
-                <div className="grid h-full grid-cols-10 grid-rows-10 items-center divide-x divide-y text-4xl">
+                <div className="grid h-full grid-cols-10 grid-rows-10 items-center divide-x divide-y divide-muted-foreground/50 text-4xl">
                     <div 
                         className="container h-full w-full flex items-center col-span-5 row-span-2" 
                     >
@@ -77,7 +77,7 @@ export const ContactModal = () => {
                         >
                             <Button
                                 variant="ghost"
-                                className="h-full w-full rounded-none p-1"
+                                className="h-full w-full rounded-none p-1 hover:bg-primary/10"
                             >
                                 {social.icon}
                             </Button>

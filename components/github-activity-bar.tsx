@@ -1,12 +1,20 @@
 "use client";
 
-import { formatDistance } from "date-fns";
 import { githubEventTypes } from "@/lib/github";
-import { ActivityIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
+import { formatDistance } from "date-fns";
+import { MotionValue, PanInfo, motion, useSpring, useTransform } from "framer-motion";
+import { ActivityIcon, Github } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useRafLoop } from "react-use";
 import { useWindowSize } from "usehooks-ts";
-import { useSpring, useTransform, motion } from "framer-motion";
-import { useRaf, useRafLoop } from "react-use";
+
+const config = {
+    speed: 0.75,
+    threshold: 0.014,
+    wheelFactor: 1.8,
+    dragFactor: 1.2,
+}
 
 const Content = ({events}: any) => {
     return (
@@ -20,14 +28,15 @@ const Content = ({events}: any) => {
                         key={event.id}
                         className="flex-1 text-sm font-normal flex h-full min-w-max justify-center items-center gap-2 px-3 text-nowrap"
                     >
-                        <img
+                        {/* <img
                             src={event.actor.avatar_url}
                             alt={event.actor.display_login}
                             width={24}
                             height={24}
                             className="rounded-full"
-                        />
-                        <div>
+                        /> */}
+                        <div className="flex gap-1">
+                            <Github size={16}/>
                             {icon ? icon : <ActivityIcon />}
                         </div>
                         <div>
@@ -49,13 +58,12 @@ const Content = ({events}: any) => {
     );
 };
 
-
 const ActivityBlock = ({ 
     events, 
     speed,
 }: {
     events: any,
-    speed: any,
+    speed: MotionValue<number>,
 }) => {
     const block = useRef<HTMLDivElement>(null);
     const blockRect = useRef<DOMRect>(null);
@@ -84,38 +92,62 @@ const ActivityBlock = ({
     useRafLoop(loop, true);
 
     return (
-        <div ref={block} className="flex h-full">
+        <div ref={block} className="flex h-full pointer-events-none cursor-none">
             <Content events={events} />
         </div>
     )
 };
 
 const Marquee = ({events}: any) => {
-    const marquee = useRef(null);
-    const slowDown = useRef(false);
+    const marquee = useRef<HTMLDivElement>(null);
+    const slowDown = useRef<boolean>(false);
     // const isScrolling = useRef(false);
-    const constraintsRef = useRef(null);
+    const constraintsRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState<boolean>(false);
 
     const x = useRef<number>(0);
-    // const w = useRef(window.innerWidth).current;
-    const speed = useSpring(1, {
+    const w = useRef(useWindowSize().width).current;
+    const speed = useSpring(config.speed, {
         damping: 40,
         stiffness: 90,
         mass: 5,
     });
-    // const opacity = useTransform(speed, [-w * 0.25, 0, w * 0.25], [1, 0, 1]);
-    // const skewX = useTransform(speed, [-w * 0.25, 0, w * 0.25], [-25, 0, 25]);
+    const opacity = useTransform(speed, [-w * 1.25, 1, w * 1.25], [0, 1, 0]);
+    const skewX = useTransform(speed, [-w * 0.25, 0, w * 0.25], [-25, 0, 25]);
+
+    const onDragStart = () => {
+        setIsDragging(true);
+        slowDown.current = true;
+        marquee.current?.classList.add("drag");
+        speed.set(0);
+      };
+    
+    const onDrag = (
+        e: MouseEvent | TouchEvent | PointerEvent,
+        info: PanInfo,
+    ) => {
+        speed.set(config.dragFactor * -info.delta.x);
+    };
+    
+    const onDragEnd = (
+        e: MouseEvent | TouchEvent | PointerEvent,
+    ) => {
+        setIsDragging(false);
+        slowDown.current = false;
+        marquee.current?.classList.remove("drag");
+        x.current = config.speed;
+    };
 
     const loop = () => {
         if (slowDown.current || Math.abs(x.current) < 0.014) return;
         x.current *= 0.66;
         if (x.current < 0) {
-          x.current = Math.min(x.current, 0);
+            x.current = Math.min(x.current, 0);
         } else {
-          x.current = Math.max(x.current, 0);
+            x.current = Math.max(x.current, 0);
         }
         speed.set(2 + x.current);
-      };
+    };
 
     useRafLoop(loop, true);
 
@@ -123,7 +155,18 @@ const Marquee = ({events}: any) => {
         <motion.div ref={constraintsRef} className="flex h-full w-full">
             <motion.div
                 ref={marquee}
-                className="flex h-full w-full overflow-hidden"
+                style={{ skewX }}
+                // onWheel={onWheel}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragStart={onDragStart}
+                onDrag={onDrag}
+                onDragEnd={onDragEnd}
+                dragElastic={0.000001}
+                className={cn(
+                    "flex h-full w-full overflow-hidden cursor-grab",
+                    isDragging && "cursor-grabbing"
+                )}
             >
                 <ActivityBlock events={events} speed={speed} />
                 <ActivityBlock events={events} speed={speed} />

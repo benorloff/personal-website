@@ -1,5 +1,19 @@
-import { ArrowUpFromLine, BookPlus } from "lucide-react";
 import React from "react";
+import { 
+    ArrowUpFromLine, 
+    BookOpenCheck, 
+    BookPlus, 
+    FileCode, 
+    FlagTriangleRight, 
+    GitBranch, 
+    GitPullRequestArrow, 
+    Heart, 
+    MessageCircleCode, 
+    PackageCheck, 
+    Star, 
+    Trash2, 
+    User 
+} from "lucide-react";
 
 const baseUrl = 'https://api.github.com';
 const username = 'benorloff';
@@ -10,87 +24,86 @@ interface GithubEvent {
     icon: React.ReactNode;
 }
 
-// TODO: Add icons to all event types
 export const githubEventTypes: GithubEvent[] = [
     {
         event: 'CreateEvent',
         outputText: 'created',
-        icon: <BookPlus />,
+        icon: <BookPlus size={16} />,
     },
     {
         event: 'DeleteEvent',
         outputText: 'deleted',
-        icon: 'trash',
+        icon: <Trash2 size={16} />,
     },
     {
         event: 'ForkEvent',
         outputText: 'forked',
-        icon: 'git-branch',
+        icon: <GitBranch size={16} />,
     },
     {
         event: 'GollumEvent',
         outputText: 'edited a wiki',
-        icon: 'book-open',
+        icon: <FileCode size={16} />,
     },
     {
         event: 'IssuesEvent',
         outputText: 'opened an issue',
-        icon: 'issue-opened',
+        icon: <FlagTriangleRight size={16} />,
     },
     {
         event: 'IssueCommentEvent',
         outputText: 'commented on an issue',
-        icon: 'comment',
+        icon: <MessageCircleCode size={16} />,
     },
     {
         event: 'MemberEvent',
         outputText: 'added a collaborator',
-        icon: 'user-follow',
+        icon: <User size={16} />,
     },
     {
         event: 'PublicEvent',
         outputText: 'open sourced',
-        icon: 'repo',
+        icon: <BookOpenCheck size={16} />,
     },
     {
         event: 'PullRequestEvent',
         outputText: 'opened a pull request',
-        icon: 'git-pull-request',
+        icon: <GitPullRequestArrow size={16} />,
     },
     {
         event: 'PullRequestReviewEvent',
         outputText: 'reviewed a pull request',
-        icon: 'git-pull-request',
+        icon: <GitPullRequestArrow size={16} />,
     },
     {
         event: 'PullRequestReviewCommentEvent',
         outputText: 'commented on a pull request',
-        icon: 'comment-discussion',
+        icon: <GitPullRequestArrow size={16} />,
     },
     {
         event: 'PullRequestReviewThreadEvent',
         outputText: 'commented on a pull request thread',
-        icon: 'comment-discussion',
+        icon: <GitPullRequestArrow size={16} />,
     },
     {
         event: 'PushEvent',
         outputText: 'pushed to',
-        icon: <ArrowUpFromLine />,
+        icon: <ArrowUpFromLine size={16} />,
     },
     {
         event: 'ReleaseEvent',
         outputText: 'released',
-        icon: 'tag',
+        icon: <PackageCheck size={16} />,
     },
     {
         event: 'SponsorshipEvent',
         outputText: 'sponsored',
-        icon: 'heart',
+        icon: <Heart size={16} />,
     },
     {
         event: 'WatchEvent',
         outputText: 'starred',
-        icon: 'star',
+        icon: <Star size={16} />,
     },
 ];
 
@@ -105,7 +118,12 @@ export const getRecentGithubEvents = async ({
         per_page: per_page ? per_page.toString() : '30',
         page: page ? page.toString() : '1',
     })
-    const res = await fetch(`${baseUrl}/users/${username}/events?${params}`);
-    const data = await res.json();
+    let data;
+    try {
+        const res = await fetch(`${baseUrl}/users/${username}/events?${params}`);
+        data = await res.json();
+    } catch (e) {
+        console.error(e);
+    }
     return data;
 };

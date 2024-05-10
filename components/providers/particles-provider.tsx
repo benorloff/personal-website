@@ -98,7 +98,7 @@ export const ParticlesProvider = () => {
   const optionsLight: ISourceOptions = useMemo(
     () => ({
       background: { 
-        image: "radial-gradient(#b53636, #fff)",
+        image: "radial-gradient(#ff6b6b, #fff)",
       },
       fpsLimit: 40,
       interactivity: {

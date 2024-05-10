@@ -19,42 +19,49 @@ export const MenuModal = () => {
     const isModalOpen = isOpen && type === "menu";
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="sync">
             { isModalOpen && (
-            <motion.div 
-                key="menu-modal"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ type: "linear", duration: 0.5 }}
+            <div 
                 className={cn(
-                    "absolute z-10 top-0 left-0 inset-y w-full h-full backdrop-blur-3xl overflow-scroll",
+                    "absolute z-10 top-0 left-0 inset-y w-full h-full overflow-scroll",
                     isModalOpen ? "block" : "hidden"
                 )}
             >
                 <div className="flex flex-row h-full divide-x divide-foreground-muted dark:divide-foreground/25">
-                    <div className="flex-1 container py-8">
+                    <motion.div 
+                        initial={{ x: '-100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '-100%' }}
+                        transition={{ type: "tween", duration: 0.5 }}
+                        className="flex-1 backdrop-blur-3xl"
+                    >
                         <h2 className="text-2xl font-semibold">Menu</h2>
-                    </div>
-                    <div className="flex-1 grid auto-cols-auto h-full items-center divide-y divide-foreground-muted dark:divide-foreground/25">
+                    </motion.div>
+                    <motion.div 
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: "tween", duration: 0.5 }}
+                        className="flex-1 backdrop-blur-3xl grid auto-cols-auto h-full items-center divide-y divide-foreground-muted dark:divide-foreground/25"
+                    >
                         {routes.map((route, i) => (
                             <motion.div
                                 key={i}
-                                initial={{ opacity: 0, y: 50, scale: 0.5 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 50, scale: 0.5 }}
+                                initial={{ opacity: 0, x: '100%' }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: '100%' }}
                                 transition={{ delay: i * 0.1 }}
-                                className="container h-full w-full flex items-center group hover:bg-foreground transition-colors duration-500"
+                                className="container h-full w-full flex items-center group hover:bg-primary/10 transition-all duration-500"
                                 onClick={() => onClose()}
                             >
                                 <Link key={i} href={route.href} className="h-full w-full flex items-center">
-                                    <h2 className="text-8xl font-bold group-hover:text-background ">{route.name}</h2>
+                                    <h2 className="text-6xl font-bold">{route.name}</h2>
                                 </Link>
                             </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 </div>
-            </motion.div>
+            </div>
             )}
         </AnimatePresence>
     )

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Weather } from "@/lib/weather"
 import { useState } from "react"
 import { useTheme } from "next-themes"
+import { cn } from "@/lib/utils"
 
 export const WeatherBar = ({
     temperature,
@@ -17,7 +18,7 @@ export const WeatherBar = ({
     const items = [
         {
             key: "location",
-            value: "Coding with 🖤 in Tucson, Arizona",
+            value: "Coding with ❤️ in Tucson, Arizona",
         },
         {
             key: "icon",
@@ -55,7 +56,7 @@ export const WeatherBar = ({
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.5+(i * 0.2), ease: "easeInOut" }}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 text-sm"
                         >
                             {item.value}
                         </motion.div>
