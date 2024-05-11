@@ -101,4 +101,10 @@
     .custom-border-color {
       @apply border-muted-foreground/50;
     }
+    .modal-glass {
+      @apply backdrop-blur-3xl
+    }
+    .card-glass {
+      @apply backdrop-blur-sm
+    }
   }

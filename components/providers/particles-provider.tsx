@@ -5,9 +5,6 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import {
   type Container,
   type ISourceOptions,
-  MoveDirection,
-  OutMode,
-  tsParticles,
 } from "@tsparticles/engine";
 // import { loadAll } from "@tsparticles/all"; // if you are going to use `loadAll`, install the "@tsparticles/all" package too.
 // import { loadFull } from "tsparticles"; // if you are going to use `loadFull`, install the "tsparticles" package too.
@@ -28,27 +25,27 @@ export const ParticlesProvider = () => {
       //await loadAll(engine);
       //await loadFull(engine);
       await loadSlim(engine);
-      //await loadBasic(engine);
+      // await loadBasic(engine);
     }).then(() => {
       setInit(true);
     });
   }, []);
 
   const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log(container);
+    // console.log(container);
   };
 
   const optionsDark: ISourceOptions = useMemo(
     () => ({
       background: { 
-        image: "radial-gradient(#4a0000, #000)",
+        image: "radial-gradient(rgba(242,17,52,0.25), rgba(0,0,0,0))",
       },
       fpsLimit: 40,
       interactivity: {
         events: {
           onclick: {
             enable: true,
-            mode: "push",
+            mode: "emitter",
           },
           onHover: {
             enable: true,
@@ -98,7 +95,7 @@ export const ParticlesProvider = () => {
   const optionsLight: ISourceOptions = useMemo(
     () => ({
       background: { 
-        image: "radial-gradient(#ff6b6b, #fff)",
+        image: "radial-gradient(rgba(242,17,52,0.25),rgba(0,0,0,0))",
       },
       fpsLimit: 40,
       interactivity: {

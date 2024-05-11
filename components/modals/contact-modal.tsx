@@ -3,7 +3,7 @@
 import { useModal } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, stagger } from "framer-motion";
 import { CodeSquareIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -47,44 +47,53 @@ export const ContactModal = () => {
     const isModalOpen = isOpen && type === "contact";
 
     return (
-        <AnimatePresence>
+        <AnimatePresence mode="sync">
             { isModalOpen && (
-            <motion.div 
-                key="contact-modal"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
+            <div 
                 className={cn(
-                    "absolute z-10 top-0 left-0 inset-y w-full h-full backdrop-blur-3xl overflow-scroll",
+                    "absolute z-10 top-0 left-0 w-full h-full overflow-scroll",
                     isModalOpen ? "block" : "hidden"
                 )}
             >
-                <div className="grid h-full grid-cols-10 grid-rows-10 items-center divide-x divide-y divide-muted-foreground/50 text-4xl">
-                    <div 
-                        className="container h-full w-full flex items-center col-span-5 row-span-2" 
+                <div className="flex flex-row flex-wrap min-h-full lg:divide-x divide-foreground-muted dark:divide-foreground/25">
+                    <motion.div 
+                        initial={{ x: '-100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '-100%' }}
+                        transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+                        className="flex-1 min-w-full lg:min-w-0.5 modal-glass custom-border-color"
                     >
-                        Send me a message
-                    </div>
-                    {socials.map((social, i) => (
-                        <motion.div 
-                            key={i}
-                            initial={{ y: "calc(100%)" }}
-                            animate={{ y: 0 }}
-                            exit={{ y: "calc(100%)" }}
-                            transition={{ delay: i * 0.1 }}
-                            className="h-full w-full flex justify-center items-center col-span-2 row-start-9 row-span-2"
-                        >
-                            <Button
-                                variant="ghost"
-                                className="h-full w-full rounded-none p-1 hover:bg-primary/10"
-                            >
-                                {social.icon}
-                            </Button>
-                        </motion.div>
-                    ))}
+                        <h2 className="text-2xl font-semibold">Let's work together on your next project.</h2>
+                    </motion.div>
+                    <motion.div 
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+                        className="flex-1 flex flex-col min-w-full lg:min-w-0.5 justify-between modal-glass border-r custom-border-color"
+                    >
+                        <h2 className="text-2xl font-semibold">Send me a message</h2>
+                        <div className="flex border-t custom-border-color divide-x divide-muted-foreground/50">
+                            {socials.map((social, i) => (
+                                <motion.div 
+                                    key={i}
+                                    initial={{ x: "100%", opacity: 0 }}
+                                    animate={{ x: 0, opacity: 1 }}
+                                    transition={{ delay: i * 0.1, type: "tween", duration: 0.3 }}
+                                    className="flex-1 flex justify-center aspect-square"
+                                >
+                                    <Button
+                                        variant="ghost"
+                                        className="h-full w-full rounded-none hover:bg-primary/10"
+                                    >
+                                        {social.icon}
+                                    </Button>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
                 </div>
-            </motion.div>
+            </div>
             )}
         </AnimatePresence>
     )

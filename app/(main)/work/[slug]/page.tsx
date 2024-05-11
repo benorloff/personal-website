@@ -5,6 +5,9 @@ import { useRef } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { Mdx } from '@/components/mdx-components';
 import { Frame } from "@/components/frame";
+import { Badge } from '@/components/ui/badge';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
 
 const ProjectPage = ({
     params
@@ -16,46 +19,54 @@ const ProjectPage = ({
 
     const project = allProjects.find((project) => project._raw.flattenedPath.replace(/projects\/?/, '') === params.slug);
 
-    if (!project) throw new Error("Project not found")
+    if (!project) {
+        return notFound();
+    }
 
     const contentRef = useRef<HTMLDivElement>(null);
-    const { scrollXProgress } = useScroll({
+    const { scrollYProgress } = useScroll({
         container: contentRef,
     });
-    const scaleX = useSpring(scrollXProgress, {
+    const scaleX = useSpring(scrollYProgress, {
         stiffness: 100,
         damping: 30,
         restDelta: 0.001,
     })
 
     return (
-        <>
-            <Frame position="top">
-                <div className="grid grid-cols-10 h-full w-full divide-x">
-                    <div className="col-span-2 text-4xl flex justify-center items-center">
-                        <h1>Work</h1>
-                    </div>
-                    <div className="col-span-8 text-4xl flex justify-center items-center">
-                        <h1>{project.title}</h1>
+        <div ref={contentRef} className="h-full w-full overflow-scroll p-4 space-y-4">
+            {/* <Mdx code={project.body.code} /> */}
+            <div className='flex h-full w-full justify-center items-center border border-white'>
+                <div className='flex flex-col items-center gap-4'>
+                    <h4>PROJECT</h4>
+                    <h1>{project.title}</h1>
+                    <div className='flex justify-center items-center gap-2'>
+                        {project.tags?.map((tag) => (
+                            <Badge key={tag} variant="outline" className='text-xs'>{tag}</Badge>
+                        ))}
                     </div>
                 </div>
-            </Frame>
-            <Frame position="left">
-                left
-            </Frame>
-            <Frame position="right">
-                right
-            </Frame>
-            <Frame position="bottom">
-                <motion.div
-                    className="h-full w-full bg-muted-foreground origin-left"
-                    style={{ scaleX }}
-                />
-            </Frame>
-            <div ref={contentRef} className="h-full w-full overflow-scroll no-scrollbar">
-                <Mdx code={project.body.code} />
             </div>
-        </>
+            <div className='flex w-full h-full justify-center items-center border border-white'>
+                <Image src={project.heroImageUrl} alt={project.title} width={800} height={400} />
+            </div>
+            <div className='flex w-full h-full justify-center items-center border border-white'>
+                <div className='grid grid-cols-2 w-full h-full'>
+                    <div className='flex justify-center items-center'>
+                        {project.client}
+                    </div>
+                    <div className='flex justify-center items-center'>
+                        {project.year}
+                    </div>
+                    <div className='flex justify-center items-center'>
+                        {project.category[0] || 'category'}
+                    </div>
+                    <div className='flex justify-center items-center'>
+                        one
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 

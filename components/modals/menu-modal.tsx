@@ -23,17 +23,17 @@ export const MenuModal = () => {
             { isModalOpen && (
             <div 
                 className={cn(
-                    "absolute z-10 top-0 left-0 inset-y w-full h-full overflow-scroll",
+                    "absolute z-10 top-0 left-0 w-full h-full overflow-scroll",
                     isModalOpen ? "block" : "hidden"
                 )}
             >
-                <div className="flex flex-row h-full divide-x divide-foreground-muted dark:divide-foreground/25">
+               <div className="flex flex-row flex-wrap-reverse min-h-full lg:divide-x divide-foreground-muted dark:divide-foreground/25">
                     <motion.div 
                         initial={{ x: '-100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
-                        transition={{ type: "tween", duration: 0.5 }}
-                        className="flex-1 backdrop-blur-3xl"
+                        transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+                        className="flex-1 min-w-full lg:min-w-0.5 modal-glass custom-border-color"
                     >
                         <h2 className="text-2xl font-semibold">Menu</h2>
                     </motion.div>
@@ -41,8 +41,8 @@ export const MenuModal = () => {
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
-                        transition={{ type: "tween", duration: 0.5 }}
-                        className="flex-1 backdrop-blur-3xl grid auto-cols-auto h-full items-center divide-y divide-foreground-muted dark:divide-foreground/25"
+                        transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
+                        className="flex-1 min-w-full lg:min-w-0.5 modal-glass grid auto-cols-auto items-center divide-y divide-foreground-muted dark:divide-foreground/25"
                     >
                         {routes.map((route, i) => (
                             <motion.div
