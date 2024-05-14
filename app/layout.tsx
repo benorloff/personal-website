@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
+import { Work_Sans } from "next/font/google";
 import "./globals.css";
 
 import { cn } from "@/lib/utils";
@@ -9,6 +11,8 @@ import { ParticlesProvider } from "@/components/providers/particles-provider";
 
 
 const inter = Inter({ subsets: ["latin"] });
+const dmSans = DM_Sans({ subsets: ["latin"] });
+const workSans = Work_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Ben Orloff",
@@ -22,11 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body id="body" className={cn("min-h-screen", inter.className)}>
+      <body id="body" className={cn("min-h-screen", workSans.className)}>
         <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
+          attribute='data-theme'
+          defaultTheme="dark-red"
           enableSystem={false}
+          themes={["dark-red", "light-red", "dark-green", "light-green", "dark-blue", "light-blue"]}
         >
           <Cursor />
           <ParticlesProvider />

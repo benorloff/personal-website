@@ -5,13 +5,27 @@ import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/ui/button"
+import { useEffect } from "react";
 
 export const ThemeToggle = () => {
   const { setTheme, theme } = useTheme()
 
+  let mode: string = 'dark';
+  let color: string = 'red';
+
+  mode = theme?.split("-")[0]!;
+  color = theme?.split("-")[1]!;
+
+  useEffect(() => {
+    if (theme) {
+      mode = theme.split("-")[0];
+      color = theme.split("-")[1];
+    }
+  }, [theme])
+
   return (
     <AnimatePresence mode="popLayout">
-      { theme === "light" ? (
+      { mode === "light" ? (
         <motion.div
           layout
           key="theme-light"
@@ -22,7 +36,7 @@ export const ThemeToggle = () => {
         >
           <Button
             variant="ghost"
-            onClick={() => setTheme("dark")}
+            onClick={() => setTheme(`dark-${color}`)}
             className="h-full w-full rounded-none rounded-bl-sm p-1"
           >
             <motion.div 
@@ -48,7 +62,7 @@ export const ThemeToggle = () => {
         >
           <Button
             variant="ghost"
-            onClick={() => setTheme("light")}
+            onClick={() => setTheme(`light-${color}`)}
             className="h-full w-full rounded-none rounded-bl-sm p-1"
           >
             <motion.div 

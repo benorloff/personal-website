@@ -9,8 +9,26 @@ import {
 // import { loadAll } from "@tsparticles/all"; // if you are going to use `loadAll`, install the "@tsparticles/all" package too.
 // import { loadFull } from "tsparticles"; // if you are going to use `loadFull`, install the "tsparticles" package too.
 import { loadSlim } from "@tsparticles/slim"; // if you are going to use `loadSlim`, install the "@tsparticles/slim" package too.
-import { useTheme } from "next-themes";
+import { useTheme,  } from "next-themes";
 // import { loadBasic } from "@tsparticles/basic"; // if you are going to use `loadBasic`, install the "@tsparticles/basic" package too.
+
+const variants = [
+  {
+    color: "red",
+    bg: "hsla(351, 90%, 51%, 0.25), hsla(0, 0%, 0%, 0)",
+    particles: ["#f31637", "#f53d59", "#F7647A", "#F7647A", "#FBB1BC"]
+  },
+  {
+    color: "green",
+    bg: "hsla(110, 90%, 51%, 0.25), hsla(0, 0%, 0%, 0)",
+    particles: ["#37F312", "#5CF53D", "#7CF764", "#9DF98B", "#BEFBB1"]
+  },
+  {
+    color: "blue",
+    bg: "hsla(240, 100%, 51%, 0.25), hsla(0, 0%, 0%, 0)",
+    particles: ["#0505FF", "#3333FF", "#5C5CFF", "#8585FF", "#ADADFF"]
+  },
+]
 
 export const ParticlesProvider = () => {
   const [init, setInit] = useState(false);
@@ -29,16 +47,16 @@ export const ParticlesProvider = () => {
     }).then(() => {
       setInit(true);
     });
-  }, []);
+  }, [theme]);
 
   const particlesLoaded = async (container?: Container): Promise<void> => {
     // console.log(container);
   };
 
-  const optionsDark: ISourceOptions = useMemo(
+  let options: ISourceOptions = useMemo(
     () => ({
       background: { 
-        image: "radial-gradient(rgba(242,17,52,0.25), rgba(0,0,0,0))",
+        image: `radial-gradient(${variants.find((v) => v.color === theme?.split('-')[1])?.bg}`,
       },
       fpsLimit: 40,
       interactivity: {
@@ -71,7 +89,7 @@ export const ParticlesProvider = () => {
           },
         },
         color: {
-          value: ["#fdcf58", "#757676", "#f27d0c", "#800909", "#f07f13"],
+          value: variants.find((v) => v.color === theme?.split('-')[1])?.particles,
         },
         opacity: {
           value: 0.5,
@@ -89,64 +107,7 @@ export const ParticlesProvider = () => {
       },
       detectRetina: true,
     }),
-    []
-  );
-
-  const optionsLight: ISourceOptions = useMemo(
-    () => ({
-      background: { 
-        image: "radial-gradient(rgba(242,17,52,0.25),rgba(0,0,0,0))",
-      },
-      fpsLimit: 40,
-      interactivity: {
-        events: {
-          onclick: {
-            enable: true,
-            mode: "push",
-          },
-          onHover: {
-            enable: true,
-            mode: "repulse",
-          },
-          modes: {
-            push: {
-              quantity: 4,
-            },
-            repulse: {
-              distance: 200,
-              duration: 0.4,
-            },
-          },
-        },
-      },
-      particles: {
-        number: {
-          value: 80,
-          density: {
-            enable: true,
-            area: 800,
-          },
-        },
-        color: {
-          value: ["#fdcf58", "#757676", "#f27d0c", "#800909", "#f07f13"],
-        },
-        opacity: {
-          value: 0.5,
-          random: true,
-        },
-        size: {
-          value: 3,
-          random: true,
-        },
-        move: {
-          enable: true,
-          speed: 1,
-          random: false,
-        },
-      },
-      detectRetina: true,
-    }),
-    []
+    [theme]
   );
 
   if (init) {
@@ -154,7 +115,7 @@ export const ParticlesProvider = () => {
       <Particles
         id="tsparticles"
         particlesLoaded={particlesLoaded}
-        options={theme === "dark" ? optionsDark : optionsLight}
+        options={options}
       />
     );
   }

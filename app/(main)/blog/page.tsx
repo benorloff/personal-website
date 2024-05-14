@@ -64,27 +64,11 @@ const BlogCard = (post: Post) => {
 const BlogPage = () => {
     const posts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
     return (
-        <>
-            <Frame position="top">
-                <div className="container flex h-full items-center">
-                    <h1 className="text-2xl">Blog</h1>
-                </div>
-            </Frame>
-            <Frame position="left">
-                left
-            </Frame>
-            <Frame position="right">
-                right
-            </Frame>
-            <Frame position="bottom">
-                bottom
-            </Frame>
-            <div className="p-4 h-full w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-scroll">
-                {posts.map((post, i) => (
-                    <BlogCard key={i} {...post} />
-                ))}
-            </div>
-        </>
+        <div className="p-4 h-full w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-scroll">
+            {posts.map((post, i) => (
+                <BlogCard key={i} {...post} />
+            ))}
+        </div>
     )
 };
 

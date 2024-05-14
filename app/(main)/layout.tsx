@@ -1,4 +1,3 @@
-import { ModalProvider } from "@/components/providers/modal-provider";
 import { Frame } from "@/components/frame";
 
 export default function MainLayout({
@@ -8,7 +7,6 @@ export default function MainLayout({
 }>) {
   return (
     <Frame>
-      <ModalProvider />
       {children}
     </Frame>
   )

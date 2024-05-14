@@ -70,7 +70,7 @@ export const ContactModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 flex flex-col min-w-full lg:min-w-0.5 justify-between modal-glass border-r custom-border-color"
+                        className="flex-1 flex flex-col min-w-full lg:min-w-0.5 justify-between modal-glass"
                     >
                         <h2 className="text-2xl font-semibold">Send me a message</h2>
                         <div className="flex border-t custom-border-color divide-x divide-muted-foreground/50">

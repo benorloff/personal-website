@@ -9,7 +9,9 @@ import { GithubActivityBar } from "@/components/github-activity-bar";
 import { WeatherBar } from "@/components/weather";
 import { getRecentGithubEvents } from "@/lib/github";
 import { getWeather } from "@/lib/weather";
-import { CircleDotDashed } from "lucide-react";
+import { ColorPicker } from "./color-picker";
+import { Briefcase, Home, MessageCircleMore, User } from "lucide-react";
+import { Nav } from "./nav";
 
 export const Frame = async ({
     children,
@@ -60,10 +62,9 @@ export const Frame = async ({
                 </div>
                 {/* LEFT SIDE */}
                 <div className="fixed left-[10px] top-[58px] bottom-[58px] w-[48px]">
-                    <div className="flex flex-col h-full w-full place-content-end overflow-hidden">
-                        <div className="flex w-full aspect-square justify-center items-center border-t custom-border-color">
-                            <CircleDotDashed size={24} className="rounded-full text-red-500"/>
-                        </div>
+                    <div className="flex flex-col h-full w-full justify-between">
+                        <Nav />
+                        <ColorPicker />
                     </div>
                 </div>
                 {/* MAIN CONTENT */}
