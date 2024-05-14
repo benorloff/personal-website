@@ -3,13 +3,39 @@
 import { allProjects, Project } from 'contentlayer/generated';
 
 import Link from 'next/link';
-import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, MotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { useRef, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
-const WorkPage = () => {
+const ProjectTitle = ({
+    i,
+    projectsLength,
+    progress,
+    children,
+}: {
+    i: number;
+    projectsLength: number;
+    progress: MotionValue<number>;
+    children: React.ReactNode;
+}) => {
+    const start = i / projectsLength;
+    const end = start + ( 1 / projectsLength );
+    const range = [start, end];
+    const x = useTransform(progress, range, ['-30%', '0%']);
+    return (
+        <motion.div
+            key={i}
+            style={{ x }}
+            className='absolute left-0 right-0 top-0 bottom-0 text-[300px] leading-none bg-gradient-to-t from-transparent from-20% to-primary/5 to-100% text-transparent bg-clip-text font-black'
+        >
+            {children}
+        </motion.div>
+    )
+}
+
+export default function WorkPage () {
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const [isHovered, setIsHovered] = useState(-1);
@@ -51,20 +77,9 @@ const WorkPage = () => {
                                     {`0${i+1}`}
                                 </div>
                                 <div className='absolute inset-x-0 h-full w-full -z-50'>
-                                    <motion.div
-                                        initial={{ translateX: '-30%' }}
-                                        whileInView={{ translateX: '0%' }}
-                                        transition={{
-                                            duration: 3,
-                                            type: 'spring',
-                                            damping: 40,
-                                            stiffness: 90,
-                                            mass: 3,
-                                        }}
-                                        className='absolute left-0 right-0 top-0 bottom-0 text-[300px] leading-none bg-gradient-to-t from-transparent from-20% to-primary/5 to-100% text-transparent bg-clip-text font-black'
-                                    >
+                                    <ProjectTitle i={i} projectsLength={projects.length} progress={scrollYProgress}>
                                         {project.title}
-                                    </motion.div>
+                                    </ProjectTitle>
                                 </div>
                                 <div className='col-start-2 row-span-2 self-center justify-self-center'>
                                     <AnimatePresence>
@@ -120,6 +135,4 @@ const WorkPage = () => {
             </div>
         </>
     )
-}
-
-export default WorkPage;
+};

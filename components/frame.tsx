@@ -51,7 +51,7 @@ export const Frame = async ({
                 </div>
                 {/* BOTTOM SIDE */}
                 <div className="fixed bottom-[10px] left-[58px] right-[58px] h-[48px]">
-                    <div className="flex flex-row w-auto h-full overflow-hidden">
+                    <div className="flex flex-row w-full h-full overflow-hidden">
                         <WeatherBar temperature={temperature} label={label} icon={icon} />
                         <GithubActivityBar events={events} />
                     </div>

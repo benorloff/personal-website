@@ -14,18 +14,33 @@ import { useTheme,  } from "next-themes";
 
 const variants = [
   {
-    color: "red",
-    bg: "hsla(351, 90%, 51%, 0.25), hsla(0, 0%, 0%, 0)",
+    color: "dark-red",
+    bg: "hsla(351, 90%, 51%, 0.1), hsla(0, 0%, 0%, 1)",
     particles: ["#f31637", "#f53d59", "#F7647A", "#F7647A", "#FBB1BC"]
   },
   {
-    color: "green",
-    bg: "hsla(110, 90%, 51%, 0.25), hsla(0, 0%, 0%, 0)",
+    color: "light-red",
+    bg: "hsla(351, 90%, 51%, 0.1), hsla(0, 0%, 0%, 0)",
+    particles: ["#f31637", "#f53d59", "#F7647A", "#F7647A", "#FBB1BC"]
+  },
+  {
+    color: "dark-green",
+    bg: "hsla(110, 90%, 51%, 0.1), hsla(0, 0%, 0%, 1)",
     particles: ["#37F312", "#5CF53D", "#7CF764", "#9DF98B", "#BEFBB1"]
   },
   {
-    color: "blue",
-    bg: "hsla(240, 100%, 51%, 0.25), hsla(0, 0%, 0%, 0)",
+    color: "light-green",
+    bg: "hsla(110, 90%, 51%, 0.1), hsla(0, 0%, 0%, 0)",
+    particles: ["#37F312", "#5CF53D", "#7CF764", "#9DF98B", "#BEFBB1"]
+  },
+  {
+    color: "dark-blue",
+    bg: "hsla(240, 100%, 51%, 0.1), hsla(0, 0%, 0%, 1)",
+    particles: ["#0505FF", "#3333FF", "#5C5CFF", "#8585FF", "#ADADFF"]
+  },
+  {
+    color: "light-blue",
+    bg: "hsla(240, 100%, 51%, 0.1), hsla(0, 0%, 0%, 0)",
     particles: ["#0505FF", "#3333FF", "#5C5CFF", "#8585FF", "#ADADFF"]
   },
 ]
@@ -56,7 +71,7 @@ export const ParticlesProvider = () => {
   let options: ISourceOptions = useMemo(
     () => ({
       background: { 
-        image: `radial-gradient(${variants.find((v) => v.color === theme?.split('-')[1])?.bg}`,
+        image: `radial-gradient(${variants.find((v) => v.color === theme)?.bg}`,
       },
       fpsLimit: 40,
       interactivity: {
@@ -74,7 +89,7 @@ export const ParticlesProvider = () => {
               quantity: 4,
             },
             repulse: {
-              distance: 200,
+              distance: 50,
               duration: 0.4,
             },
           },
@@ -89,20 +104,28 @@ export const ParticlesProvider = () => {
           },
         },
         color: {
-          value: variants.find((v) => v.color === theme?.split('-')[1])?.particles,
+          value: variants.find((v) => v.color === theme)?.particles,
         },
         opacity: {
-          value: 0.5,
+          value: {min: 0.1, max: 0.3},
           random: true,
         },
         size: {
-          value: 3,
+          value: { min: 3, max: 10 },
           random: true,
+        },
+        shadow: {
+          enable: true,
+          blur: 50,
+          color: "#000000",
         },
         move: {
           enable: true,
-          speed: 1,
-          random: false,
+          speed: { min: 1, max: 1.5 },
+          random: true,
+        },
+        collisions: {
+          enable: true,
         },
       },
       detectRetina: true,

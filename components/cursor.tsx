@@ -8,7 +8,6 @@ import {
     transform, 
     useMotionValue, 
     useSpring, 
-    useTransform
 } from "framer-motion";
 
 interface Config {

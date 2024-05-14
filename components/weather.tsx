@@ -39,13 +39,12 @@ export const WeatherBar = ({
     ]
 
     return (
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="sync">
             <motion.button 
                 className="flex h-full min-w-max items-center justify-start border-r border-muted-foreground/50 gap-4 px-3 overflow-hidden"
                 onClick={() => setIsExpanded(!isExpanded)}
                 style={{ 
                     width: isExpanded ? "100%" : 48,
-                    transition: "width 0.5s ease-in-out, background-color 0.5s ease-in-out",
                 }}
             >
                 <img src={theme === "light" ? "/spinning-globe-dark.gif" : "/spinning-globe-light.gif"} width={24} height={24} />
@@ -55,7 +54,7 @@ export const WeatherBar = ({
                             key={item.key}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5+(i * 0.2), ease: "easeInOut" }}
+                            transition={{ delay: (i * 0.2), ease: "easeInOut" }}
                             className="flex items-center gap-2 text-sm"
                         >
                             {item.value}
