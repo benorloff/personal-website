@@ -78,7 +78,7 @@ export const ParticlesProvider = () => {
         events: {
           onclick: {
             enable: true,
-            mode: "emitter",
+            mode: "trail",
           },
           onHover: {
             enable: true,
@@ -89,7 +89,7 @@ export const ParticlesProvider = () => {
               quantity: 4,
             },
             repulse: {
-              distance: 50,
+              distance: 500,
               duration: 0.4,
             },
           },
@@ -97,7 +97,7 @@ export const ParticlesProvider = () => {
       },
       particles: {
         number: {
-          value: 80,
+          value: 5,
           density: {
             enable: true,
             area: 800,
@@ -107,11 +107,11 @@ export const ParticlesProvider = () => {
           value: variants.find((v) => v.color === theme)?.particles,
         },
         opacity: {
-          value: {min: 0.1, max: 0.3},
+          value: {min: 0.1, max: 0.2},
           random: true,
         },
         size: {
-          value: { min: 3, max: 10 },
+          value: { min: 200, max: 500 },
           random: true,
         },
         shadow: {
@@ -135,11 +135,14 @@ export const ParticlesProvider = () => {
 
   if (init) {
     return (
-      <Particles
-        id="tsparticles"
-        particlesLoaded={particlesLoaded}
-        options={options}
-      />
+      <>
+        <Particles
+          id="tsparticles"
+          particlesLoaded={particlesLoaded}
+          options={options}
+        />
+        <div className="fixed top-0 left-0 w-full h-full bg-background/25 backdrop-blur-xl pointer-events-none" />
+      </>
     );
   }
 

@@ -23,7 +23,7 @@ export const MenuModal = () => {
             { isModalOpen && (
             <div 
                 className={cn(
-                    "absolute z-10 top-0 left-0 w-full h-full overflow-scroll",
+                    "absolute z-50 top-0 left-0 w-full h-full overflow-scroll",
                     isModalOpen ? "block" : "hidden"
                 )}
             >
@@ -33,16 +33,18 @@ export const MenuModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 min-w-full lg:min-w-0.5 modal-glass custom-border-color"
+                        className="flex-1 min-w-full lg:min-w-0.5 bg-background/25 modal-glass custom-border-color"
                     >
-                        <h2 className="text-2xl font-semibold">Menu</h2>
+                        <div className="p-10">
+                            <h2 className="text-2xl font-semibold">Menu</h2>
+                        </div>
                     </motion.div>
                     <motion.div 
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 min-w-full lg:min-w-0.5 modal-glass grid auto-cols-auto items-center divide-y divide-foreground-muted dark:divide-foreground/25"
+                        className="flex-1 min-w-full lg:min-w-0.5 bg-background/25 modal-glass grid auto-cols-auto items-center divide-y divide-foreground-muted dark:divide-foreground/25"
                     >
                         {routes.map((route, i) => (
                             <motion.div

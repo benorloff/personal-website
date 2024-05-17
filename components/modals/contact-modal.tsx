@@ -51,7 +51,7 @@ export const ContactModal = () => {
             { isModalOpen && (
             <div 
                 className={cn(
-                    "absolute z-10 top-0 left-0 w-full h-full overflow-scroll",
+                    "absolute z-50 top-0 left-0 w-full h-full overflow-scroll",
                     isModalOpen ? "block" : "hidden"
                 )}
             >
@@ -61,7 +61,7 @@ export const ContactModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 min-w-full lg:min-w-0.5 modal-glass custom-border-color"
+                        className="flex-1 min-w-full lg:min-w-0.5 bg-background/25 modal-glass"
                     >
                         <h2 className="text-2xl font-semibold">Let's work together on your next project.</h2>
                     </motion.div>
@@ -70,7 +70,7 @@ export const ContactModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 flex flex-col min-w-full lg:min-w-0.5 justify-between modal-glass"
+                        className="flex-1 flex flex-col min-w-full lg:min-w-0.5 justify-between bg-background/25 modal-glass"
                     >
                         <h2 className="text-2xl font-semibold">Send me a message</h2>
                         <div className="flex border-t custom-border-color divide-x divide-muted-foreground/50">

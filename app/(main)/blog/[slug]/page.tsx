@@ -46,28 +46,6 @@ const PostPage = ({
 
     return (
         <>
-            <Frame position="top">
-                <div className="grid grid-cols-10 h-full w-full divide-x">
-                    <div className="col-span-2 text-4xl flex justify-center items-center">
-                        <h1>Blog</h1>
-                    </div>
-                    <div className="col-span-8 text-4xl flex justify-center items-center">
-                        <h1>{post.title}</h1>
-                    </div>
-                </div>
-            </Frame>
-            <Frame position="left">
-                left
-            </Frame>
-            <Frame position="right">
-                <motion.div
-                    className="h-full w-full bg-foreground origin-top"
-                    style={{ scaleY }}
-                />
-            </Frame>
-            <Frame position="bottom">
-                bottom
-            </Frame>
             <div ref={contentRef} className="h-full w-full overflow-scroll no-scrollbar">
                 <Mdx code={post.body.code} />
             </div>
