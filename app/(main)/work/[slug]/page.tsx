@@ -7,6 +7,12 @@ import { Mdx } from '@/components/mdx-components';
 import { Badge } from '@/components/ui/badge';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import { ProjectCard } from '@/components/project-card';
+
+const variants = {
+    hidden: { scale: 0.9, opacity: 0.25 },
+    visible: { scale: 1, opacity: 1 },
+}
 
 const ProjectPage = ({
     params
@@ -17,15 +23,22 @@ const ProjectPage = ({
 }) => {
 
     const project = allProjects.find((project) => project._raw.flattenedPath.replace(/projects\/?/, '') === params.slug);
-
+    
     if (!project) {
         return notFound();
     }
 
+    const projects: Project[] = allProjects.sort();
+
+    const nextProject: Project = projects.indexOf(project) + 1 < projects.length 
+        ? projects[projects.indexOf(project) + 1] 
+        : projects[0]
+
+    const nextProjectIndex: number = projects.indexOf(nextProject);
+
     const contentRef = useRef<HTMLDivElement>(null);
     const isInView = useInView(contentRef, )
     const containerHeight = contentRef.current?.scrollHeight;
-    console.log(containerHeight, 'scrollHeight')
     const { scrollYProgress } = useScroll({
         container: contentRef,
     });
@@ -49,13 +62,24 @@ const ProjectPage = ({
                     ))}
                 </div>
             </div>
-            <Image 
-                src={project.heroImageUrl} 
-                alt={project.title} 
-                width={1200} 
-                height={800} 
-                className='rounded-sm border custom-border-color'
-            />
+            <motion.div
+                ref={useRef<HTMLDivElement>(null)}
+                variants={variants}
+                initial='hidden'
+                whileInView='visible'
+                exit='hidden'
+                viewport={{ root: contentRef, amount: 0.5 }}
+                transition={{ duration: 0.5 }}
+                className='pb-10'
+            >
+                <Image 
+                    src={project.heroImageUrl} 
+                    alt={project.title} 
+                    width={1200} 
+                    height={800} 
+                    className='rounded-sm border custom-border-color'
+                />
+            </motion.div>
             <div className='flex h-full flex-col gap-10 justify-center items-center'>
                 <div 
                     className='text-2xl md:text-3xl lg:text-4xl'
@@ -83,11 +107,13 @@ const ProjectPage = ({
                 <motion.div
                     key={index}
                     ref={useRef<HTMLDivElement>(null)}
-                    initial={{ scale: 0.9, opacity: 0.25 }}
-                    whileInView={{ scale: 1, opacity: 1 }}
-                    viewport={{ root: contentRef}}
-                    exit={{ scale: 0.9, opacity: 0.25 }}
-                    transition={{ duration: 1 }}
+                    variants={variants}
+                    initial='hidden'
+                    whileInView='visible'
+                    exit='hidden'
+                    viewport={{ root: contentRef, amount: 0.5}}
+                    transition={{ duration: 0.5 }}
+                    className='pb-10'
                 >
                     <Image 
                         src={project.heroImageUrl} 
@@ -98,6 +124,13 @@ const ProjectPage = ({
                     />
                 </motion.div>
             ))}
+            <div className='flex flex-col h-full w-full justify-center items-center gap-8'>
+                <h4 className='text-4xl'>Up Next</h4>
+                <ProjectCard 
+                    project={nextProject} 
+                    i={nextProjectIndex}
+                />
+            </div>
         </div>
     )
 }

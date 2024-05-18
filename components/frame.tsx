@@ -10,7 +10,6 @@ import { WeatherBar } from "@/components/weather";
 import { getRecentGithubEvents } from "@/lib/github";
 import { getWeather } from "@/lib/weather";
 import { ColorPicker } from "./color-picker";
-import { Briefcase, Home, MessageCircleMore, User } from "lucide-react";
 import { Nav } from "./nav";
 
 export const Frame = async ({
@@ -35,6 +34,7 @@ export const Frame = async ({
                 <div className="fixed top-[10px] left-[10px] w-[48px] aspect-square flex justify-center items-center border-b border-r custom-border-color">
                     <NameButton />
                 </div>
+                {/* TOP SIDE */}
                 <div className="fixed top-[10px] left-[58px] right-[58px] h-[48px]">
                     
                 </div>
@@ -42,8 +42,9 @@ export const Frame = async ({
                 <div className="fixed top-[10px] right-[10px] w-[48px] aspect-square flex justify-center items-center border-b border-l custom-border-color">
                     <MenuButton />
                 </div>
+                {/* RIGHT SIDE */}
                 <div className="fixed right-[10px] top-[58px] bottom-[58px] w-[48px]">
-                    
+
                 </div>
                 {/* BOTTOM RIGHT CORNER */}
                 <div className="fixed bottom-[10px] right-[10px] w-[48px] aspect-square flex justify-center items-center border-t border-l custom-border-color">
