@@ -53,9 +53,9 @@ const ProjectPage = ({
                 />
             </div>
             {/* <Mdx code={project.body.code} /> */}
-            <div className='flex flex-col w-full justify-center items-center gap-4 py-36'>
+            <div className='flex flex-col justify-center items-center gap-4 py-36'>
                 <h4>PROJECT</h4>
-                <h1 className='text-8xl font-normal'>{project.title}</h1>
+                <h1 className='text-8xl font-normal text-center text-pretty tracking-tight'>{project.title}</h1>
                 <div className='flex justify-center items-center gap-2'>
                     {project.tags?.map((tag) => (
                         <Badge key={tag} variant="outline" className='text-xs'>{tag}</Badge>
@@ -103,7 +103,7 @@ const ProjectPage = ({
                     </div>
                 </div>
             </div>
-            {Array.from({ length: 5 }).map((_, index) => ( 
+            {project.images?.map((image, index) => ( 
                 <motion.div
                     key={index}
                     ref={useRef<HTMLDivElement>(null)}
@@ -116,8 +116,8 @@ const ProjectPage = ({
                     className='pb-10'
                 >
                     <Image 
-                        src={project.heroImageUrl} 
-                        alt={project.title} 
+                        src={image.imageUrl} 
+                        alt={image.alt || project.title} 
                         width={1200} 
                         height={800} 
                         className='rounded-sm border custom-border-color'

@@ -1,16 +1,17 @@
 import { defineDocumentType, defineNestedType, makeSource } from "contentlayer/source-files";
 
-const Category = defineNestedType(() => ({
-    name: 'Category',
+const ProjectImage = defineNestedType(() => ({
+    name: 'ProjectImage',
     fields: {
-        name: {
-            type: 'enum',
-            options: [
-                'Web',
-                'Branding',
-                'Strategy',
-            ],
+        imageUrl: {
+            type: 'string',
             required: true,
+        },
+        title: {
+            type: 'string',
+        },
+        alt: {
+            type: 'string',
         }
     }
 }));
@@ -44,6 +45,10 @@ export const Project = defineDocumentType(() => ({
             type: 'list',
             of: { type: 'string' },
         },
+        images: {
+            type: 'list',
+            of: ProjectImage,
+        }
     },
     computedFields: {
         url: {

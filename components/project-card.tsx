@@ -118,7 +118,7 @@ export const ProjectCard = ({
     return (
         <div 
             className={cn(
-                "w-full pb-8",
+                "w-full mb-8 rounded-sm",
                 className,
             )}
             style={{
@@ -141,12 +141,9 @@ export const ProjectCard = ({
                     viewport={{ root: scrollRef, margin: "200px" }}
                     onHoverStart={() => setIsHovered(i)}
                     onHoverEnd={() => setIsHovered(-1)}
-                    className='grid grid-cols-[auto,1fr,auto] grid-rows-2 p-8 gap-4 group bg-foreground/5 backdrop-blur-sm overflow-hidden border custom-border-color backdrop-brightness-100 hover:backdrop-brightness-110 dark:hover:backdrop-brightness-125 rounded-sm transition-all duration-300 ease-in-out'
+                    className='flex flex-wrap justify-between p-8 gap-8 group backdrop-blur-sm overflow-hidden border custom-border-color hover:bg-foreground/10 transition-color duration-300 ease-in-out rounded-sm'
                 >
-                    <div className='self-start'>
-                        {`0${i+1}`}
-                    </div>
-                    <div className='absolute inset-x-0 h-full w-full -z-50'>
+                    <div className='absolute inset-x-0 top-0 left-4 h-full w-full -z-50'>
                         <ProjectTitle 
                             i={i} 
                             projectsLength={projectsLength}
@@ -155,58 +152,63 @@ export const ProjectCard = ({
                             {project.title}
                         </ProjectTitle>
                     </div>
-                    <div className='col-start-2 row-span-2 self-center justify-self-center'>
-                        {/* <div className="w-full h-full rounded-sm bg-background/50"> */}
-                            <motion.div
-                                style={{
-                                    rotateX,
-                                    rotateY,
-                                    transformStyle: 'preserve-3d',
-                                }}
-                            >
-                                <Image 
-                                    src={project.heroImageUrl} 
-                                    alt="placeholder" 
-                                    width={400} 
-                                    height={200} 
-                                    className='rounded-sm shadow-xl shadow-background'
-                                />
-                            </motion.div>
-                        {/* </div> */}
-                    </div>
-                    <div className='col-start-3 justify-self-end'>
-                        <AnimatePresence>
-                            {isHovered === i && (
-                                <motion.div 
-                                    initial={{ opacity: 0, translateX: '-20px', translateY: '20px' }}
-                                    animate={{ opacity: 1, translateX: '0px', translateY: '0px' }}
-                                    exit={{ opacity: 0, translateX: '-20px', translateY: '20px' }}
-                                    transition={{ duration: 0.3 }}
-                                    className='h-full ml-auto text-muted-foreground'
-                                >
-                                    <ArrowUpRight size={24} className='text-primary'/>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                    <div className='space-y-4'>
-                        <h2 className='text-6xl'>
-                            {project.title}
-                        </h2>
-                        <div className='flex gap-2'>
-                            {project.tags?.map((tag, i) => (
-                                <Badge 
-                                    key={i} 
-                                    variant='outline' 
-                                    className='p-2 px-4 text-muted-foreground border-muted-foreground'
-                                >
-                                    {tag}
-                                </Badge>
-                            ))}
+                    <div className="flex flex-col flex-1 lg:basis-5/12 w-full md:w-auto justify-between min-h-48">
+                        <div className="pb-10">
+                            {`0${i+1}`}
+                        </div>
+                        <div className='space-y-4'>
+                            <h2 className='text-6xl text-pretty'>
+                                {project.title}
+                            </h2>
+                            <div className='flex gap-2'>
+                                {project.tags?.map((tag, i) => (
+                                    <Badge 
+                                        key={i} 
+                                        variant='outline' 
+                                        className='p-2 px-4 text-muted-foreground border-muted-foreground'
+                                    >
+                                        {tag}
+                                    </Badge>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                    <div className='text-muted-foreground self-end justify-self-end'>
-                        {project.year}
+                    <div className="flex lg:basis-5/12 justify-center items-center min-h-48">
+                        <motion.div
+                            style={{
+                                rotateX,
+                                rotateY,
+                                transformStyle: 'preserve-3d',
+                            }}
+                        >
+                            <Image 
+                                src={project.heroImageUrl} 
+                                alt="placeholder" 
+                                width={400} 
+                                height={200} 
+                                className='rounded-sm group-hover:shadow-xl group-hover:shadow-shadow transition-shadow duration-300 ease-in-out'
+                            />
+                        </motion.div>
+                    </div>
+                    <div className='flex flex-1 lg:basis-1/12 justify-between items-end'>
+                        <div className="order-2 md:order-1">
+                            <AnimatePresence>
+                                {isHovered === i && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, translateX: '-20px', translateY: '20px' }}
+                                        animate={{ opacity: 1, translateX: '0px', translateY: '0px' }}
+                                        exit={{ opacity: 0, translateX: '-20px', translateY: '20px' }}
+                                        transition={{ duration: 0.3 }}
+                                        className='text-muted-foreground absolute top-8 right-8'
+                                    >
+                                        <ArrowUpRight size={24} className='text-primary'/>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                        <div className='text-muted-foreground self-end justify-self-end order-1 lg:order-2'>
+                            {project.year}
+                        </div>
                     </div>
                 </motion.div>
             </Link>
