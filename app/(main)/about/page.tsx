@@ -12,13 +12,7 @@ const AboutPage = () => {
             <div className="flex h-full w-full items-center justify-center text-balance text-center">
                 <h3>I'm currently looking for new opportunities. If you'd like to work together, feel free to reach out.</h3>
             </div>
-            <div className="flex h-full w-full items-center justify-center text-balance text-center">
-                <TestimonialCarousel>
-                    {Array.from({ length: 3 }).map((_, i) => (
-                        <div key={i} className="border rounded-sm min-w-[500px] p-10">Testimonial {i + 1}</div>
-                    ))}
-                </TestimonialCarousel>
-            </div>
+            <TestimonialCarousel />
         </div>
     )
 }

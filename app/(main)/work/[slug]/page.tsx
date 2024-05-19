@@ -10,8 +10,10 @@ import Image from 'next/image';
 import { ProjectCard } from '@/components/project-card';
 
 const variants = {
-    hidden: { scale: 0.9, opacity: 0.25 },
-    visible: { scale: 1, opacity: 1 },
+    containerHidden: { scale: 0.9 },
+    containerVisible: { scale: 1 },
+    imageHidden: { opacity: 0.5 },
+    imageVisible: { opacity: 1 },
 }
 
 const ProjectPage = ({
@@ -65,20 +67,30 @@ const ProjectPage = ({
             <motion.div
                 ref={useRef<HTMLDivElement>(null)}
                 variants={variants}
-                initial='hidden'
-                whileInView='visible'
-                exit='hidden'
+                initial='containerHidden'
+                whileInView='containerVisible'
+                exit='containerHidden'
                 viewport={{ root: contentRef, amount: 0.5 }}
                 transition={{ duration: 0.5 }}
-                className='pb-10'
+                className='mb-10 bg-background'
             >
-                <Image 
-                    src={project.heroImageUrl} 
-                    alt={project.title} 
-                    width={1200} 
-                    height={800} 
-                    className='rounded-sm border custom-border-color'
-                />
+                    <motion.div
+                        ref={useRef<HTMLDivElement>(null)}
+                        variants={variants}
+                        initial='imageHidden'
+                        whileInView='imageVisible'
+                        exit='imageHidden'
+                        transition={{ duration: 0.5 }}
+                        viewport={{ root: contentRef, amount: 0.5 }}
+                    >
+                        <Image 
+                            src={project.heroImageUrl} 
+                            alt={project.title} 
+                            width={1200} 
+                            height={800} 
+                            className='w-full rounded-sm border custom-border-color'
+                        />
+                    </motion.div>
             </motion.div>
             <div className='flex h-full flex-col gap-10 justify-center items-center'>
                 <div 
@@ -108,20 +120,30 @@ const ProjectPage = ({
                     key={index}
                     ref={useRef<HTMLDivElement>(null)}
                     variants={variants}
-                    initial='hidden'
-                    whileInView='visible'
-                    exit='hidden'
+                    initial='containerHidden'
+                    whileInView='containerVisible'
+                    exit='containerHidden'
                     viewport={{ root: contentRef, amount: 0.5}}
                     transition={{ duration: 0.5 }}
-                    className='pb-10'
+                    className='mb-10 bg-background'
                 >
+                    <motion.div
+                        ref={useRef<HTMLDivElement>(null)}
+                        variants={variants}
+                        initial='imageHidden'
+                        whileInView='imageVisible'
+                        exit='imageHidden'
+                        transition={{ duration: 0.5 }}
+                        viewport={{ root: contentRef, amount: 0.5 }}
+                    >
                     <Image 
                         src={image.imageUrl} 
                         alt={image.alt || project.title} 
                         width={1200} 
                         height={800} 
-                        className='rounded-sm border custom-border-color'
+                        className='w-full rounded-sm border custom-border-color'
                     />
+                    </motion.div>
                 </motion.div>
             ))}
             <div className='flex flex-col h-full w-full justify-center items-center gap-8'>
