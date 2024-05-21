@@ -81,22 +81,23 @@
 
   @layer base {
     * {
-      @apply border-border;
+      @apply border-border;  
+      @apply scrollbar-thin scrollbar-thumb-accent scrollbar-track-muted;
     }
     body {
       @apply bg-background text-foreground;
     }
     h1 {
-      @apply text-4xl font-semibold;
+      @apply text-6xl font-semibold;
     }
     h2 {
-      @apply text-2xl font-semibold;
+      @apply text-4xl font-semibold;
     }
     h3 {
-      @apply text-xl font-semibold;
+      @apply text-2xl font-semibold;
     }
     h4 {
-      @apply text-lg font-semibold;
+      @apply text-xl font-semibold;
     }
     h5 {
       @apply text-lg font-semibold;
@@ -104,13 +105,6 @@
   }
 
   @layer components {
-    .no-scrollbar {
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-    }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
     .custom-border-color {
       @apply border-muted-foreground/50;
     }

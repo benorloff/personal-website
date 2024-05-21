@@ -141,7 +141,7 @@ export const ParticlesProvider = () => {
           particlesLoaded={particlesLoaded}
           options={options}
         />
-        <div className="fixed top-0 left-0 w-full h-full bg-background/25 backdrop-blur-xl pointer-events-none" />
+        <div className="fixed top-0 left-0 w-full h-full bg-background/50 backdrop-blur-md pointer-events-none" />
       </>
     );
   }

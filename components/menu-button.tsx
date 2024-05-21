@@ -23,7 +23,10 @@ export const MenuButton = () => {
                     <Button 
                         variant="default"
                         className="h-full w-full rounded-none rounded-tr-sm p-1"
-                        onClick={() => !isOpen ? onOpen("menu") : onClose()}
+                        onClick={() => { !isModalOpen 
+                            ? (onClose(), onOpen("menu")) 
+                            : onClose()
+                        }}
                     >
                         <motion.div 
                             layout
@@ -48,7 +51,10 @@ export const MenuButton = () => {
                     <Button 
                         variant="ghost"
                         className="h-full w-full rounded-none rounded-tr-sm p-1"
-                        onClick={() => !isOpen ? onOpen("menu") : onClose()}
+                        onClick={() => { !isModalOpen 
+                            ? (onClose(), onOpen("menu")) 
+                            : onClose()
+                        }}
                     >
                         <motion.div 
                             layout

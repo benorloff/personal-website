@@ -24,7 +24,10 @@ export const ContactButton = () => {
                     <Button 
                         variant="default"
                         className="h-full w-full rounded-none rounded-br-sm p-1"
-                        onClick={() => !isOpen ? onOpen("contact") : onClose()}
+                        onClick={() => { !isModalOpen 
+                            ? (onClose(), onOpen("contact")) 
+                            : onClose()
+                        }}
                     >
                         <motion.div 
                             layout
@@ -49,7 +52,10 @@ export const ContactButton = () => {
                     <Button 
                         variant="ghost"
                         className="h-full w-full rounded-none rounded-br-sm p-1"
-                        onClick={() => !isOpen ? onOpen("contact") : onClose()}
+                        onClick={() => { !isModalOpen 
+                            ? (onClose(), onOpen("contact")) 
+                            : onClose()
+                        }}
                     >
                         <motion.div 
                             layout

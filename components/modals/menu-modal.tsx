@@ -33,7 +33,7 @@ export const MenuModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 min-w-full lg:min-w-0.5 bg-background/25 modal-glass custom-border-color"
+                        className="flex-1 min-w-full lg:min-w-0.5 bg-background/75 modal-glass border-r custom-border-color"
                     >
                         <div className="p-10">
                             <h2 className="text-2xl font-semibold">Menu</h2>
@@ -44,7 +44,7 @@ export const MenuModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 min-w-full lg:min-w-0.5 bg-background/25 modal-glass grid auto-cols-auto items-center divide-y divide-foreground-muted dark:divide-foreground/25"
+                        className="flex-1 min-w-full lg:min-w-0.5 bg-background/75 modal-glass grid auto-cols-auto items-center divide-y divide-foreground-muted dark:divide-foreground/25"
                     >
                         {routes.map((route, i) => (
                             <motion.div

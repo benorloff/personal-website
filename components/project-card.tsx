@@ -3,52 +3,30 @@
 import { Project } from "@/.contentlayer/generated";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { AnimatePresence, MotionValue, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-interface ProjectTitleProps {
-    i: number;
-    projectsLength?: number;
-    progress?: MotionValue<number>;
-    children: React.ReactNode;
-}
-
 interface ProjectCardProps {
     i: number;
     project: Project;
-    projectsLength?: number;
-    scrollRef?: React.RefObject<HTMLDivElement>;
-    progress?: MotionValue<number>;
     className?: string;
 }
 
 const ProjectTitle = ({
-    i,
-    projectsLength,
-    progress,
     children,
-}: ProjectTitleProps) => {
-
-    let start: number = 0;
-    let end: number = 0;
-    let range: number[] = [];
-    let x: MotionValue<string> = useMotionValue('0%');
-
-    if (projectsLength && progress) {
-        start = i / projectsLength;
-        end = start + ( 1 / projectsLength );
-        range = [start, end];
-        x = useTransform(progress, range, ['-10%', '0%']);
-    }
-
+}: {
+    children: React.ReactNode;
+}) => {
     return (
         <motion.div
-            key={i}
-            style={{ x }}
-            className='absolute left-0 right-0 top-0 bottom-0 text-[300px] leading-none bg-gradient-to-t from-transparent from-20% to-primary/5 to-100% text-transparent bg-clip-text font-black'
+            initial={{ opacity: 0, x: -500 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ amount: 'some' }}
+            transition={{ duration: 0.5, type: 'spring', damping: 40, stiffness: 90, mass: 3}}
+            className='absolute inset-x-0 top-0 left-4 h-full w-full -z-50 text-[300px] leading-none bg-gradient-to-t from-transparent from-20% to-primary/5 to-100% text-transparent bg-clip-text font-black text-nowrap'
         >
             {children}
         </motion.div>
@@ -58,11 +36,10 @@ const ProjectTitle = ({
 export const ProjectCard = ({
     i,
     project,
-    projectsLength,
-    scrollRef,
-    progress,
     className,
 }: ProjectCardProps) => {
+
+    const ref = useRef<HTMLDivElement>(null);
 
     const [isHovered, setIsHovered] = useState(-1);
 
@@ -112,8 +89,6 @@ export const ProjectCard = ({
         x.set(0);
         y.set(0);
     }
-        
-
 
     return (
         <div 
@@ -129,29 +104,24 @@ export const ProjectCard = ({
         >
             <Link href={`/work/${project._raw.flattenedPath.replace(/projects\/?/, '')}`}>
                 <motion.div 
-                    initial={{ x: '-20%', opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
+                    ref={ref}
+                    initial={{ x: '-5%', opacity: 0.8 }}
+                    whileInView={{ x: '0%', opacity: 1 }}
+                    exit={{ x: '-5%', opacity: 0.8 }}
                     transition={{ 
-                        duration: 1, 
-                        type: 'spring', 
-                        damping: 40,
-                        stiffness: 90,
-                        mass: 3, 
+                        duration: 0.5, 
+                        type: 'tween',
+                        ease: 'linear',
+                        delay: 0,
                     }}
-                    viewport={{ root: scrollRef, margin: "200px" }}
+                    viewport={{ amount: 'some' }}
                     onHoverStart={() => setIsHovered(i)}
                     onHoverEnd={() => setIsHovered(-1)}
-                    className='flex flex-wrap justify-between p-8 gap-8 group backdrop-blur-sm overflow-hidden border custom-border-color hover:bg-foreground/10 transition-color duration-300 ease-in-out rounded-sm'
+                    className='flex flex-wrap justify-between p-8 gap-8 group backdrop-blur-sm overflow-hidden border custom-border-color bg-background/25 hover:bg-background/50 transition-color duration-300 ease-in-out rounded-sm'
                 >
-                    <div className='absolute inset-x-0 top-0 left-4 h-full w-full -z-50'>
-                        <ProjectTitle 
-                            i={i} 
-                            projectsLength={projectsLength}
-                            progress={progress}
-                        >
-                            {project.title}
-                        </ProjectTitle>
-                    </div>
+                    <ProjectTitle>
+                        {project.title}
+                    </ProjectTitle>
                     <div className="flex flex-col flex-1 lg:basis-5/12 w-full md:w-auto justify-between min-h-48">
                         <div className="pb-10">
                             {`0${i+1}`}

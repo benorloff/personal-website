@@ -7,7 +7,8 @@ import {
     motion, 
     transform, 
     useMotionValue, 
-    useSpring, 
+    useSpring,
+    useTransform, 
 } from "framer-motion";
 
 interface Config {
@@ -126,7 +127,7 @@ export const Cursor = () => {
             animate(
                 cursor[key].current!, 
                 { rotate: `${angle}rad` }, 
-                { duration: 0, ease: 'easeInOut' }
+                { duration: 0 }
             );
         });
     }
@@ -163,6 +164,32 @@ export const Cursor = () => {
             position[key].x.set(clientX - size[key] / 2);
             position[key].y.set(clientY - size[key] / 2);
         });
+    }
+
+    interface SmoothPosition {
+        [key: string]: {
+            x: MotionValue<number>;
+            y: MotionValue<number>;
+        }
+    }
+
+    const smoothPosition: SmoothPosition = {
+        xs: { 
+            x: useSpring(position.xs.x, springConfig.xs), 
+            y: useSpring(position.xs.y, springConfig.xs) 
+        },
+        sm: { 
+            x: useSpring(position.sm.x, springConfig.sm), 
+            y: useSpring(position.sm.y, springConfig.sm) 
+        },
+        md: { 
+            x: useSpring(position.md.x, springConfig.md), 
+            y: useSpring(position.md.y, springConfig.md) 
+        },
+        lg: { 
+            x: useSpring(position.lg.x, springConfig.lg), 
+            y: useSpring(position.lg.y, springConfig.lg) 
+        },
     }
 
     const onMouseMove = (e: MouseEvent) => {
@@ -218,12 +245,14 @@ export const Cursor = () => {
                     transformTemplate={template}
                     className="absolute max-w-10 max-h-10 rounded-full bg-background dark:bg-foreground mix-blend-difference pointer-events-none z-50"
                     style={{
-                        translateX: useSpring(position[key].x, springConfig[key]),
-                        translateY: useSpring(position[key].y, springConfig[key]),
+                        translateX: smoothPosition[key].x,
+                        translateY: smoothPosition[key].y,
+                        scaleX: scale[key].x,
+                        scaleY: scale[key].y,
+                    }}
+                    animate={{
                         width: size[key],
                         height: size[key],
-                        scaleX: useSpring(scale[key].x, springConfig[key]),
-                        scaleY: useSpring(scale[key].y, springConfig[key]),
                     }}
                     ref={cursor[key]}
                 />

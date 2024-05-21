@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body id="body" className={cn("min-h-screen", workSans.className)}>
         <ThemeProvider
           attribute='data-theme'
@@ -35,7 +35,7 @@ export default function RootLayout({
         >
           <Cursor />
           <ParticlesProvider />
-          {children}
+            {children}
         </ThemeProvider>
       </body>
     </html>

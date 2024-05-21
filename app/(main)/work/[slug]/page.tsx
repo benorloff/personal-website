@@ -39,21 +39,9 @@ const ProjectPage = ({
     const nextProjectIndex: number = projects.indexOf(nextProject);
 
     const contentRef = useRef<HTMLDivElement>(null);
-    const isInView = useInView(contentRef, )
-    const containerHeight = contentRef.current?.scrollHeight;
-    const { scrollYProgress } = useScroll({
-        container: contentRef,
-    });
-    const translateY = useTransform(scrollYProgress, [0, 1], ['-100%', '0%']);
 
     return (
         <div ref={contentRef} className="h-full w-full p-4 md:p-6 lg:p-10 overflow-scroll no-scrollbar">
-            <div className='absolute top-0 right-0 h-full w-1 overflow-hidden'>
-                <motion.div
-                    className='absolute top-0 right-0 h-full w-1 bg-accent'
-                    style={{ translateY }}
-                />
-            </div>
             {/* <Mdx code={project.body.code} /> */}
             <div className='flex flex-col justify-center items-center gap-4 py-36'>
                 <h4>PROJECT</h4>

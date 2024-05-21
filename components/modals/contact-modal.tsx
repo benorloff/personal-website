@@ -2,12 +2,15 @@
 
 import { useModal } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { motion, AnimatePresence, stagger } from "framer-motion";
-import { CodeSquareIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CodeSquareIcon, Codepen, Github, Linkedin } from "lucide-react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
+import { ContactForm } from "../contact-form";
+import { z } from "zod";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub, faHashnode, faInstagram, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import Link from "next/link";
 
 interface Socials {
     name: string;
@@ -17,29 +20,24 @@ interface Socials {
 
 const socials: Socials[] = [
     { 
-        name: "icon", 
-        href: "#",
-        icon: <CodeSquareIcon />
+        name: "GitHub", 
+        href: "https://github.com/benorloff/",
+        icon: <FontAwesomeIcon icon={faGithub} size="2xl" />
     },
     { 
-        name: "icon", 
-        href: "#",
-        icon: <CodeSquareIcon />
+        name: "Hashnode", 
+        href: "https://blog.benorloff.co/",
+        icon: <FontAwesomeIcon icon={faHashnode} size="2xl" />
     },
     { 
-        name: "icon", 
-        href: "#",
-        icon: <CodeSquareIcon />
+        name: "LinkedIn", 
+        href: "https://www.linkedin.com/in/benorloff/",
+        icon: <FontAwesomeIcon icon={faLinkedin} size="2xl" />
     },
     { 
-        name: "icon", 
-        href: "#",
-        icon: <CodeSquareIcon />
-    },
-    { 
-        name: "icon", 
-        href: "#",
-        icon: <CodeSquareIcon />
+        name: "Instagram", 
+        href: "https://www.instagram.com/ben.orloff/",
+        icon: <FontAwesomeIcon icon={faInstagram} size="2xl" />
     },
 ]
 
@@ -49,6 +47,7 @@ export const ContactModal = () => {
     const isModalOpen = isOpen && type === "contact";
 
     return (
+        <>
         <AnimatePresence mode="sync">
             { isModalOpen && (
             <div 
@@ -63,10 +62,10 @@ export const ContactModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '-100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 min-w-full min-h-full lg:min-w-0.5 bg-background/25 modal-glass"
+                        className="flex-1 min-w-full min-h-full lg:min-w-0.5 bg-background/75 modal-glass border-r custom-border-color"
                     >
                         <div className="flex flex-col h-full w-full justify-center items-center space-y-10 p-10">
-                            <h2 className="text-2xl font-semibold">Let's work together on your next project.</h2>
+                            {/* <ContactForm /> */}
                         </div>
                     </motion.div>
                     <motion.div 
@@ -74,61 +73,40 @@ export const ContactModal = () => {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
-                        className="flex-1 flex flex-col min-h-full min-w-full lg:min-w-0.5 justify-between bg-background/25 modal-glass"
+                        className="flex-1 flex flex-col min-h-full min-w-full lg:min-w-0.5 justify-between bg-background/75 modal-glass"
                     >
                         <div className="flex flex-col h-full w-full justify-between space-y-10 p-10">
-                            <h2 className="text-2xl font-semibold">Send me a message</h2>
-                            <div className="flex flex-col gap-4">
-                                <div className="flex gap-4">
-                                    <Input
-                                        type="text"
-                                        placeholder="Name*"
-                                        className="flex-1 h-12 bg-background/25 border-muted-foreground/50"
-                                        required
-                                    />
-                                    <Input
-                                        type="email"
-                                        placeholder="Email*"
-                                        className="flex-1 h-12 bg-background/25 border-muted-foreground/50"
-                                        required
-                                    />
-                                </div>
-                                <Input
-                                    type="text"
-                                    placeholder="Company"
-                                    className="w-full h-12 bg-background/25 border-muted-foreground/50"
-                                />
-                                <Textarea
-                                    placeholder="Message*"
-                                    className="w-full bg-background/25 border-muted-foreground/50"
-                                    rows={10}
-                                    required
-                                />
-                                <Button
-                                    className="w-full h-12"
-                                >
-                                    Send
-                                </Button>
-                            </div>
-                            <div className="flex min-h-min w-full justify-center items-end">
-                                <p>Or find me here 👇🏼</p>
-                            </div>
+                            <ContactForm />
                         </div>
-                        <div className="flex border-t custom-border-color divide-x divide-muted-foreground/50">
+                        <div className="flex min-h-24 border-t custom-border-color divide-x divide-muted-foreground/50">
                             {socials.map((social, i) => (
                                 <motion.div 
                                     key={i}
                                     initial={{ x: "100%", opacity: 0 }}
                                     animate={{ x: 0, opacity: 1 }}
                                     transition={{ delay: 0.3 + i * 0.1, type: "tween", duration: 0.3 }}
-                                    className="flex-1 flex justify-center aspect-square"
+                                    className="flex-1"
                                 >
-                                    <Button
-                                        variant="ghost"
-                                        className="h-full w-full rounded-none hover:bg-primary/10"
-                                    >
-                                        {social.icon}
-                                    </Button>
+                                    <TooltipProvider delayDuration={100}>
+                                        <Tooltip>
+                                            <Link href={social.href} className="w-full h-full">
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        className="w-full h-full rounded-none hover:bg-primary/10"
+                                                    >
+                                                        {social.icon}
+                                                    </Button>
+                                                </TooltipTrigger>
+                                            </Link>
+                                            <TooltipContent
+                                                sideOffset={10}
+                                                className="bg-primary/10 custom-border-color"
+                                            >
+                                                {social.name}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 </motion.div>
                             ))}
                         </div>
@@ -137,5 +115,6 @@ export const ContactModal = () => {
             </div>
             )}
         </AnimatePresence>
+        </>
     )
 }
