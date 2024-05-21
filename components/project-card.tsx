@@ -117,7 +117,7 @@ export const ProjectCard = ({
                     viewport={{ amount: 'some' }}
                     onHoverStart={() => setIsHovered(i)}
                     onHoverEnd={() => setIsHovered(-1)}
-                    className='flex flex-wrap justify-between p-8 gap-8 group backdrop-blur-sm overflow-hidden border custom-border-color bg-background/25 hover:bg-background/50 transition-color duration-300 ease-in-out rounded-sm'
+                    className='flex flex-wrap justify-between p-8 gap-8 group backdrop-blur-sm overflow-hidden border custom-border-color hover:bg-background/50 transition-color duration-300 ease-in-out rounded-sm'
                 >
                     <ProjectTitle>
                         {project.title}

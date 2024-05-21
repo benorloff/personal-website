@@ -35,7 +35,15 @@ export const Frame = async ({
                     <NameButton />
                 </div>
                 {/* TOP SIDE */}
-                <div className="fixed top-[10px] left-[58px] right-[58px] h-[48px]">
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: `${gutter}px`,
+                        left: `${offset}px`,
+                        right: `${offset}px`,
+                        height: `${size}px`,
+                    }}
+                >
                     
                 </div>
                 {/* TOP RIGHT CORNER */}
@@ -71,7 +79,9 @@ export const Frame = async ({
                 {/* MAIN CONTENT */}
                 <div className="fixed top-[57px] left-[57px] right-[57px] bottom-[57px] border custom-border-color">
                     <ModalProvider />
-                    {children}
+                    <div className="h-full w-full overflow-scroll">
+                        {children}
+                    </div>
                 </div>
             </div>
         </main>
