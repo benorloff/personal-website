@@ -156,7 +156,7 @@ export const ProjectCard = ({
                                 alt="placeholder" 
                                 width={400} 
                                 height={200} 
-                                className='rounded-sm group-hover:shadow-xl group-hover:shadow-shadow transition-shadow duration-300 ease-in-out'
+                                className='rounded-sm group-hover:shadow-lg group-hover:shadow-shadow border custom-border-color transition-shadow duration-300 ease-in-out'
                             />
                         </motion.div>
                     </div>

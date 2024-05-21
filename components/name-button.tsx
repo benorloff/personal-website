@@ -18,13 +18,13 @@ export const NameButton = () => {
         <AnimatePresence>
             <Button 
                 variant={isGrid ? "default" : "ghost"}
-                className="h-full w-full rounded-none rounded-tl-sm p-1"
+                className="h-full w-full rounded-none hover:bg-accent rounded-tl-sm p-1"
                 onClick={() => router.push("/")}
                 onMouseEnter={() => setIsGrid(true)}
                 onMouseLeave={() => setIsGrid(false)}
             >
                 {isGrid ? (
-                    <div className="flex-1 w-full h-full grid grid-cols-3 grid-rows-3">
+                    <div className="flex-1 w-full h-full grid grid-cols-3 grid-rows-3 text-foreground">
                         {name.map((char, i) => (
                             <motion.div
                                 key={i}

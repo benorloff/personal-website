@@ -8,7 +8,6 @@ import {
     transform, 
     useMotionValue, 
     useSpring,
-    useTransform, 
 } from "framer-motion";
 
 interface Config {
@@ -243,7 +242,7 @@ export const Cursor = () => {
                 <motion.div 
                     key={key}
                     transformTemplate={template}
-                    className="absolute max-w-10 max-h-10 rounded-full bg-background dark:bg-foreground mix-blend-difference pointer-events-none z-50"
+                    className="absolute rounded-full bg-background dark:bg-foreground mix-blend-difference pointer-events-none z-50"
                     style={{
                         translateX: smoothPosition[key].x,
                         translateY: smoothPosition[key].y,
