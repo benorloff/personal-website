@@ -25,6 +25,7 @@ export const ThemeToggle = () => {
 
   return (
     <AnimatePresence mode="popLayout">
+      <div className="w-full h-full hover:bg-accent rounded-bl-sm group">
       { mode === "light" ? (
         <motion.div
           layout
@@ -42,11 +43,11 @@ export const ThemeToggle = () => {
             <motion.div 
                 layout
                 className="flex items-center"
-                initial={{ x: "calc(100%)", rotate: 180 }}
-                animate={{ x: 0, rotate: 0 }}
-                exit={{ x: "calc(100%)", rotate: 180 }}
+                initial={{ rotate: -180 }}
+                animate={{ rotate: 0 }}
+                exit={{ rotate: -180 }}
             >
-                <Sun className="w-6 h-6" />
+                <Sun className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out" />
                 <span className="sr-only">Toggle theme</span>
             </motion.div>
           </Button>
@@ -68,16 +69,17 @@ export const ThemeToggle = () => {
             <motion.div 
                 layout
                 className="flex items-center"
-                initial={{ x: "calc(100%)", rotate: 180 }}
-                animate={{ x: 0, rotate: 0 }}
-                exit={{ x: "calc(100%)", rotate: 180 }}
+                initial={{ rotate: 180 }}
+                animate={{ rotate: 0 }}
+                exit={{ rotate: 180 }}
             >
-                <Moon className="w-6 h-6" />
+                <Moon className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out" />
                 <span className="sr-only">Toggle theme</span>
             </motion.div>
           </Button>
         </motion.div>
       )}
+      </div>
     </AnimatePresence>
   )
 }

@@ -12,6 +12,7 @@ export const ContactButton = () => {
 
     return (
         <AnimatePresence mode="popLayout">
+            <div className="w-full h-full hover:bg-accent rounded-br-sm group">
             { isModalOpen ? (
                 <motion.div
                     layout
@@ -22,7 +23,7 @@ export const ContactButton = () => {
                     className="h-full w-full overflow-hidden"
                 >
                     <Button 
-                        variant="default"
+                        variant="ghost"
                         className="h-full w-full rounded-none rounded-br-sm p-1"
                         onClick={() => { !isModalOpen 
                             ? (onClose(), onOpen("contact")) 
@@ -32,11 +33,11 @@ export const ContactButton = () => {
                         <motion.div 
                             layout
                             className="flex items-center"
-                            initial={{ x: "calc(100%)", rotate: 180 }}
-                            animate={{ x: 0, rotate: 0 }}
-                            exit={{ x: "calc(100%)", rotate: 180 }}
+                            initial={{ rotate: -180 }}
+                            animate={{ rotate: 0 }}
+                            exit={{ rotate: -180 }}
                         >
-                            <X className="w-6 h-6" />
+                            <X className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out" />
                         </motion.div>
                     </Button>
                 </motion.div>
@@ -60,15 +61,16 @@ export const ContactButton = () => {
                         <motion.div 
                             layout
                             className="flex items-center"
-                            initial={{ x: "calc(-100%)" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "calc(-100%)" }}
+                            initial={{ rotate: 180 }}
+                            animate={{ rotate: 0 }}
+                            exit={{ rotate: 180 }}
                         >
-                            <MessageCircleMore className="w-6 h-6" />
+                            <MessageCircleMore className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out" />
                         </motion.div>
                     </Button>
                 </motion.div>
             )}
+            </div>
         </AnimatePresence>
     )
 }

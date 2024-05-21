@@ -11,6 +11,7 @@ export const MenuButton = () => {
 
     return (
         <AnimatePresence mode="popLayout">
+            <div className="w-full h-full hover:bg-accent rounded-tr-sm group">
             { isModalOpen ? (
                 <motion.div
                     layout
@@ -21,7 +22,7 @@ export const MenuButton = () => {
                     className="h-full w-full overflow-hidden"
                 >
                     <Button 
-                        variant="default"
+                        variant="ghost"
                         className="h-full w-full rounded-none rounded-tr-sm p-1"
                         onClick={() => { !isModalOpen 
                             ? (onClose(), onOpen("menu")) 
@@ -31,11 +32,11 @@ export const MenuButton = () => {
                         <motion.div 
                             layout
                             className="flex items-center"
-                            initial={{ x: "calc(100%)", rotate: 180 }}
-                            animate={{ x: 0, rotate: 0 }}
-                            exit={{ x: "calc(100%)", rotate: 180 }}
+                            initial={{ rotate: -180 }}
+                            animate={{ rotate: 0 }}
+                            exit={{ rotate: -180 }}
                         >
-                            <X className="w-6 h-6" />
+                            <X className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out" />
                         </motion.div>
                     </Button>
                 </motion.div>
@@ -59,15 +60,16 @@ export const MenuButton = () => {
                         <motion.div 
                             layout
                             className="flex items-center"
-                            initial={{ x: "calc(-100%)" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "calc(-100%)" }}
+                            initial={{ rotate: 180 }}
+                            animate={{ rotate: 0 }}
+                            exit={{ rotate: 180 }}
                         >
-                            <AlignRight className="w-6 h-6" />
+                            <AlignRight className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out" />
                         </motion.div>
                     </Button>
                 </motion.div>
             )}
+            </div>
         </AnimatePresence>
     )
 }
