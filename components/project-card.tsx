@@ -105,16 +105,10 @@ export const ProjectCard = ({
             <Link href={`/work/${project._raw.flattenedPath.replace(/projects\/?/, '')}`}>
                 <motion.div 
                     ref={ref}
-                    initial={{ x: '-5%', opacity: 0.8 }}
-                    whileInView={{ x: '0%', opacity: 1 }}
-                    exit={{ x: '-5%', opacity: 0.8 }}
-                    transition={{ 
-                        duration: 0.5, 
-                        type: 'tween',
-                        ease: 'linear',
-                        delay: 0,
-                    }}
-                    viewport={{ amount: 'some' }}
+                    initial={{ scale: 0.95, opacity: 0.5 }}
+                    whileInView={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.95, opacity: 0.5 }}
+                    viewport={{ amount: 0.5 }}
                     onHoverStart={() => setIsHovered(i)}
                     onHoverEnd={() => setIsHovered(-1)}
                     className='flex flex-wrap justify-between p-8 gap-8 group backdrop-blur-sm overflow-hidden border custom-border-color hover:bg-background/50 transition-color duration-300 ease-in-out rounded-sm'

@@ -23,6 +23,7 @@ import {
     TooltipProvider, 
     TooltipTrigger 
 } from "@/components/ui/tooltip";
+import { Scene } from "../3d-model";
 
 interface Social {
     name: string;
@@ -76,7 +77,7 @@ export const ContactModal = () => {
                         transition={{ type: "tween", ease: "easeInOut", duration: 0.5 }}
                         className="flex-1 min-w-full min-h-full lg:min-w-0.5 bg-background/75 modal-glass border-r custom-border-color"
                     >
-                        <div className="flex flex-col h-full w-full justify-center items-center p-10">
+                        <div className="flex h-full w-full justify-center items-center p-10">
                             <SystemStatus />
                         </div>
                     </motion.div>
