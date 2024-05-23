@@ -9,6 +9,7 @@ export const ColorPicker = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { setTheme, theme } = useTheme();
     const [mode, setMode] = useState<ThemeMode>('dark');
+    const [color, setColor] = useState<ThemeColor>('red');
     const [availableColors, setAvailableColors] = useState<ThemeColorProps[]>([]);
 
     useEffect(() => {

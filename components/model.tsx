@@ -9,15 +9,25 @@ import React, { MutableRefObject, useEffect, useRef, useState } from "react"
 import { useGLTF, useAnimations, PerspectiveCamera } from "@react-three/drei"
 import { GroupProps, useFrame } from "@react-three/fiber"
 import { useTheme } from "next-themes"
-import { themeModeAndColor } from "@/lib/themes"
+import { themeModeAndColor, themeColors, Theme } from "@/lib/themes"
 
 const color = new THREE.Color()
 
 export const Model = ({ scroll, ...props }: {scroll: MutableRefObject<number>}) => {
-  const group = useRef<THREE.Group>(null)
-  const { nodes, materials, animations } = useGLTF("/model.glb")
-  const { actions } = useAnimations(animations, group)
-  const [hovered, set] = useState<string|null>(null)
+  const group = useRef<THREE.Group>(null);
+  const { nodes, materials, animations } = useGLTF("/model.glb");
+  const { actions } = useAnimations(animations, group);
+  const [hovered, set] = useState<string|null>(null);
+  const [materialColor, setMaterialColor] = useState<string>("#F20D2F");
+  const { theme } = useTheme()
+
+  useEffect(() => {
+    const { color } = themeModeAndColor(theme as Theme);
+    const colorProps = themeColors.find((c) => c.name === color);
+    if (colorProps) {
+      setMaterialColor(colorProps.colors.default);
+    }
+  }, [theme])
   
   const extras = { receiveShadow: true, castShadow: true, "material-envMapIntensity": 0.2 }
   
@@ -33,7 +43,7 @@ export const Model = ({ scroll, ...props }: {scroll: MutableRefObject<number>}) 
     actions["CameraAction.005"]!.time = THREE.MathUtils.lerp(actions["CameraAction.005"]!.time, actions["CameraAction.005"]!.getClip().duration * scroll.current, 0.05)
     group.current?.children[0].children.forEach((child, index) => {
       // @ts-ignore
-      child.material.color.lerp(color.set(hovered === child.name ? "tomato" : "#202020"), hovered ? 0.1 : 0.05)
+      child.material.color.lerp(color.set(hovered === child.name ? materialColor : "#202020"), hovered ? 0.1 : 0.05)
       const et = state.clock.elapsedTime
       child.position.y = Math.sin((et + index * 2000) / 2) * 1
       child.rotation.x = Math.sin((et + index * 2000) / 3) / 10
