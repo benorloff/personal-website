@@ -1,18 +1,22 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { availableThemeColors, themeModeAndColor, Theme } from "@/lib/themes";
+import { availableThemeColors, themeModeAndColor, Theme, ThemeMode, ThemeColor, ThemeColorProps } from "@/lib/themes";
 import { AnimatePresence, motion } from "framer-motion";
 
 export const ColorPicker = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { setTheme, theme, themes } = useTheme();
+    const { setTheme, theme } = useTheme();
+    const [mode, setMode] = useState<ThemeMode>('dark');
+    const [availableColors, setAvailableColors] = useState<ThemeColorProps[]>([]);
 
-    if (!theme || !themes) return null;
-
-    const { mode } = themeModeAndColor(theme as Theme);
-    let availableColors = availableThemeColors(theme as Theme);
+    useEffect(() => {
+        const { mode, color } = themeModeAndColor(theme as Theme);
+        const availableColors = availableThemeColors(theme as Theme);
+        setMode(mode);
+        setAvailableColors(availableColors);
+    }, [theme])
 
     const container = {
         open: { 
@@ -68,6 +72,7 @@ export const ColorPicker = () => {
                     const backgroundColor = c.colors.default;
                     return (
                         <motion.div 
+                            key={c.name}
                             className="absolute flex w-full aspect-square justify-center items-center cursor-pointer"
                             onClick={() => setTheme(`${mode}-${c.name}`)}
                             whileHover={{ scale: 1.5 }}

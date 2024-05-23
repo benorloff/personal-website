@@ -20,7 +20,7 @@ const Content = ({events}: any) => {
     return (
         <div className="flex h-full w-full overflow-x-scroll p-1">
             {events.map((event: any, i: number) => {
-                const { outputText, icon } = githubEventTypes.find(
+                const { outputText } = githubEventTypes.find(
                     (e) => e.event === event.type) 
                     || { outputText: '', icon: undefined };
                 return (
@@ -37,7 +37,7 @@ const Content = ({events}: any) => {
                         /> */}
                         <div className="flex gap-1">
                             <Github size={16}/>
-                            {icon ? icon : <ActivityIcon />}
+                            <ActivityIcon />
                         </div>
                         <div>
                             {event.actor.display_login}
@@ -93,7 +93,7 @@ const ActivityBlock = ({
 
     return (
         <div ref={block} className="flex h-full pointer-events-none cursor-none">
-            <Content events={events} />
+            <Content events={events}/>
         </div>
     )
 };
@@ -177,6 +177,6 @@ const Marquee = ({events}: any) => {
 
 export const GithubActivityBar = ({ events }: any) => {
   return (
-    <Marquee events={events}/>
+    <Marquee events={events} />
   );
 };

@@ -5,15 +5,63 @@ import { Weather } from "@/lib/weather"
 import { useState } from "react"
 import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils"
+import { CloudHail, CloudLightning, CloudRain, CloudSnow, CloudSun, Cloudy, Sun } from "lucide-react"
+
+interface WeatherResult {
+  label: string;
+  icon: React.ReactNode;
+}
+
+export const weatherCodes = (
+    weatherCode: Weather["weatherCode"]
+  ): WeatherResult => {
+  
+    let label: WeatherResult['label'] = '';
+    let icon: WeatherResult['icon'] = undefined;
+  
+    switch (true) {
+      case weatherCode === 1000:
+        label = 'Clear';
+        icon = <Sun />;
+        break;
+      case weatherCode > 1000 && weatherCode < 2000:
+        label = 'Cloudy';
+        icon = <CloudSun />;
+        break;
+      case weatherCode >= 4000 && weatherCode < 5000:
+        label = 'Rain';
+        icon = <CloudRain />;
+        break;
+      case weatherCode >= 5000 && weatherCode < 6000:
+        label = 'Snow';
+        icon = <CloudSnow />;
+        break;
+      case weatherCode >= 6000 && weatherCode < 8000:
+        label = 'Hail';
+        icon = <CloudHail />;
+        break;
+      case weatherCode === 8000:
+        label = 'Thunderstorm';
+        icon = <CloudLightning />;
+        break;
+      default:
+        label = 'Clear';
+        icon = <Sun />;
+        break;
+    }
+  
+    return { label, icon }; 
+  };
 
 export const WeatherBar = ({
     temperature,
-    label,
-    icon,
+    weatherCode,
 }: Weather) => {
     const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
     const { theme } = useTheme();
+
+    const { label, icon } = weatherCodes(weatherCode);
 
     const items = [
         {
@@ -56,6 +104,7 @@ export const WeatherBar = ({
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: (i * 0.2), ease: "easeInOut" }}
                             className="flex items-center gap-2 text-sm"
+                            suppressHydrationWarning
                         >
                             {item.value}
                         </motion.div>

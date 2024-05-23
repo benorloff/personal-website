@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Cursor } from "@/components/cursor";
 import { ParticlesProvider } from "@/components/providers/particles-provider";
-import { Frame } from "@/components/frame";
 
 const workSans = Work_Sans({ subsets: ["latin"] });
 
@@ -23,7 +22,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-        <body id="body" className={cn("h-auto min-h-screen", workSans.className)}>
+        <body id="body" className={cn("min-h-screen", workSans.className)}>
           <ThemeProvider
             attribute='data-theme'
             defaultTheme="dark-red"
@@ -32,9 +31,7 @@ export default function RootLayout({
           >
             <Cursor />
             <ParticlesProvider />
-            <Frame>
-              {children}
-            </Frame>
+            {children}
           </ThemeProvider>
         </body>
     </html>
