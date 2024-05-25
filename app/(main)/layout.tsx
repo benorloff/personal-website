@@ -6,9 +6,9 @@ export default function MainLayout({
     children: React.ReactNode;
   }>) {
     return (
-        <Frame>
-            {children}
-        </Frame>
+      <Frame>
+          {children}
+      </Frame>
     );
   }
   

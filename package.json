@@ -22,6 +22,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@react-three/drei": "^9.105.6",
     "@react-three/fiber": "^8.16.6",
+    "@react-three/postprocessing": "^2.16.2",
     "@tsparticles/basic": "^3.3.0",
     "@tsparticles/engine": "^3.3.0",
     "@tsparticles/react": "^3.0.0",
