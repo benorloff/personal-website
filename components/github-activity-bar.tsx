@@ -18,7 +18,7 @@ const config = {
 
 const Content = ({events}: any) => {
     return (
-        <div className="flex h-full w-full overflow-x-scroll p-1">
+        <div className="flex h-full w-full p-1">
             {events.map((event: any, i: number) => {
                 const { outputText } = githubEventTypes.find(
                     (e) => e.event === event.type) 
@@ -152,10 +152,10 @@ const Marquee = ({events}: any) => {
     useRafLoop(loop, true);
 
     return (
-        <motion.div ref={constraintsRef} className="flex h-full w-full">
+        <motion.div ref={constraintsRef} className="flex h-full w-full overflow-hidden">
             <motion.div
                 ref={marquee}
-                style={{ skewX }}
+                // style={{ skewX }}
                 // onWheel={onWheel}
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}

@@ -23,7 +23,7 @@ export const MenuModal = () => {
             { isModalOpen && (
             <div 
                 className={cn(
-                    "absolute z-50 top-0 left-0 w-full h-full overflow-scroll",
+                    "absolute z-50 top-0 left-0 w-full h-full overflow-hidden",
                     isModalOpen ? "block" : "hidden"
                 )}
             >

@@ -30,6 +30,7 @@ export const Frame = async ({
     const events = await getRecentGithubEvents({ per_page: 5, page: 1 });
 
     return (
+        <Suspense fallback={null}>
         <main className="h-full w-full">
             <div className="fixed h-[calc(100vh-20px)] w-[calc(100vw-20px)] border custom-border-color rounded-sm m-[10px]">
                 <div className="fixed top-[10px] left-[10px] w-[48px] aspect-square flex justify-center items-center border-b border-r custom-border-color">
@@ -64,5 +65,6 @@ export const Frame = async ({
                 </div>
             </div>
         </main>
+        </Suspense>
     )
 }

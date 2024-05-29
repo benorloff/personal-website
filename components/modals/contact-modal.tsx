@@ -23,7 +23,6 @@ import {
     TooltipProvider, 
     TooltipTrigger 
 } from "@/components/ui/tooltip";
-import { Scene } from "../3d-model";
 
 interface Social {
     name: string;
@@ -65,7 +64,7 @@ export const ContactModal = () => {
             { isModalOpen && (
             <div 
                 className={cn(
-                    "absolute z-50 top-0 left-0 w-full h-full overflow-scroll",
+                    "absolute z-50 top-0 left-0 w-full h-full overflow-hidden",
                     isModalOpen ? "block" : "hidden"
                 )}
             >

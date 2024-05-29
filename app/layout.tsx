@@ -22,7 +22,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-        <body id="body" className={cn("min-h-screen", workSans.className)}>
+        <body id="body" className={cn("min-h-screen overflow-hidden", workSans.className)}>
           <ThemeProvider
             attribute='data-theme'
             defaultTheme="dark-red"

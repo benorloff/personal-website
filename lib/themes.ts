@@ -1,6 +1,14 @@
-export type Theme = 'dark-red' | 'dark-green' | 'dark-blue' | 'light-red' | 'light-green' | 'light-blue';
+export type Theme = 
+    | 'dark-red' 
+    | 'dark-green' 
+    | 'dark-blue' 
+    | 'light-red' 
+    | 'light-green' 
+    | 'light-blue';
+
 export type ThemeMode = 'dark' | 'light';
 export type ThemeColor = 'red' | 'green' | 'blue';
+
 export interface ThemeColorProps {
     name: ThemeColor;
     bg: string;
