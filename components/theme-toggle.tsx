@@ -24,7 +24,7 @@ export const ThemeToggle = () => {
   }, [theme])
 
   return (
-    <AnimatePresence mode="popLayout">
+    <AnimatePresence mode="popLayout" initial={false}>
       <div className="w-full h-full hover:bg-accent rounded-bl-sm group">
       { mode === "light" ? (
         <motion.div

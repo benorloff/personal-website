@@ -2,7 +2,6 @@
 
 import { Frame } from "@/components/frame";
 import { allPosts, Post } from "@/.contentlayer/generated";
-import { useMDXComponent } from "next-contentlayer/hooks";
 import { Mdx } from "@/components/mdx-components";
 import { notFound } from "next/navigation";
 import { useRef } from "react";
@@ -46,8 +45,10 @@ const PostPage = ({
 
     return (
         <>
-            <div ref={contentRef} className="h-full w-full overflow-scroll no-scrollbar">
-                <Mdx code={post.body.code} />
+            <div ref={contentRef} className="overflow-y-scroll no-scrollbar bg-background/75">
+                <article className="max-w-2xl mx-auto px-4 py-8">
+                    <Mdx code={post.body.code} />
+                </article>
             </div>
         </>
     )

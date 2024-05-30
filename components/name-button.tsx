@@ -15,7 +15,7 @@ export const NameButton = () => {
     const [isGrid, setIsGrid] = useState<boolean>(false);
 
     return (
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
             <Button 
                 variant={isGrid ? "default" : "ghost"}
                 className="h-full w-full rounded-none hover:bg-accent rounded-tl-sm p-1"

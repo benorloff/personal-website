@@ -11,7 +11,7 @@ export const ContactButton = () => {
     const isModalOpen = isOpen && type === "contact";
 
     return (
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="popLayout" initial={false}>
             <div className="w-full h-full hover:bg-accent rounded-br-sm group">
             { isModalOpen ? (
                 <motion.div

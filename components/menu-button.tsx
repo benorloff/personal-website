@@ -10,7 +10,7 @@ export const MenuButton = () => {
     const isModalOpen = isOpen && type === "menu";
 
     return (
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="popLayout" initial={false}>
             <div className="w-full h-full hover:bg-accent rounded-tr-sm group">
             { isModalOpen ? (
                 <motion.div

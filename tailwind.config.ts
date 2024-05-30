@@ -7,6 +7,7 @@ const config = {
     './components/**/*.{js,ts,tsx}',
     './app/**/*.{js,ts,tsx}',
     './src/**/*.{js,ts,tsx}',
+    './content/**/*.{md,mdx}',
 	],
   prefix: "",
   theme: {
@@ -76,7 +77,8 @@ const config = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    require("tailwind-scrollbar")
+    require("tailwind-scrollbar"),
+    require("@tailwindcss/typography")
   ],
 } satisfies Config
 
