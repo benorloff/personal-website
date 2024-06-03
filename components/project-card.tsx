@@ -26,7 +26,9 @@ const ProjectTitle = ({
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ amount: 'some' }}
             transition={{ duration: 0.5, type: 'spring', damping: 40, stiffness: 90, mass: 3}}
-            className='absolute inset-x-0 top-0 left-4 h-full w-full -z-50 text-[300px] leading-none bg-gradient-to-t from-transparent from-20% to-primary/5 to-100% text-transparent bg-clip-text font-black text-nowrap'
+            className='absolute inset-x-0 top-0 left-4 h-full w-full -z-50 text-[300px] leading-none 
+            bg-gradient-to-t from-transparent from-20% to-primary/5 to-100% text-transparent 
+            bg-clip-text font-black text-nowrap'
         >
             {children}
         </motion.div>
@@ -146,7 +148,7 @@ export const ProjectCard = ({
                             }}
                         >
                             <Image 
-                                src={project.heroImageUrl} 
+                                src={project.featuredImage} 
                                 alt="placeholder" 
                                 width={400} 
                                 height={200} 

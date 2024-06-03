@@ -1,4 +1,4 @@
-import { PerspectiveCamera, useAnimations, useGLTF } from '@react-three/drei'
+import { Center, PerspectiveCamera, Select, Text3D, useAnimations, useCursor, useGLTF } from '@react-three/drei'
 import { useFrame, useLoader } from '@react-three/fiber'
 import { motion } from 'framer-motion-3d'
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
@@ -53,13 +53,18 @@ export function Model({
     const particles = useRef<THREE.Group>(null)
     const { nodes, materials, animations } = useGLTF('/model.glb') as GLTFResult
     const { actions } = useAnimations<GLTFAction>(animations, group)
-    const [hovered, setHovered] = useState<boolean>(false);
+    const [hovered, setHovered] = useState<boolean>(false)
+    const [selected, setSelected] = useState<THREE.Object3D<THREE.Object3DEventMap>[]>([]);
     const [isPaused, setIsPaused] = useState<boolean>(false);
 
     // Play all animations on mount
     useEffect(() => void (
         Object.keys(actions).forEach((key) => actions[key as ActionName]!.play())
     ), [])
+
+    useEffect(() => {
+        console.log(hovered, 'hovered')
+    }, [hovered])
 
     // Change color of the nucleus and spheres on theme color change
     useEffect(() => {
@@ -93,8 +98,10 @@ export function Model({
         }
 
         // actions.NucleusAnim!.play().paused = isPaused;
-
     })
+
+    useCursor(hovered)
+
 
     return (
         <group ref={group} {...props} dispose={null}>
@@ -105,6 +112,21 @@ export function Model({
                     <group name="Main" 
                         scale={0.25}
                     >
+                        <Center position={[0,-45,0]} rotation={[1.5,0,0]}>
+                                <Text3D
+                                    curveSegments={32}
+                                    bevelEnabled
+                                    bevelSize={0.04}
+                                    height={0.5}
+                                    lineHeight={0.55}
+                                    letterSpacing={-0.06}
+                                    size={1.5}
+                                    font="/Inter_Bold.json"
+                                >
+                                    {`Creative\nDeveloper`}
+                                    <meshNormalMaterial />
+                                </Text3D>
+                        </Center>
                         <group name="_SpaceStation" 
                             position={[-11.855, 9.914, 4.498]} 
                             scale={0.006}

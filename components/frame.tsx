@@ -59,9 +59,11 @@ export const Frame = async ({
                         <ColorPicker />
                     </div>
                 </div>
-                <div id="frameInner" className="fixed top-[57px] left-[57px] right-[57px] bottom-[57px] border custom-border-color overflow-auto">
+                <div id="frameInner" className="fixed top-[57px] left-[57px] right-[57px] bottom-[57px] bg-background/75 border custom-border-color">
                     <ModalProvider />
-                    {children}
+                    <div className="h-full w-full overflow-y-scroll">
+                        {children}
+                    </div>
                 </div>
             </div>
         </main>

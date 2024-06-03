@@ -1,6 +1,8 @@
 import { defineDocumentType, defineNestedType, makeSource } from "contentlayer/source-files";
-
-
+import { visit } from "unist-util-visit";
+import rehypePrettyCode from "rehype-pretty-code";
+import path from "path"
+import { getHighlighter, loadTheme } from "@shikijs/compat"
 
 const ProjectImage = defineNestedType(() => ({
     name: 'ProjectImage',
@@ -35,7 +37,7 @@ export const Project = defineDocumentType(() => ({
             type: 'number',
             required: true,
         },
-        heroImageUrl: {
+        featuredImage: {
             type: 'string',
             required: true,
         },
@@ -50,7 +52,10 @@ export const Project = defineDocumentType(() => ({
         images: {
             type: 'list',
             of: ProjectImage,
-        }
+        },
+        updated: {
+            type: 'date',
+        },
     },
     computedFields: {
         url: {
@@ -73,7 +78,7 @@ export const Post = defineDocumentType(() => ({
             type: 'string',
             required: true,
         },
-        heroImage: {
+        featuredImage: {
             type: 'string',
             required: true,
         },
@@ -81,17 +86,16 @@ export const Post = defineDocumentType(() => ({
             type: 'date',
             required: true,
         },
+        updated: {
+            type: 'date',
+        },
         tags: {
             type: 'list',
             of: { type: 'string' },
         },
         category: {
             type: 'enum',
-            options: [
-                'Guide',
-                'Tutorial',
-                'Productivity',
-            ]
+            options: ['Guide', 'Tutorial'],
         }
     },
     computedFields: {
@@ -105,4 +109,44 @@ export const Post = defineDocumentType(() => ({
 export default makeSource({
     contentDirPath: 'content',
     documentTypes: [Project, Post],
+    // mdx: {
+    //     remarkPlugins: [],
+    //     rehypePlugins: [rehypePrettyCode],
+        //     () => (tree) => {
+        //         visit(tree, (node) => {
+        //             if (node?.type === "element" && node?.tagName === "pre") {
+        //                 const [codeEl] = node.children;
+                
+        //                 if (codeEl.tagName !== "code") return;
+                
+        //                 node.raw = codeEl.children?.[0].value;
+        //             }
+        //         });
+        //     },
+        //     [
+        //         rehypePrettyCode,
+        //         {
+        //             theme: {
+        //                 dark: "github-dark",
+        //                 light: "github",
+        //             }
+        //         }
+        //     ],
+        //     () => (tree) => {
+        //         visit(tree, (node) => {
+        //             if (node?.type === "element" && node?.tagName === "div") {
+        //                 if (!("data-rehype-pretty-code-fragment" in node.properties)) {
+        //                     return;
+        //                 }
+                
+        //                 for (const child of node.children) {
+        //                     if (child.tagName === "pre") {
+        //                         child.properties["raw"] = node.raw;
+        //                     }
+        //                 }
+        //             }
+        //         });
+        //     },
+        // ]
+    // }
 })

@@ -1,17 +1,28 @@
-// @ts-nocheck
-"use client"
+import React, { Suspense } from "react";
 
-import { NextImage } from "@/components/image";
-import { cn } from "@/lib/utils";
 import { useMDXComponent } from "next-contentlayer/hooks";
-import React from "react";
+import rehypeHighlight from "rehype-highlight";
+import { visit } from "unist-util-visit";
+
+import { cn } from "@/lib/utils";
+
+// import { CodeBlock } from "@/components/code-block";
+import { NextImage } from "@/components/image";
+import { Callout } from "@/components//callout";
+import { Badge } from "./ui/badge";
+
+// import "@/styles/github.css";
+import "@/styles/github-dark.css";
 
 const components = {
+    // CodeBlock,
     NextImage,
+    Callout,
+    Badge,
     h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h1 
             className={cn(
-                "text-4xl mt-2 font-bold",
+                "text-6xl font-semibold mt-6",
                 className
             )}
             {...props}
@@ -20,7 +31,7 @@ const components = {
     h2: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h2 
             className={cn(
-                "text-3xl font-semibold",
+                "text-3xl font-semibold mt-6",
                 className
             )}
             {...props}
@@ -29,7 +40,7 @@ const components = {
     h3: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h3 
             className={cn(
-                "text-2xl font-semibold",
+                "text-2xl font-semibold mt-6",
                 className
             )}
             {...props}
@@ -38,7 +49,7 @@ const components = {
     h4: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h4 
             className={cn(
-                "text-xl font-semibold tracking-tight",
+                "text-xl font-semibold mt-6 tracking-tight",
                 className
             )}
             {...props}
@@ -47,7 +58,7 @@ const components = {
     h5: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h5 
             className={cn(
-                "text-lg font-semibold tracking-tight",
+                "text-lg font-semibold mt-6 tracking-tight",
                 className
             )}
             {...props}
@@ -66,6 +77,15 @@ const components = {
         <p 
             className={cn(
                 "leading-relaxed tracking-wide [&:not(:first-child)]:mt-6",
+                className
+            )}
+            {...props}
+        />
+    ),
+    a: ({ className, ...props }: React.HTMLAttributes<HTMLAnchorElement>) => (
+        <a 
+            className={cn(
+                "text-accent underline underline-offset-4 decoration-dotted hover:underline-2 hover:text-accent hover:decoration-solid transition-colors duration-300 ease-in-out",
                 className
             )}
             {...props}
@@ -118,26 +138,17 @@ const components = {
             {...props}
         />
     ),
-    code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-        <code
-          className={cn(
-            "relative w-full rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm",
-            className
-          )}
-          {...props}
-        />
-      ),
 }
 
 interface MdxProps {
-    code: string,
+    code: string
 }
 
-export const Mdx = ({ code }: MdxProps) => {
+export function Mdx({ code }: MdxProps) {
     const Component = useMDXComponent(code);
     return (
-        <div className="mdx">
+        <Suspense fallback={<div>Loading...</div>}>
             <Component components={components} />
-        </div>
+        </Suspense>
     )
-};
+}

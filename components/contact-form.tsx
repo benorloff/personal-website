@@ -167,7 +167,7 @@ export const ContactForm = () => {
                                                         {...field}
                                                         placeholder="How can I help you?"
                                                         className="w-full bg-background/25 border-muted-foreground/50"
-                                                        rows={10}
+                                                        rows={5}
                                                         required
                                                     />
                                                 </FormControl>

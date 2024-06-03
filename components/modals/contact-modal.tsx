@@ -64,7 +64,7 @@ export const ContactModal = () => {
             { isModalOpen && (
             <div 
                 className={cn(
-                    "absolute z-50 top-0 left-0 w-full h-full overflow-hidden",
+                    "absolute z-50 top-0 left-0 w-full h-full overflow-y-scroll scrollbar-none",
                     isModalOpen ? "block" : "hidden"
                 )}
             >

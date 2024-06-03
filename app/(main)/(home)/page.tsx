@@ -20,7 +20,9 @@ import {
   Environment, 
   Html, 
   OrbitControls, 
-  useProgress 
+  useProgress,
+  CameraShake,
+  Stars,
 } from "@react-three/drei"
 
 import { Theme, themeColors, themeModeAndColor } from "@/lib/themes";
@@ -76,10 +78,27 @@ export default function Home() {
             <Noise premultiply blendFunction={BlendFunction.ADD} />
             <Bloom opacity={0.2} intensity={0.1} />
             <ChromaticAberration radialModulation={false} modulationOffset={2} />
+            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+            <CameraShake
+              maxYaw={0.05}
+              maxPitch={0.05}
+              maxRoll={0.05}
+              yawFrequency={0.05}
+              pitchFrequency={0.05}
+              rollFrequency={0.05}
+              intensity={1}
+              decayRate={0.65}
+            />
           </EffectComposer>
-          <OrbitControls maxDistance={25} minDistance={1} enablePan={false} />
+          <OrbitControls maxDistance={25} minDistance={1} enablePan={false} makeDefault />
         </Suspense>
       </Canvas>
+      {/* <div className="absolute w-full h-full top-0 left-0 p-10">
+        <div className="absolute w-24 h-24 top-0 left-0 border-4 border-muted-foreground border-r-0 border-b-0 m-10 lg:m-48" />
+        <div className="absolute w-24 h-24 top-0 right-0 border-4 border-muted-foreground border-l-0 border-b-0 m-10 lg:m-48" />
+        <div className="absolute w-24 h-24 bottom-0 left-0 border-4 border-muted-foreground border-r-0 border-t-0 m-10 lg:m-48" />
+        <div className="absolute w-24 h-24 bottom-0 right-0 border-4 border-muted-foreground border-l-0 border-t-0 m-10 lg:m-48" />
+      </div> */}
     </>
   );
 }

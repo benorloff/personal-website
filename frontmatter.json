@@ -1,0 +1,160 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.taxonomy.contentTypes": [
+    {
+      "name": "Post",
+      "pageBundle": false,
+      "previewPath": null,
+      "fileType": "mdx",
+      "template": "[[workspace]]/.frontmatter/templates/post.mdx",
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "title": "Excerpt",
+          "name": "excerpt",
+          "type": "string"
+        },
+        {
+          "title": "Featured Image",
+          "name": "featuredImage",
+          "type": "image",
+          "isPreviewImage": true
+        },
+        {
+          "title": "Published Date",
+          "name": "date",
+          "type": "datetime",
+          "default": "{{now}}",
+          "isPublishDate": true
+        },
+        {
+          "title": "Updated Date",
+          "name": "updated",
+          "type": "datetime",
+          "isModifiedDate": true
+        },
+        {
+          "title": "Tags",
+          "name": "tags",
+          "type": "tags"
+        },
+        {
+          "title": "Category",
+          "name": "category",
+          "type": "categories"
+        }
+      ]
+    },
+    {
+      "name": "Project",
+      "pageBundle": false,
+      "fileType": "mdx",
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "title": "Client",
+          "name": "client",
+          "type": "string"
+        },
+        {
+          "title": "Year",
+          "name": "year",
+          "type": "number"
+        },
+        {
+          "title": "Category",
+          "name": "category",
+          "type": "categories"
+        },
+        {
+          "title": "Tags",
+          "name": "tags",
+          "type": "tags"
+        },
+        {
+          "title": "Featured Image",
+          "name": "featuredImage",
+          "type": "image",
+          "isPreviewImage": true
+        },
+        { "title": "Updated Date",
+          "name": "updated",
+          "type": "datetime",
+          "isModifiedDate": true  
+        },
+        {
+          "title": "Images",
+          "name": "images",
+          "type": "block",
+          "fields": [
+            {
+              "title": "0",
+              "name": "0",
+              "type": "fields",
+              "fields": [
+                {
+                  "title": "imageUrl",
+                  "name": "imageUrl",
+                  "type": "image"
+                }
+              ]
+            },
+            {
+              "title": "1",
+              "name": "1",
+              "type": "fields",
+              "fields": [
+                {
+                  "title": "imageUrl",
+                  "name": "imageUrl",
+                  "type": "image"
+                }
+              ]
+            },
+            {
+              "title": "2",
+              "name": "2",
+              "type": "fields",
+              "fields": [
+                {
+                  "title": "imageUrl",
+                  "name": "imageUrl",
+                  "type": "image"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "frontMatter.framework.id": "next",
+  "frontMatter.content.publicFolder": "public",
+  "frontMatter.preview.host": "http://localhost:3000",
+  "frontMatter.content.autoUpdateDate": false,
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "Projects",
+      "path": "[[workspace]]/content/projects",
+      "contentTypes": [
+        "project"
+      ]
+    },
+    {
+      "title": "Posts",
+      "path": "[[workspace]]/content/posts",
+      "contentTypes": [
+        "post"
+      ]
+    }
+  ],
+  "frontMatter.git.enabled": true
+}

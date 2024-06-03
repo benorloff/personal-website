@@ -1,46 +1,60 @@
 import Link from "next/link";
-import { compareDesc, format, parseISO } from "date-fns";
-import { allPosts, Post } from 'contentlayer/generated';
-
-import { Frame } from "@/components/frame";
-import { cn } from "@/lib/utils";
 import Image from "next/image";
+
+import { getAllPosts } from "@/lib/content";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Suspense } from "react";
 
-const BlogCard = (post: Post) => {
+interface BlogCardProps {
+    slug: string;
+    title: string;
+    excerpt: string;
+    featuredImage: string;
+    date: string;
+    tags: string[];
+    category: string;
+}
+
+const BlogCard = async ({ 
+    slug,
+    title,
+    excerpt,
+    featuredImage,
+    date,
+    tags,
+    category,
+}: BlogCardProps) => {
     return (
-        <Link href={post.url}>
+        <Link href={`/blog/${slug}`}>
             <div className="container h-auto py-8 flex flex-col gap-4 bg-foreground/5 backdrop-blur-sm border custom-border-color rounded-sm">
-                <div className="relative">
+                {/* <div className="relative">
                     <Image
-                        src={post.heroImage}
-                        alt={post.title}
+                        src={featuredImage}
+                        alt={title}
                         width={800}
                         height={400}
                         className="rounded-sm"
                     />
-                    {post.category && (
+                    {category && (
                         <div className="absolute top-0 right-0 m-2">
-                            <Badge variant="default">{post.category}</Badge>
+                            <Badge variant="default">{category}</Badge>
                         </div>
                     )}
-                </div>
+                </div> */}
                 <div className="h-full flex flex-col gap-4 justify-between items-start">
                     <div>
                         <h2 className="text-2xl">
-                            <Link href={post.url}>
-                                {post.title}
-                            </Link>
+                            {title}
                         </h2>
                     </div>
                     <div>
                         <p className="text-muted-foreground">
-                            {post.excerpt}
+                            {excerpt}
                         </p>
                     </div>
                     <div className="flex gap-2">
-                        {post.tags?.map((tag, i) => (
+                        {tags?.map((tag, i) => (
                             <Badge key={i} variant="secondary">{tag}</Badge>
                         ))}
                     </div>
@@ -51,9 +65,7 @@ const BlogCard = (post: Post) => {
                         </Avatar>
                         <p>Ben Orloff</p>
                         <span>&middot;</span>
-                        <time dateTime={post.date}>
-                            {format(parseISO(post.date), 'LLLL dd, yyyy')}
-                        </time>
+                        <span>{date}</span>
                     </div>
                 </div>
             </div>
@@ -61,14 +73,16 @@ const BlogCard = (post: Post) => {
     )
 }
 
-const BlogPage = () => {
-    const posts = allPosts.sort((a, b) => compareDesc(new Date(a.date), new Date(b.date)));
+const BlogPage = async () => {
+    const posts = await getAllPosts();
     return (
-        <div className="p-4 h-full w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-scroll">
-            {posts.map((post, i) => (
-                <BlogCard key={i} {...post} />
-            ))}
-        </div>
+        <Suspense fallback={<div>Loading...</div>}>
+            <div className="p-4 h-full w-full flex flex-col gap-4 overflow-y-scroll">
+                {posts.map((post, i) => (
+                    <BlogCard key={i} {...post} />
+                ))}
+            </div>
+        </Suspense>
     )
 };
 

@@ -23,6 +23,9 @@ export interface ThemeColorProps {
     };
 }
 
+export const darkThemes: Theme[] = ['dark-red', 'dark-green', 'dark-blue'];
+export const lightThemes: Theme[] = ['light-red', 'light-green', 'light-blue'];
+
 export const themeColors: ThemeColorProps[] = [
     {
         name: 'green',
