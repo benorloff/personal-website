@@ -1,0 +1,449 @@
+---
+title: Async Form Validation with Zod & React Hook Form
+excerpt: A Guide to Using Zod to Validate Input Fields with Asynchronous Functions
+featuredImage: /placeholder.png
+date: 2024-04-03
+tags:
+    - sample
+    - test
+category: Guide
+updated: 2024-05-30T21:03:10.161Z
+---
+
+This post is a continuation of my series on building forms in Next.js. If you'd like to follow along, feel free to check out [Create Your First Next.js App](/blog/2024-03-27-create-your-first-nextjs-app) and [Create a Form with React Hook Form & Next.js](/blog/2024-04-01-create-a-form-with-react-hook-form-nextjs)
+
+## The Validation Schema
+
+Since we're using Zod to create our validation schema, we need to define a couple more imports in our component.
+
+In `@/components/site-form.tsx`, add the following imports which we installed earlier:
+
+```tsx
+// @/components/site-form.tsx
+
+// ... imports
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+export const SiteForm = () => {
+
+// ... SiteForm component
+
+};
+```
+
+Now that we've imported `zod` as our external validation library and `@hookform/resolvers` which enables react-hook-form to work with external validation libraries, we can build our form schema.
+
+Update the code as follows:
+
+```tsx
+// @/components/site-form.tsx
+
+// ... imports (no changes needed)
+
+// Add the Zod validation schema
+const FormSchema = z.object({
+    name: z.string().min(1, {
+        message: "Please enter a name for your site."
+    }),
+    url: z.string().min(1, {
+        message: "Please enter a URL for your site."
+    }).max(255, {
+        message: "URL must be less than 255 characters."
+    })
+})
+
+export const SiteForm = () => {
+
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema), // <-- Add the resolver prop
+        defaultValues: {
+            name: "",
+            url: "",
+        },
+        mode: "onChange" // <-- Add the mode prop
+    });
+
+    const { 
+        setValue, // <-- Add the setValue prop
+        handleSubmit,
+        control,
+    } = form;
+
+    // Add this handleChange() function
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        fieldName: keyof z.infer<typeof FormSchema>
+    ) => {
+        const { value } = e.target; // <-- Extract the value
+        setValue(fieldName, value, { shouldDirty: true, shouldValidate: true }); // <-- Set the form value
+        console.log(`${fieldName}: `, value); 
+    }; 
+
+    // Update the onSubmit() function with type safety
+    // now that we have a validation schema
+    const onSubmit = (values: z.infer<typeof FormSchema>) => {
+        console.log(values, "values")
+    };
+
+    // Update the Inputs to use handleChange()
+    return (
+        // ...
+            <FormField
+                control={control}
+                name="name"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Site Name</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field} 
+                                onChange={(e) => handleChange(e, field.name)}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name="url"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>URL</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                onChange={(e) => handleChange(e, field.name)}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        // ...
+    )
+};
+```
+
+### Code Review
+
+🤔 What this code does:
+
+- Define our initial validation schema with zod. ([Zod Documentation](https://zod.dev/))
+- Update the `useForm()` hook to include the `resolver` and `mode` properties that tell react-hook-form how to validate the form and when we want the validation to be triggered.
+- Add a custom, type-safe `handleChange()` function that we'll be using to identify and process change events from the two fields.
+- Add type-safety to the `useForm()` hook and the `onSubmit()` function.
+- Update the Inputs so they use the new `handleChange()` function.
+
+### The Result
+
+We now have some very basic form validation. If you save the file, reload `localhost:3000/get-started` and click the "Get Started" button, you should see the error messages we created.
+
+<Callout type="info">
+Try checking your browser console to confirm that every change event generates a log with the value and field name.
+</Callout>
+
+## Asynchronous Validation
+
+Having a form with basic validation is great, but our goal is to pass the URL to an asynchronous function where we'll initiate a HTTP request to confirm whether the website is built with WordPress or not.
+
+### Create the Async Function
+
+In the `/lib` folder, create a file named `wordpress.ts` and copy this code into the file:
+
+```ts
+// @/lib/wordpress.ts
+
+"use server" // <-- Important!
+
+export const checkUrl = async (
+    url: string
+): Promise<boolean> => { 
+
+    // Initialize as falsy
+    let isWordPress: boolean = false;
+
+    try {
+        // Send a HEAD request to the provided URL
+        const response = await fetch(url, {
+            method: "HEAD",
+        })
+        // Check the headers for the presence of the WordPress API
+        // Further checks will be needed to determine if the site is WordPress
+        // when the Rest API is disabled (uncommon)
+        const headerLinks = response.headers.get("link") || "";
+        if (headerLinks?.includes("https://api.w.org")) {
+            isWordPress = true;
+        }
+    } catch (error) {
+        console.log("Error parsing response headers: ", error);
+    }
+
+    // Return the result as a boolean
+    return isWordPress!!;
+}
+```
+
+Don't forget to add the `"use-server"` directive at the beginning of this file. This is necessary when importing a server-side function into a client component. If you don't add the directive, you'll get a CORS error. ([Read the Next.js Docs](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#client-components))
+
+### Code Review
+
+🤔 What this code does:
+
+- Create a server-side async helper function `checkUrl()` that we can use throughout our app
+- Send a HEAD request to the URL that the function accepts as an argument
+- Return a boolean indicating whether the WordPress REST API was detected
+
+## Advanced Validation Methods
+
+Now that we have our async function that sends a HEAD request and returns a boolean, let's incorporate it into our FormSchema along with some regex.
+
+For more advanced functionality beyond simple checks like `.min()` and `.max()`, Zod provides several schema methods that open up a world of possibilities. The 2 schema methods we'll be using in this project are `.transform` and `.refine`.
+
+Here's the new validation schema:
+
+```tsx
+// @/components/site-form.tsx
+
+// ... imports
+import { checkUrl } from '@/lib/wordpress.ts';
+
+const httpRegex = /^(http|https):/
+const completeUrlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/
+
+const FormSchema = z.object({
+    name: z
+        .string()
+        .min(1, {
+            message: "Please enter a name for your site."
+        })
+        .max(255, {
+            message: "Name must be less than 255 characters."
+        }),
+    url: z
+        .string()
+        .min(1, {
+            message: "Please enter a URL for your site."
+        })
+        .max(255, {
+            message: "URL must be less than 255 characters."
+        })
+        .transform((val, ctx) => {
+            let completeUrl = val;
+            // Prepend https:// if the URL 
+            // doesn't start with http:// or https:// 
+            if (!httpRegex.test(completeUrl)) {
+                completeUrl = `https://${completeUrl}`;
+            }
+            // If the URL is still invalid, display an error message
+            // and pass the fatal flag to abort the validation process early
+            // This prevents unnecessary requests to the server to check
+            // if the URL is a WordPress site
+            if (!completeUrlRegex.test(completeUrl)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    fatal: true,
+                    message: "Please enter a valid URL",
+                });
+                return z.NEVER;
+            }
+            return completeUrl;
+        })
+        // This refinement checks if the URL is a WordPress site
+        // It only runs if the URL is valid
+        .refine(async (completeUrl) => 
+            completeUrl && await checkUrl(completeUrl), { 
+                message: "Uh oh! That doesn't look like a WordPress site.",
+        })
+});
+```
+
+### Code Review
+
+🤔 What this code does:
+
+- Introduces 2 regex patterns we'll use to test the validity of the input
+- Adds a `.transform` method that is used to apply proper URL structure to the input value or reject the input and abort the validation process
+- Adds a `.refine` method that invokes our async server function `checkUrl()` and passes the now properly formatted URL as the argument
+
+### The Result
+
+With this updated validation schema, we can enter a URL into the form and see if it's a WordPress website!
+
+### The Final Code
+
+Here's the final code for our `Site-Form` component:
+
+```tsx
+// @/components/site-form.tsx
+
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { checkUrl } from "@/lib/wordpress";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { 
+    Form, 
+    FormControl, 
+    FormField, 
+    FormItem, 
+    FormLabel, 
+    FormMessage 
+} from "@/components/ui/form";
+import { 
+    Card, 
+    CardContent, 
+    CardDescription, 
+    CardFooter, 
+    CardHeader, 
+    CardTitle 
+} from "@/components/ui/card";
+
+const httpRegex = /^(http|https):/
+const completeUrlRegex = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/
+
+const FormSchema = z.object({
+    name: z
+        .string()
+        .min(1, {
+            message: "Please enter a name for your site."
+        })
+        .max(255, {
+            message: "Name must be less than 255 characters."
+        }),
+    url: z
+        .string()
+        .min(1, {
+            message: "Please enter a URL for your site."
+        })
+        .max(255, {
+            message: "URL must be less than 255 characters."
+        })
+        .transform((val, ctx) => {
+            let completeUrl = val;
+            // Prepend https:// if the URL 
+            // doesn't start with http:// or https:// 
+            if (!httpRegex.test(completeUrl)) {
+                completeUrl = `https://${completeUrl}`;
+            }
+            // If the URL is still invalid, display an error message
+            // and pass the fatal flag to abort the validation process early
+            // This prevents unnecessary requests to the server to check
+            // if the URL is a WordPress site
+            if (!completeUrlRegex.test(completeUrl)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    fatal: true,
+                    message: "Please enter a valid URL",
+                });
+                return z.NEVER;
+            }
+            return completeUrl;
+        })
+        // This refinement checks if the URL is a WordPress site
+        // It only runs if the URL is valid
+        .refine(async (completeUrl) => 
+            completeUrl && await checkUrl(completeUrl), { 
+                message: "Uh oh! That doesn't look like a WordPress site.",
+        })
+});
+
+export const SiteForm = () => {
+
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            name: "",
+            url: "",
+        },
+        mode: "onChange"
+    })
+
+    const {  
+        setValue,
+        handleSubmit,
+        control,
+    } = form;
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        fieldName: keyof z.infer<typeof FormSchema>
+    ) => {
+        const { value } = e.target;
+        setValue(fieldName, value, { shouldDirty: true, shouldValidate: true });
+    }; 
+
+    const onSubmit = (values: z.infer<typeof FormSchema>) => {
+        console.log(values, "values")
+    }
+
+    return (
+        <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Card className="w-[350px]">
+                    <CardHeader>
+                        <CardTitle>Create Your Website</CardTitle>
+                        <CardDescription>Tell us about your new site to get started.</CardDescription>
+                        <CardContent className="py-6 px-0 space-y-4">
+                            <FormField 
+                                control={control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input 
+                                                {...field}
+                                                onChange={(e) => handleChange(e, field.name)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField 
+                                control={control}
+                                name="url"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>URL</FormLabel>
+                                        <FormControl>
+                                            <Input 
+                                                {...field} 
+                                                onChange={(e) => handleChange(e, field.name)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </CardContent>
+                        <CardFooter className="justify-end py-0 px-0">
+                            <Button>Get Started</Button>
+                        </CardFooter>
+                    </CardHeader>
+                </Card>
+            </form>
+        </Form>
+    )
+}
+```
+
+## Summary
+
+By leveraging asynchronous validation for form fields, we can deliver a better user experience in situations where basic field validations just aren't enough.
+
+Hopefully, next time you need to query a database or check a URL to validate a form field, you'll have some insight into how to approach the problem.
+
+In my next post, I'm going to cover "debouncing" and how it can make your forms more efficient and performant, especially if you're using asynchronous validation.
+
+If you'd like to be notified when my next post is published, go ahead and hit the "Subscribe" button. I'd be honored if you did.
+
+See you soon!

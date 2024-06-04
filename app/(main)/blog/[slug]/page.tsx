@@ -5,9 +5,12 @@ import { Mdx } from "@/components/mdx-components";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
-import { allPosts, type Post } from "@/.contentlayer/generated";
+import { allPosts, type Post } from "@/.contentlayer/generated"
 import readingTime, { ReadTimeResults } from "reading-time";
 import { humanDate } from "@/lib/utils";
+import { remark } from "remark";
+import { headingTree } from "@/lib/heading-tree";
+import { TableOfContents } from "@/components/table-of-contents";
 
 export async function generateStaticParams() {
     return allPosts.map((post) => ({
@@ -57,10 +60,25 @@ const PostPage = async ({
     });
     const readTime: ReadTimeResults = readingTime(post.body.raw);
 
+    const getHeadings = async () => { 
+        const processedContent = await remark()
+            .use(headingTree)
+            .process(post.body.raw);
+
+        return processedContent.data.headings;
+    };
+
+    const headings = await getHeadings();
+
     return (
-        <div className="h-auto min-h-min">
+        <div className="flex h-auto min-h-min">
+            <div className="lg:flex-1">
+                <div className="sticky top-0 left-0 h-[calc(100vh-116px)] flex items-center justify-center">
+                    <TableOfContents nodes={headings} />
+                </div>
+            </div>
             <article 
-                className="max-w-2xl mx-auto px-4 py-8" 
+                className="lg:flex-4 max-w-2xl mx-auto px-4 py-8" 
                 data-testid="post-article"
             >
                 <h1 
@@ -75,7 +93,7 @@ const PostPage = async ({
                 >
                     {excerpt}
                 </h4>
-                <div className="flex items-center text-muted-foreground gap-4">
+                <div className="flex flex-wrap items-center text-muted-foreground gap-4">
                     <p 
                         data-testid="post-publish-date"
                     >
@@ -87,7 +105,6 @@ const PostPage = async ({
                     >
                         {readTime.text}
                     </p>
-                    <span>&bull;</span>
                     <Badge 
                         className="rounded-sm text-base font-normal text-muted-foreground bg-muted"
                         variant="outline" 
@@ -96,7 +113,7 @@ const PostPage = async ({
                         Last Updated: {updateDate}
                     </Badge>
                 </div>
-                <div 
+                {/* <div 
                     className="pb-4" 
                     data-testid="post-tags"
                 >
@@ -111,9 +128,10 @@ const PostPage = async ({
                     variant="outline"
                 >
                     {category}
-                </Badge>
+                </Badge> */}
                 <Mdx code={post.body.code}/>
             </article>
+            <div className="lg:flex-1"></div>
         </div>
     )
 }

@@ -17,8 +17,11 @@ export const getWeather = async (): Promise<Weather> => {
       headers: {
         "Content-Type": "application/json",
       },
+      next: {
+        revalidate: 3600,
+      }
     })
-    const { data } = await res.json();
+    const {data} = await res.json();
     weather = {
       temperature: Math.round(data.values.temperature),
       weatherCode: data.weatherCode,

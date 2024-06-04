@@ -24,9 +24,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
         <body id="body" className={cn("min-h-screen overflow-hidden", workSans.className)}>
           <ThemeProvider
-            attribute='data-theme'
             defaultTheme="dark-red"
             enableSystem={false}
+            enableColorScheme
             themes={["dark-red", "light-red", "dark-green", "light-green", "dark-blue", "light-blue"]}
           >
             <Cursor />

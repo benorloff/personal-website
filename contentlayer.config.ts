@@ -1,6 +1,10 @@
 import { defineDocumentType, defineNestedType, makeSource } from "contentlayer/source-files";
 import { visit } from "unist-util-visit";
 import rehypePrettyCode from "rehype-pretty-code";
+import rehypeToc from "@jsdevtools/rehype-toc"
+import rehypeSlug from "rehype-slug"
+import { customTOC } from "./components/custom-toc";
+import remarkToc from "remark-toc";
 import path from "path"
 import { getHighlighter, loadTheme } from "@shikijs/compat"
 
@@ -109,44 +113,47 @@ export const Post = defineDocumentType(() => ({
 export default makeSource({
     contentDirPath: 'content',
     documentTypes: [Project, Post],
-    // mdx: {
-    //     remarkPlugins: [],
-    //     rehypePlugins: [rehypePrettyCode],
-        //     () => (tree) => {
-        //         visit(tree, (node) => {
-        //             if (node?.type === "element" && node?.tagName === "pre") {
-        //                 const [codeEl] = node.children;
+    mdx: {
+        remarkPlugins: [],
+        rehypePlugins: [
+            () => (tree) => {
+                visit(tree, (node) => {
+                    if (node?.type === "element" && node?.tagName === "pre") {
+                        const [codeEl] = node.children;
+            
+                        if (codeEl.tagName !== "code") return;
+            
+                        node.raw = codeEl.children?.[0].value;
+                    }
+                });
+            },
+            [
+                rehypePrettyCode, 
+                {
+                    theme: {
+                        dark: "github-dark",
+                        light: "github-light",
+                    },
+                },
+            ],
+            [rehypeSlug],
+            [rehypeToc, { customizeTOC: customTOC }],
+            () => (tree) => {
+                visit(tree, (node) => {
+                    if (node?.type === "element" && node?.tagName === "figure") {
+                        if (!("data-rehype-pretty-code-figure" in node.properties)) {
+                            return;
+                        }
+            
+                        for (const child of node.children) {
+                            if (child.tagName === "pre") {
+                                child.properties["raw"] = node.raw;
+                            }
+                        }
+                    }
+                });
                 
-        //                 if (codeEl.tagName !== "code") return;
-                
-        //                 node.raw = codeEl.children?.[0].value;
-        //             }
-        //         });
-        //     },
-        //     [
-        //         rehypePrettyCode,
-        //         {
-        //             theme: {
-        //                 dark: "github-dark",
-        //                 light: "github",
-        //             }
-        //         }
-        //     ],
-        //     () => (tree) => {
-        //         visit(tree, (node) => {
-        //             if (node?.type === "element" && node?.tagName === "div") {
-        //                 if (!("data-rehype-pretty-code-fragment" in node.properties)) {
-        //                     return;
-        //                 }
-                
-        //                 for (const child of node.children) {
-        //                     if (child.tagName === "pre") {
-        //                         child.properties["raw"] = node.raw;
-        //                     }
-        //                 }
-        //             }
-        //         });
-        //     },
-        // ]
-    // }
+            },
+        ],
+    }
 })

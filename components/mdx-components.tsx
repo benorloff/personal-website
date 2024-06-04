@@ -6,16 +6,22 @@ import { visit } from "unist-util-visit";
 
 import { cn } from "@/lib/utils";
 
-// import { CodeBlock } from "@/components/code-block";
 import { NextImage } from "@/components/image";
-import { Callout } from "@/components//callout";
-import { Badge } from "./ui/badge";
+import { Callout } from "@/components/callout";
+import { Badge } from "@/components/ui/badge";
+import { CopyButton } from "./copy-button";
+import { customTOC } from "./custom-toc";
 
-// import "@/styles/github.css";
-import "@/styles/github-dark.css";
+interface Pre extends React.HTMLAttributes<HTMLPreElement> {
+    raw?: string;
+    ['data-language']?: string;
+}
+
+interface MdxProps {
+    code: string
+}
 
 const components = {
-    // CodeBlock,
     NextImage,
     Callout,
     Badge,
@@ -67,7 +73,7 @@ const components = {
     h6: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
         <h6 
             className={cn(
-                "text-base font-semibold tracking-tight",
+                "text-base font-semibold mt-6 tracking-tight",
                 className
             )}
             {...props}
@@ -95,10 +101,10 @@ const components = {
         <ul className={cn("my-6 ml-6 list-disc", className)} {...props} />
     ),
     ol: ({ className, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
-        <ol className={cn("my-6 ml-6 list-decimal", className)} {...props} />
+        <ol className={cn("my-2 list-none", className)} {...props} />
     ),
     li: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-        <li className={cn("mt-2", className)} {...props} />
+        <li className={cn("mt-0 ml-4", className)} {...props} />
     ),
     blockquote: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
         <blockquote
@@ -138,10 +144,15 @@ const components = {
             {...props}
         />
     ),
-}
-
-interface MdxProps {
-    code: string
+    pre: ({ children, raw, className, ...props }: Pre) => {
+        const lang = props["data-language"];
+        return (
+            <pre {...props} className={cn("relative", className)}>
+                <CopyButton text={raw!} />
+                {children}
+            </pre>
+        )
+    },
 }
 
 export function Mdx({ code }: MdxProps) {

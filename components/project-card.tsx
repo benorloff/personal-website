@@ -123,7 +123,7 @@ export const ProjectCard = ({
                             {`0${i+1}`}
                         </div>
                         <div className='space-y-4'>
-                            <h2 className='text-6xl text-pretty'>
+                            <h2 className='text-4xl text-pretty'>
                                 {project.title}
                             </h2>
                             <div className='flex gap-2'>

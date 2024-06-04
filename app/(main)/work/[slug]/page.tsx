@@ -41,7 +41,7 @@ const ProjectPage = ({
     const contentRef = useRef<HTMLDivElement>(null);
 
     return (
-        <div ref={contentRef} className="h-full w-full p-4 md:p-6 lg:p-10 overflow-scroll no-scrollbar">
+        <div ref={contentRef} className="h-full w-full p-4 md:p-6 lg:p-10 overflow-y-scroll no-scrollbar">
             {/* <Mdx code={project.body.code} /> */}
             <div className='flex flex-col justify-center items-center gap-4 py-36'>
                 <h4>PROJECT</h4>
@@ -72,7 +72,7 @@ const ProjectPage = ({
                         viewport={{ root: contentRef, amount: 0.5 }}
                     >
                         <Image 
-                            src={project.heroImageUrl} 
+                            src={project.featuredImage} 
                             alt={project.title} 
                             width={1200} 
                             height={800} 
