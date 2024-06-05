@@ -4,9 +4,6 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeToc from "@jsdevtools/rehype-toc"
 import rehypeSlug from "rehype-slug"
 import { customTOC } from "./components/custom-toc";
-import remarkToc from "remark-toc";
-import path from "path"
-import { getHighlighter, loadTheme } from "@shikijs/compat"
 
 const ProjectImage = defineNestedType(() => ({
     name: 'ProjectImage',

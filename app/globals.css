@@ -129,7 +129,7 @@
     @apply p-4 border-none overflow-x-scroll;
   }
   code:not(pre *) {
-    @apply !bg-muted rounded-sm;
+    @apply !bg-muted rounded-sm py-0;
   }
   /* pre > code span {
     @apply text-wrap;

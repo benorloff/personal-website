@@ -1,8 +1,6 @@
 import React, { Suspense } from "react";
 
 import { useMDXComponent } from "next-contentlayer/hooks";
-import rehypeHighlight from "rehype-highlight";
-import { visit } from "unist-util-visit";
 
 import { cn } from "@/lib/utils";
 
@@ -10,7 +8,6 @@ import { NextImage } from "@/components/image";
 import { Callout } from "@/components/callout";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "./copy-button";
-import { customTOC } from "./custom-toc";
 
 interface Pre extends React.HTMLAttributes<HTMLPreElement> {
     raw?: string;

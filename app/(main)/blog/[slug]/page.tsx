@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { getPost, getAllPosts } from "@/lib/content";
+// import { getPost, getAllPosts } from "@/lib/content";
 import { Mdx } from "@/components/mdx-components";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,37 +42,60 @@ const PostPage = async ({
 
     const post: Post | undefined = allPosts.find((post) => post._raw.flattenedPath === `posts/${params.slug}`)
 
+    // const post = await getPost({ slug: params.slug });
+
     if (!post) {
         return notFound();
     }
 
-    const { title, excerpt, date, updated, tags, category } = post;
+    const { 
+        title,
+        excerpt,
+        featuredImage,
+        tags,
+        date,
+        updated,
+    } = post;
 
     const publishDate = new Date(date).toLocaleDateString(undefined, {
         year: "numeric",
         month: "long",
         day: "numeric",
     });
-    const updateDate = new Date(updated!).toLocaleDateString(undefined, {
+
+    const updateDate = updated ? new Date(updated).toLocaleDateString(undefined, {
         year: "numeric",
         month: "long",
         day: "numeric",
-    });
+    }) : null;
+
     const readTime: ReadTimeResults = readingTime(post.body.raw);
 
     const getHeadings = async () => { 
         const processedContent = await remark()
             .use(headingTree)
             .process(post.body.raw);
-
         return processedContent.data.headings;
     };
 
     const headings = await getHeadings();
 
+    // const processedMarkdown = async () => {
+    //     const result = await unified()
+    //         .use(remarkParse)
+    //         .use(remarkRehype)
+    //         .use(rehypeStringify)
+    //         .process(post.content.markdown);
+
+    //     return result;
+    // }
+
+    // const code = await processedMarkdown();
+    // console.log(code, "processed markdown code")
+
     return (
         <div className="flex h-auto min-h-min">
-            <div className="lg:flex-1">
+            <div className="lg:flex-1 mx-auto px-4">
                 <div className="sticky top-0 left-0 h-[calc(100vh-116px)] flex items-center justify-center">
                     <TableOfContents nodes={headings} />
                 </div>
@@ -105,13 +128,15 @@ const PostPage = async ({
                     >
                         {readTime.text}
                     </p>
-                    <Badge 
-                        className="rounded-sm text-base font-normal text-muted-foreground bg-muted"
-                        variant="outline" 
-                        data-testid="post-update-date"
-                    >
-                        Last Updated: {updateDate}
-                    </Badge>
+                    { updateDate && (
+                        <Badge 
+                            className="rounded-sm text-base font-normal text-muted-foreground bg-muted"
+                            variant="outline" 
+                            data-testid="post-update-date"
+                        >
+                            Last Updated: {updateDate}
+                        </Badge>
+                    )}
                 </div>
                 {/* <div 
                     className="pb-4" 
