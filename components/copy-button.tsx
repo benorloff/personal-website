@@ -22,7 +22,7 @@ export const CopyButton = ({ text }: { text: string }) => {
         variant="ghost"
         disabled={isCopied} 
         onClick={copy}
-        className="hidden md:absolute h-fit md:flex items-center top-4 right-4 py-[2px] text-muted-foreground border border-muted-foreground/50 hover:text-muted-foreground hover:bg-transparent transition-colors duration-300 ease-in-out"
+        className="h-fit py-[2px] text-muted-foreground  border border-muted-foreground/50 hover:text-foreground hover:bg-background !disabled:bg-background transition-colors duration-300 ease-in-out"
     >
         {isCopied ? 'Copied!' : 'Copy'}
     </Button>

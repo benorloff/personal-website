@@ -131,6 +131,7 @@ export default makeSource({
                         dark: "github-dark",
                         light: "github-light",
                     },
+                    keepBackground: false,
                 },
             ],
             [rehypeSlug],

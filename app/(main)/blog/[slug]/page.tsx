@@ -11,6 +11,7 @@ import { humanDate } from "@/lib/utils";
 import { remark } from "remark";
 import { headingTree } from "@/lib/heading-tree";
 import { TableOfContents } from "@/components/table-of-contents";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export async function generateStaticParams() {
     return allPosts.map((post) => ({
@@ -71,6 +72,7 @@ const PostPage = async ({
 
     const readTime: ReadTimeResults = readingTime(post.body.raw);
 
+
     const getHeadings = async () => { 
         const processedContent = await remark()
             .use(headingTree)
@@ -80,24 +82,13 @@ const PostPage = async ({
 
     const headings = await getHeadings();
 
-    // const processedMarkdown = async () => {
-    //     const result = await unified()
-    //         .use(remarkParse)
-    //         .use(remarkRehype)
-    //         .use(rehypeStringify)
-    //         .process(post.content.markdown);
-
-    //     return result;
-    // }
-
-    // const code = await processedMarkdown();
-    // console.log(code, "processed markdown code")
-
     return (
         <div className="flex h-auto min-h-min">
             <div className="lg:flex-1 mx-auto px-4">
                 <div className="sticky top-0 left-0 h-[calc(100vh-116px)] flex items-center justify-center">
-                    <TableOfContents nodes={headings} />
+                    <ScrollArea className="h-full">
+                        <TableOfContents nodes={headings} />
+                    </ScrollArea>
                 </div>
             </div>
             <article 

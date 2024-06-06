@@ -1,6 +1,17 @@
 import { visit } from "unist-util-visit";
 import { toString } from "mdast-util-to-string";
+import { remark } from "remark";
 
+export interface TOCHeading {
+    value: string;
+    depth: number;
+    data: {
+        hProperties: {
+            id: string;
+        };
+    };
+    children: TOCHeading[];
+}
 
 export function headingTree() {
     return (node: any, file: any) => {
@@ -12,14 +23,15 @@ function getHeadings(root: any) {
     const nodes = {};
     const output: any = [];
     const indexMap = {};
-    visit(root, 'heading', (node) => {
-        addId(node, nodes);
-        transformNode(node, output, indexMap);
+    visit(root, "heading", (node) => {
+      addID(node, nodes);
+      transformNode(node, output, indexMap);
     });
+   
     return output;
-}
+  }
 
-function addId(node: any, nodes: any) {
+function addID(node: any, nodes: any) {
     const id = node.children.map((c: any) => c.value).join('');
     nodes[id] = (nodes[id] || 0) + 1;
     node.data = node.data || {

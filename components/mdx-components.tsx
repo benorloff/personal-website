@@ -145,11 +145,19 @@ const components = {
         const lang = props["data-language"];
         return (
             <pre {...props} className={cn("relative", className)}>
-                <CopyButton text={raw!} />
+                <div className="flex items-center justify-between bg-muted px-4 py-2">
+                    <span className="text-muted-foreground">{lang}</span>
+                    <CopyButton text={raw!} />
+                </div>
                 {children}
             </pre>
         )
     },
+    code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement>) => (
+        <code className={cn("overflow-x-auto", className)} {...props}>
+            {children}
+        </code>
+    ),
 }
 
 export function Mdx({ code }: MdxProps) {
