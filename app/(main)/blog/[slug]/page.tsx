@@ -83,16 +83,14 @@ const PostPage = async ({
     const headings = await getHeadings();
 
     return (
-        <div className="flex h-auto min-h-min">
-            <div className="lg:flex-1 mx-auto px-4">
-                <div className="sticky top-0 left-0 h-[calc(100vh-116px)] flex items-center justify-center">
-                    <ScrollArea className="h-full">
-                        <TableOfContents nodes={headings} />
-                    </ScrollArea>
-                </div>
+        <div className="flex h-full w-full overflow-x-hidden overflow-y-auto">
+            <div 
+                className="hidden sticky lg:flex flex-col basis-1/4 justify-center top-0 left-0 h-[calc(100vh-116px)] w-full p-4"
+            >
+                <TableOfContents nodes={headings} />
             </div>
             <article 
-                className="lg:flex-4 max-w-2xl mx-auto px-4 py-8" 
+                className="flex flex-col basis-3/4 w-full max-w-2xl mx-auto p-4" 
                 data-testid="post-article"
             >
                 <h1 
@@ -147,7 +145,6 @@ const PostPage = async ({
                 </Badge> */}
                 <Mdx code={post.body.code}/>
             </article>
-            <div className="lg:flex-1"></div>
         </div>
     )
 }

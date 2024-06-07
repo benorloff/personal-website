@@ -4,6 +4,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeToc from "@jsdevtools/rehype-toc"
 import rehypeSlug from "rehype-slug"
 import { customTOC } from "./components/custom-toc";
+import { HashnodePost, getHashnodePosts } from "./lib/hashnode";
 
 const ProjectImage = defineNestedType(() => ({
     name: 'ProjectImage',
@@ -106,6 +107,21 @@ export const Post = defineDocumentType(() => ({
         },
     },
 }));
+
+const syncContentFromHashnode = async () => {
+
+    let posts: HashnodePost[] = [];
+
+    try {
+        posts = await getHashnodePosts();
+    } catch (error) {
+        console.error(error);
+    }
+    
+    console.log(posts, 'posts from hashnode');
+}
+
+syncContentFromHashnode();
 
 export default makeSource({
     contentDirPath: 'content',

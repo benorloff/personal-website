@@ -1,20 +1,46 @@
 const apiUrl = process.env.HASHNODE_GRAPHQL_API_URL!;
 
-export interface PostMeta {
-    title: string;
-    slug: string;
-    subtitle: string;
-    coverImage: {
-        url: string;
-    }
-    tags: Record<string, any>[];
-    readTimeInMinutes: number;
-    featured: boolean;
-    publishedAt: Date;
+export interface HashnodePost {
+    id: number,
+    title: string,
+    slug: string,
+    subtitle: string,
+    tags: Array<{ 
+        name: string, 
+    }>,
+    coverImage: { 
+        url: string, 
+    },
+    readTimeInMinutes: number,
+    series: { 
+        id: number,
+        name: string,
+        description: { 
+            html: string, 
+        },
+        slug: string,
+    },
+    featured: boolean,
+    content: { 
+        markdown: string,
+    },
+    publishedAt: Date,
+    updatedAt: Date,
 }
 
-// Get all posts
-export async function getPosts() {
+export type HashnodePostMeta = Pick<HashnodePost, 
+    | 'title' 
+    | 'slug' 
+    | 'subtitle' 
+    | 'coverImage' 
+    | 'tags' 
+    | 'readTimeInMinutes' 
+    | 'featured' 
+    | 'publishedAt'
+>;
+
+// Get all posts' metadata from Hashnode (without post content)
+export async function getHashnodePostsMeta() {
     const res = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -22,7 +48,7 @@ export async function getPosts() {
         },
         body: JSON.stringify({
             query: `#graphql
-                query getPosts {
+                query getPostsMeta {
                     publication(host: "blog.benorloff.co") {
                         posts(first: 10) {
                             edges {
@@ -55,13 +81,69 @@ export async function getPosts() {
         }
     } = await res.json();
 
-    const posts: PostMeta[] = edges.map((edge: any) => edge.node);
+    const postsMeta: HashnodePostMeta[] = edges.map((edge: any) => edge.node);
+
+    return postsMeta;
+}
+
+// Get paginated posts from Hashnode
+export async function getHashnodePosts() {
+    const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            query: `#graphql
+                query getPosts {
+                    publication(host: "blog.benorloff.co") {
+                        posts(first: 10) {
+                            edges {
+                                node {
+                                    id
+                                    title
+                                    slug
+                                    subtitle
+                                    tags { name }
+                                    coverImage { url }
+                                    readTimeInMinutes
+                                    series { 
+                                        id
+                                        name
+                                        description { html }
+                                        slug
+                                    }
+                                    featured
+                                    content { markdown }
+                                    publishedAt
+                                    updatedAt
+                                }
+                            }
+                        }
+                    }
+                }
+            `
+        }),
+        next: { revalidate: 3600 },
+    });
+    
+    const { 
+        data: { 
+            publication: { 
+                posts: {
+                    edges
+                }
+            }
+        }
+    } = await res.json();
+
+    const posts: HashnodePost[] = edges.map((edge: { node: HashnodePost }) => edge.node);
 
     return posts;
 }
 
 // Get a single post by its slug
-export async function getPost({ slug }: { slug: string }) {
+export async function getHashnodePost({ slug }: { slug: string }) {
     const res = await fetch(apiUrl, {
         method: 'POST',
         headers: {

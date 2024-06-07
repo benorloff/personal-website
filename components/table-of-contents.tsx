@@ -5,10 +5,13 @@ import { SetStateAction, useEffect, useRef, useState } from "react";
 
 function renderNodes(nodes: any) {
     return (
-        <ul className="space-y-4">
+        <ul className="space-y-2">
             {nodes.map((node: any) => (
                 node.depth <= 3 &&
-                <li key={node.data.hProperties.id}>
+                <li key={node.data.hProperties.id} className={cn(
+                  "space-y-2",
+                  node.depth === 3 && "pl-2",
+                )}>
                     <TOCLink node={node} />
                     {node.children.length > 0 && renderNodes(node.children)}
                 </li>
@@ -47,7 +50,7 @@ function useHighlighted(id: string): [
 
 
 const TOCLink = ({ node }: { node: any }) => {
-  const fontSizes: { [key: number]: string } = { 2: "base", 3: "sm", 4: "xs" };
+  const fontSizes: { [key: number]: string } = { 2: "sm", 3: "xs", 4: "xs" };
   const id: string = node.data.hProperties.id;
   const [highlighted, setHighlighted] = useHighlighted(id)
   return (
@@ -77,6 +80,7 @@ export const TableOfContents = ({ nodes }: { nodes: any}) => {
    
     return (
       <div className="toc text-sm">
+        <h3 className="text-lg font-semibold pb-2">Table of Contents</h3>
         {renderNodes(nodes)}
       </div>
     );
