@@ -3,15 +3,9 @@ import { visit } from "unist-util-visit";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeToc from "@jsdevtools/rehype-toc"
 import rehypeSlug from "rehype-slug"
-import { unified } from "unified"
-import rehypeParse from "rehype-parse"
-import rehypeRemark from "rehype-remark"
-import remarkStringify from "remark-stringify"
-import rehypeSanitize, { defaultSchema } from "rehype-sanitize"
 import { customTOC } from "./components/custom-toc";
 import { HashnodePost, getHashnodePosts } from "./lib/hashnode";
 import fs from "fs/promises";
-import { sync } from "framer-motion";
 
 const ProjectImage = defineNestedType(() => ({
     name: 'ProjectImage',
@@ -168,25 +162,13 @@ export default makeSource({
                     }
                 });
             },
-            [rehypeSanitize, {
-                ...defaultSchema,
-                attributes: {
-                    ...defaultSchema.attributes,
-                    'div': [
-                        ...(defaultSchema.attributes?.div || []),
-                        ['data-node-type', 'callout']
-                    ],
-                },
-            }],
             [
                 rehypePrettyCode, 
                 {
                     theme: {
-                        dark: "github-dark",
+                        dark: "one-dark-pro",
                         light: "github-light",
-                    },
-                    keepBackground: false,
-                },
+                    },                },
             ],
             [rehypeSlug],
             [rehypeToc, { customizeTOC: customTOC }],
