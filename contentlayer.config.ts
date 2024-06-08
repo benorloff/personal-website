@@ -3,8 +3,15 @@ import { visit } from "unist-util-visit";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeToc from "@jsdevtools/rehype-toc"
 import rehypeSlug from "rehype-slug"
+import { unified } from "unified"
+import rehypeParse from "rehype-parse"
+import rehypeRemark from "rehype-remark"
+import remarkStringify from "remark-stringify"
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize"
 import { customTOC } from "./components/custom-toc";
 import { HashnodePost, getHashnodePosts } from "./lib/hashnode";
+import fs from "fs/promises";
+import { sync } from "framer-motion";
 
 const ProjectImage = defineNestedType(() => ({
     name: 'ProjectImage',
@@ -109,7 +116,6 @@ export const Post = defineDocumentType(() => ({
 }));
 
 const syncContentFromHashnode = async () => {
-
     let posts: HashnodePost[] = [];
 
     try {
@@ -117,13 +123,35 @@ const syncContentFromHashnode = async () => {
     } catch (error) {
         console.error(error);
     }
-    
-    console.log(posts, 'posts from hashnode');
-}
+
+    for (const post of posts) {
+        // Set the front matter for the post
+        const frontMatter = 
+            '---\n' + 
+            `title: ${post.title}\n` +
+            `excerpt: ${post.subtitle}\n` +
+            `featuredImage: ${post.coverImage.url}\n` +
+            `tags:\n${post.tags.map(tag => `- ${tag.name}`).join('\n')}\n` +
+            `date: ${post.publishedAt}\n` +
+            `updated: ${post.updatedAt}\n` +
+            `category: Guide\n` +
+            `---\n`;
+        // Get the content of the post
+        const content = post.content.markdown;
+        // Remove align attributes from images
+        const processedContent = content.replace(/( align="(left|center|right)"|<div data-node-type="callout-emoji">.*?<\/div>|style=".*?"|<\/div>\s+(?=<\/div>)|<div data-node-type="callout-text">)/g, '')
+        const calloutContent = processedContent.replace(/<div data-node-type="callout">\s+/g, '<Callout type="info">');
+        const closingCallout = calloutContent.replace(/<\/div>/g, '</Callout>');
+        const filePath = `./content/posts/${post.slug}.mdx`;
+        await fs.writeFile(filePath, [frontMatter, closingCallout].join('\n'));
+        console.log(`Content synced for post: ${post.title}`);
+    }
+};
 
 syncContentFromHashnode();
 
 export default makeSource({
+    syncFiles: syncContentFromHashnode,
     contentDirPath: 'content',
     documentTypes: [Project, Post],
     mdx: {
@@ -140,6 +168,16 @@ export default makeSource({
                     }
                 });
             },
+            [rehypeSanitize, {
+                ...defaultSchema,
+                attributes: {
+                    ...defaultSchema.attributes,
+                    'div': [
+                        ...(defaultSchema.attributes?.div || []),
+                        ['data-node-type', 'callout']
+                    ],
+                },
+            }],
             [
                 rehypePrettyCode, 
                 {

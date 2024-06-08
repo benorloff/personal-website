@@ -1,28 +1,38 @@
 ---
 title: Build an Interactive Code Preview
 excerpt: How to create a component preview featuring automated code-block generation with Next.js and Typescript
-featuredImage: /placeholder.png
-date: 2024-04-29
+featuredImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1714415255707/f7a3e865-4b65-4b0f-8e00-b3b9f9834f2d.png
 tags:
-    - sample
-    - test
+- React
+- TypeScript
+- UI
+- components
+- Next.js
+- guide
+- Tutorial
+date: 2024-04-29T18:29:14.420Z
+updated: 2024-06-08T02:52:06.659Z
 category: Guide
-updated: 2024-05-30T21:03:18.314Z
 ---
 
 ## Introduction
 
 ## Project Overview
 
-![](/assets/posts/interactive-code-preview.png)
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1714413715419/cd29e778-e4a7-43cf-99a1-57f42fa07a8c.png)
 
 In this article, we're going to be building a component preview featuring:
 
-- Tabs to switch between visual preview and source code
-- Drag-to-resize handles
-- Real-time component dimensions
-- Auto-generated source code
-- Dark/light mode support
+* Tabs to switch between visual preview and source code
+    
+* Drag-to-resize handles
+    
+* Real-time component dimensions
+    
+* Auto-generated source code
+    
+* Dark/light mode support
+    
 
 Let's get started!
 
@@ -30,7 +40,7 @@ Let's get started!
 
 ### Setup
 
-If you'd like to code along, create a Next.js project with the following command. If you're using Yarn, pnpm, or Bun as your package manager, see [here](https://nextjs.org/docs/pages/api-reference/create-next-app#interactive) for their equivalent commands.
+If you'd like to code along, create a Next.js project with the following command. If you're using [Yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/), or [Bun](https://bun.sh/package-manager) as your package manager, see [here](https://nextjs.org/docs/pages/api-reference/create-next-app#interactive) for their equivalent commands.
 
 ```bash
 npx create-next-app@latest
@@ -38,24 +48,37 @@ npx create-next-app@latest
 
 During the interactive installation, you'll be prompted to answer a few questions. I recommend the following configuration:
 
-- What is your project named? **code-preview**
-- Would you like to use TypeScript? **Yes**
-- Would you like to use ESLint? **Yes**
-- Would you like to use Tailwind CSS? **Yes**
-- Would you like to use src/ directory? **No**
-- Would you like to use App Router? (recommended) **Yes**
-- Would you like to customize the default import alias (@/*)? **No**
+* What is your project named? **code-preview**
+    
+* Would you like to use TypeScript? **Yes**
+    
+* Would you like to use ESLint? **Yes**
+    
+* Would you like to use Tailwind CSS? **Yes**
+    
+* Would you like to use `src/` directory? **No**
+    
+* Would you like to use App Router? (recommended) **Yes**
+    
+* Would you like to customize the default import alias (@/\*)? **No**
+    
 
 ### Install Dependencies
 
 We're going to be using a few external packages during the course of this project:
 
-- [Tailwind Container Queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
-- [Bright](https://bright.codehike.org/)
-- [Lucide](https://lucide.dev/icons/)
-- [Next Themes](https://github.com/pacocoursey/next-themes)
-- [React Resizable Panels](https://github.com/bvaughn/react-resizable-panels)
-- [Usehooks-ts](https://usehooks-ts.com/)
+* [Tailwind Container Queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
+    
+* [Bright](https://bright.codehike.org/)
+    
+* [Lucide](https://lucide.dev/icons/)
+    
+* [Next Themes](https://github.com/pacocoursey/next-themes)
+    
+* [React Resizable Panels](https://github.com/bvaughn/react-resizable-panels)
+    
+* [Usehooks-ts](https://usehooks-ts.com/)
+    
 
 Let's install them with the following command:
 
@@ -77,29 +100,29 @@ In case it is helpful, here is what our project structure will look like when we
 ```bash
 .
 ├── app
-│   ├── layout.tsx
-│   └── page.tsx
+│   ├── layout.tsx
+│   └── page.tsx
 ├── components
-│   ├── demo
-│   │   └── accordion-demo.tsx
-│   ├── providers
-│   │   └── theme-provider.tsx
-│   ├── ui
-│   │   ├── accordion.tsx
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── sonner.tsx
-│   │   └── tabs.tsx
-│   ├── demo-code.tsx
-│   ├── demo-preview.tsx
-│   ├── demo-toolbar.tsx
-│   ├── demo.tsx
-│   ├── site-header.tsx
-│   └── theme-toggle.tsx
+│   ├── demo
+│   │   └── accordion-demo.tsx
+│   ├── providers
+│   │   └── theme-provider.tsx
+│   ├── ui
+│   │   ├── accordion.tsx
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── sonner.tsx
+│   │   └── tabs.tsx
+│   ├── demo-code.tsx
+│   ├── demo-preview.tsx
+│   ├── demo-toolbar.tsx
+│   ├── demo.tsx
+│   ├── site-header.tsx
+│   └── theme-toggle.tsx
 ├── lib
-│   └── ...
+│   └── ...
 ├── public
-│   └── ...
+│   └── ...
 ├── README.md
 ├── components.json
 ├── next.config.mjs
@@ -118,7 +141,7 @@ For this project, we're only going to be using the site header to display the th
 
 Create the theme toggle component in the root of the `@/components/` directory:
 
-```tsx
+```typescript
 // @/components/theme-toggle.tsx
 
 "use client"
@@ -147,7 +170,7 @@ export const ThemeToggle = () => {
 
 Create a new file named `site-header.tsx` in the root of the `@/components/` directory:
 
-```tsx
+```typescript
 // @/components/site-header.tsx
 
 "use client"
@@ -158,9 +181,9 @@ export const SiteHeader = () => {
     return (
         <header className="fixed w-full top-0 z-50 bg-background border-b">
             <div className="container max-w-screen-2xl flex h-16 items-center justify-between">
-                <div className="text-2xl">Code Preview</div>
+                <div className="text-2xl">Code Preview</Callout>
                 <ThemeToggle />
-            </div>
+            </Callout>
         </header>
     )
 }
@@ -174,7 +197,7 @@ To do that, let's create a theme provider which we'll use in just a moment to wr
 
 Create the new directory `@/components/providers/` and then in that directory create a new file named `theme-provider.tsx`:
 
-```tsx
+```typescript
 // @/components/providers/theme-provider.tsx
 
 "use client"
@@ -193,7 +216,7 @@ export function ThemeProvider({
 
 We can now add the theme provider to our root layout located at `@/app/layout.tsx` and also add our toast provider so that we can display ephemeral notifications to our users:
 
-```tsx
+```typescript
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
@@ -232,7 +255,7 @@ export default function RootLayout({
           <main className="w-full max-w-screen-2xl mx-auto">
               <div className="relative pt-16 h-full flex flex-row gap-4">
                  {children}
-              </div>
+              </Callout>
           </main>
           <Toaster position="top-center"/>
         </ThemeProvider>
@@ -246,7 +269,7 @@ export default function RootLayout({
 
 This is the component or UI element that we want to display in our demo. I'm going to use an extended accordion component, but you can display whatever you'd like here!
 
-```tsx
+```typescript
 // @/components/demo/accordion-demo.tsx
 
 "use client"
@@ -279,7 +302,7 @@ const AccordionDemo = () => {
                         )}
                     />
                 ))}
-            </div>
+            </Callout>
             <div className="col-span-3 @3xl:col-span-1">
                 <Accordion 
                     type="single" 
@@ -315,8 +338,7 @@ const AccordionDemo = () => {
                         </AccordionItem>
                     ))}
                 </Accordion>
-            </div>
-        </div>
+            </Callout>
     )
 }
 
@@ -327,7 +349,7 @@ export default AccordionDemo;
 
 This is the main demo component which is going to serve as a wrapper for both the Demo Code and Demo Preview components. It is responsible for importing the appropriate component for the preview, as well as reading the source code from the component file. I'll elaborate on both of these functionalities below.
 
-```tsx
+```typescript
 // @/components/demo.tsx
 
 import fs from "fs";
@@ -350,7 +372,7 @@ interface DemoProps{
 export const Demo = async ({
     name,
 }: DemoProps) => {
-
+    
     const Preview = useMemo(() => {
         const Component = lazy(() => import("@/components/demo/accordion-demo"))
 
@@ -388,7 +410,7 @@ export const Demo = async ({
                         <TabsTrigger value="code">Code</TabsTrigger>
                     </TabsList>
                     <DemoToolbar copyText={Code || ""} />
-                </div>
+                </Callout>
                 <TabsContent value="preview">
                     <DemoPreview>
                         {Preview}
@@ -404,7 +426,7 @@ export const Demo = async ({
                     />
                 </TabsContent>
             </Tabs>
-        </div>
+        </Callout>
     )
 }
 ```
@@ -413,7 +435,7 @@ export const Demo = async ({
 
 Rather than importing `accordion-demo.tsx` in the top-level file imports, we are using a useMemo hook to retrieve and the file and cache the result between re-renders. This is a more extensible pattern in the event that your project has many different components to choose from for the preview.
 
-```tsx
+```typescript
 const Preview = useMemo(() => {
     const Component = lazy(() => import("@/components/demo/accordion-demo"))
 
@@ -425,7 +447,7 @@ const Preview = useMemo(() => {
 
 The nice thing about this pattern is that you can easily abstract it. Say you have a folder for all of the components you want to showcase. Simply add an index file where you define the name and file path for each component. Then you can refactor the above code to:
 
-```tsx
+```typescript
 import { Index } from "@/components";
 
 // ...
@@ -445,7 +467,7 @@ const Preview = useMemo(() => {
 
 Since this is a server-side component, we can use fs to read the contents of the display component file and pass the resulting string to our Demo Code component in a later step.
 
-```tsx
+```typescript
 // ...
 
 let Code;
@@ -463,7 +485,7 @@ try {
 
 Again, this pattern can be abstracted when dealing with multiple display components. Since `name` is a required prop for the `Demo` component, we can use this prop to reference a key in an index file and return a file path. The refactored code would look something like this:
 
-```tsx
+```typescript
 import { Index } from "@/components"
 
 // ...
@@ -485,7 +507,7 @@ try {
 
 This is where most of the interactivity takes place. I'll break down the different functions below.
 
-```tsx
+```typescript
 // @/components/demo-preview.tsx
 
 "use client"
@@ -557,7 +579,7 @@ export const DemoPreview = ({
 }: {
     children: React.ReactNode,
 }) => { 
-
+    
     const [device, setDevice] = useState<Device["name"]>(undefined);
     const [panelSize, setPanelSize] = useState<Size>({
         width: undefined,
@@ -567,11 +589,11 @@ export const DemoPreview = ({
         width: undefined,
         height: undefined,
     });
-
+    
     const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
     const panelRef = useRef<HTMLDivElement>(null)
     const previewContainerRef = useRef<HTMLDivElement>(null)
-
+    
     useResizeObserver({
         ref: previewContainerRef,
         box: 'content-box',
@@ -655,13 +677,12 @@ export const DemoPreview = ({
                                 </Button>
                             )
                         })}
-                    </div>
+                    </Callout>
                     <div>
                         { ( panelSize.width && panelSize.height ) && (
                             <p>{Math.round(panelSize.width)} x {Math.round(panelSize.height)}</p>
                         )}
-                    </div>
-                </div>
+                    </Callout>
             </CardHeader>
             <CardContent 
                 ref={previewContainerRef}
@@ -697,8 +718,7 @@ export const DemoPreview = ({
                                 bg-background max-h-full overflow-auto"
                             >
                                 {children}
-                            </div>
-                        </div>
+                            </Callout>
                     </Panel>
                     <PanelResizeHandle 
                         className="w-1.5 h-8 ml-1.5 my-auto 
@@ -722,7 +742,7 @@ Additionally, we are disabling certain device previews based on the container si
 
 ### Demo Code Component
 
-```tsx
+```typescript
 // @/components/demo-code.tsx
 
 "use server"
@@ -766,7 +786,7 @@ export const DemoCode = ({
 
 ### Page Route
 
-```tsx
+```typescript
 // @/app/page.tsx
 
 import { Demo } from "@/components/demo";
@@ -786,16 +806,20 @@ export default DemoPage;
 
 There you have it! A fully featured component preview:
 
-![](/assets/posts/interactive-code-preview.gif)
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1714415038574/90c2b00d-1e37-4312-8d1a-7de362069d0a.gif)
 
 Check out the full source code on Github:
 
 [https://github.com/benorloff/code-preview](https://github.com/benorloff/code-preview)
 
-## Acknowledgements
+## Acknowledgments
 
-- [Shadcn/ui](https://ui.shadcn.com/) - Beautiful component library
-- [Sonner](https://sonner.emilkowal.ski/) - opinionated toasts
-- [react-resizable-panels](https://github.com/bvaughn/react-resizable-panels)
-- [usehooks-ts](https://usehooks-ts.com/) - React hook library written in Typescript
-- [bright](https://bright.codehike.org/) - server-side syntax highlighting
+* [Shadcn/ui](https://ui.shadcn.com/) - Beautiful component library
+    
+* [Sonner](https://sonner.emilkowal.ski/) - opinionated toasts
+    
+* [react-resizable-panels](https://github.com/bvaughn/react-resizable-panels)
+    
+* [usehooks-ts](https://usehooks-ts.com/) - React hook library written in Typescript
+    
+* [bright](https://bright.codehike.org/) - server-side syntax highlighting

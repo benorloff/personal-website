@@ -1,16 +1,21 @@
 ---
 title: Async Form Validation with Zod & React Hook Form
 excerpt: A Guide to Using Zod to Validate Input Fields with Asynchronous Functions
-featuredImage: /placeholder.png
-date: 2024-04-03
+featuredImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1711522024526/f244f8b0-1839-4ff4-8944-1a3503cc44b9.png
 tags:
-    - sample
-    - test
+- Next.js
+- react-hook-form
+- zod
+- asynchronous
+- forms
+- Validation
+- http
+date: 2024-04-03T16:00:26.122Z
+updated: 2024-06-08T02:49:08.525Z
 category: Guide
-updated: 2024-05-30T21:03:10.161Z
 ---
 
-This post is a continuation of my series on building forms in Next.js. If you'd like to follow along, feel free to check out [Create Your First Next.js App](/blog/2024-03-27-create-your-first-nextjs-app) and [Create a Form with React Hook Form & Next.js](/blog/2024-04-01-create-a-form-with-react-hook-form-nextjs)
+This post is a continuation of my series on building forms in Next.js. If you'd like to follow along, feel free to check out [Create Your First Next.js App](https://hashnode.com/post/clu9zsgon000408l55idlgd0j) and [Create a Form with React Hook Form & Next.js](https://hashnode.com/post/cluh502j1000a0ajpd2cwb2fb)
 
 ## The Validation Schema
 
@@ -18,7 +23,7 @@ Since we're using Zod to create our validation schema, we need to define a coupl
 
 In `@/components/site-form.tsx`, add the following imports which we installed earlier:
 
-```tsx
+```typescript
 // @/components/site-form.tsx
 
 // ... imports
@@ -37,7 +42,7 @@ Now that we've imported `zod` as our external validation library and `@hookform/
 
 Update the code as follows:
 
-```tsx
+```typescript
 // @/components/site-form.tsx
 
 // ... imports (no changes needed)
@@ -131,19 +136,24 @@ export const SiteForm = () => {
 
 🤔 What this code does:
 
-- Define our initial validation schema with zod. ([Zod Documentation](https://zod.dev/))
-- Update the `useForm()` hook to include the `resolver` and `mode` properties that tell react-hook-form how to validate the form and when we want the validation to be triggered.
-- Add a custom, type-safe `handleChange()` function that we'll be using to identify and process change events from the two fields.
-- Add type-safety to the `useForm()` hook and the `onSubmit()` function.
-- Update the Inputs so they use the new `handleChange()` function.
+* Define our initial validation schema with `zod`. ([Zod Documentation](https://zod.dev/))
+    
+* Update the `useForm()` hook to include the `resolver` and `mode` properties that tell react-hook-form how to validate the form and when we want the validation to be triggered.
+    
+* Add a custom, type-safe `handleChange()` function that we'll be using to identify and process change events from the two fields.
+    
+* Add type-safety to the `useForm()` hook and the `onSubmit()` function.
+    
+* Update the Inputs so they use the new `handleChange()` function.
+    
 
 ### The Result
 
-We now have some very basic form validation. If you save the file, reload `localhost:3000/get-started` and click the "Get Started" button, you should see the error messages we created.
+We now have some very basic form validation. If you save the file, reload `localhost:3000/get-started` and click the "Get Started" button, you should see the error messages we created:
 
-<Callout type="info">
-Try checking your browser console to confirm that every change event generates a log with the value and field name.
-</Callout>
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1711436832919/b1cfbaa5-dd55-441a-9ee1-12ca3f506161.png)
+
+<Callout type="info">Try checking your browser console to confirm that every change event generates a log with the value and field name.</Callout>
 
 ## Asynchronous Validation
 
@@ -153,7 +163,7 @@ Having a form with basic validation is great, but our goal is to pass the URL to
 
 In the `/lib` folder, create a file named `wordpress.ts` and copy this code into the file:
 
-```ts
+```typescript
 // @/lib/wordpress.ts
 
 "use server" // <-- Important!
@@ -161,7 +171,7 @@ In the `/lib` folder, create a file named `wordpress.ts` and copy this code into
 export const checkUrl = async (
     url: string
 ): Promise<boolean> => { 
-
+   
     // Initialize as falsy
     let isWordPress: boolean = false;
 
@@ -192,19 +202,22 @@ Don't forget to add the `"use-server"` directive at the beginning of this file. 
 
 🤔 What this code does:
 
-- Create a server-side async helper function `checkUrl()` that we can use throughout our app
-- Send a HEAD request to the URL that the function accepts as an argument
-- Return a boolean indicating whether the WordPress REST API was detected
+* Create a server-side async helper function `checkUrl()` that we can use throughout our app
+    
+* Send a HEAD request to the URL that the function accepts as an argument
+    
+* Return a boolean indicating whether the WordPress REST API was detected
+    
 
-## Advanced Validation Methods
+## Advanced Validation Methods (.transform and .refine)
 
 Now that we have our async function that sends a HEAD request and returns a boolean, let's incorporate it into our FormSchema along with some regex.
 
-For more advanced functionality beyond simple checks like `.min()` and `.max()`, Zod provides several schema methods that open up a world of possibilities. The 2 schema methods we'll be using in this project are `.transform` and `.refine`.
+For more advanced functionality beyond simple checks like `.min()` and `.max`, Zod provides several schema methods that open up a world of possibilities. The 2 schema methods we'll be using in this project are [`.transform`](https://zod.dev/?id=transform) and [`.refine`](https://zod.dev/?id=refine).
 
 Here's the new validation schema:
 
-```tsx
+```typescript
 // @/components/site-form.tsx
 
 // ... imports
@@ -264,19 +277,24 @@ const FormSchema = z.object({
 
 🤔 What this code does:
 
-- Introduces 2 regex patterns we'll use to test the validity of the input
-- Adds a `.transform` method that is used to apply proper URL structure to the input value or reject the input and abort the validation process
-- Adds a `.refine` method that invokes our async server function `checkUrl()` and passes the now properly formatted URL as the argument
+* Introduces 2 regex patterns we'll use to test the validity of the input
+    
+* Adds a `.transform` method that is used to apply proper URL structure to the input value or reject the input and abort the validation process
+    
+* Adds a `.refine` method that invokes our async server function `checkUrl()` and passes the now properly formatted URL as the argument
+    
 
 ### The Result
 
 With this updated validation schema, we can enter a URL into the form and see if it's a WordPress website!
 
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1711746134930/c006f641-0a0e-4144-beef-e53b476c389f.png)
+
 ### The Final Code
 
 Here's the final code for our `Site-Form` component:
 
-```tsx
+```typescript
 // @/components/site-form.tsx
 
 "use client"

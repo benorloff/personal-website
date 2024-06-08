@@ -73,9 +73,9 @@
 
   code,
   code span {
-  color: var(--shiki-dark);
-  background-color: var(--shiki-dark-bg);
-}
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
 }
 
 [data-theme$="red"] {
@@ -123,17 +123,20 @@
     @apply px-4 py-2 bg-background/75 border-b rounded-tl-sm rounded-tr-sm;
   }
   code {
-    @apply rounded-bl-sm rounded-br-sm p-1 border border-border;
+    @apply rounded-bl-sm rounded-br-sm border border-border;
   }
   pre > code {
-    @apply p-4 border-none overflow-x-scroll;
+    @apply py-4 border-none overflow-x-scroll;
   }
   code:not(pre *) {
-    @apply !bg-muted rounded-sm py-0;
+    @apply !bg-muted rounded-sm py-0 cursor-pointer px-1;
   }
-  /* pre > code span {
-    @apply text-wrap;
-  } */
+  [data-line] {
+    @apply px-4;
+  }
+  [data-highlighted-line] {
+    @apply !bg-primary/25;
+  }
 }
 
 @layer components {

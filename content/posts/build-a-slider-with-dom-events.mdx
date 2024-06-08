@@ -1,13 +1,17 @@
 ---
-title: Build a Slider with DOM Events
+title: Build a Slider With DOM Events
 excerpt: A guide to creating type-safe, zero dependency sliders in the Next.js App Router
-featuredImage: /placeholder.png
-date: 2024-04-16
+featuredImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1712950830628/faa8be37-e9f8-4f9b-9dd7-55f83c70fae9.png
 tags:
-    - sample
-    - test
+- DOM
+- Next.js
+- interactive
+- hooks
+- UI
+- TypeScript
+date: 2024-04-16T16:00:47.377Z
+updated: 2024-06-08T02:51:16.116Z
 category: Guide
-updated: 2024-05-30T21:03:15.257Z
 ---
 
 ## Intro
@@ -18,7 +22,7 @@ Sliders (or "carousels") are a great UI option for displaying large blocks of co
 
 They say a picture is worth a thousand words. Instead of trying to explain what our objective is, I created a wireframe to illustrate what we're going to be building today.
 
-![](/assets/posts/Feature%20Slider.png)
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1712951171541/7ed830ad-874a-4bf1-813e-690af132b50a.png)
 
 This "carousel" style layout is great for displaying features on a landing page. It features a main content block (the "slide") with an interactive progress bar and navigational buttons that can be clicked to go directly to a specific slide.
 
@@ -38,7 +42,7 @@ My preferred method is to render page components on the server and then import c
 
 We're going to be adding the slider to the home page of our website, which means the `page.tsx` file is going to located in the root of the `@/app` directory. If you're using [route groups](https://nextjs.org/docs/app/building-your-application/routing/route-groups), then it could be inside of an organization folder like `@/app/(marketing)`. That's what I'm going to be doing for this project, so that I can keep the marketing pages separate from the dashboard pages.
 
-```tsx
+```typescript
 // @/app/(marketing)/page.tsx
 
 import { FeatureCarousel } from "@/components/marketing/feature-carousel";
@@ -48,11 +52,11 @@ const HomePage = () => {
     return (
         <>
             {/* ...other page content */}
-
+            
             <FeatureCarousel />
 
             {/* ...other page content */}
-
+      
         </>
     )
 };
@@ -66,11 +70,11 @@ Sliders are very much dependent on client-side interactivity, so even though our
 
 For this slider, we are only going to need two client components. One that will act as a "container" to manage state and then a child component for each feature in the slider.
 
-#### Slider Component
+### Slider Component
 
 Here is the code for the `FeatureCarousel` which is the "container" component. I'll elaborate more on this below.
 
-```tsx
+```typescript
 // @/components/marketing/feature-carousel.tsx
 
 "use client"
@@ -82,7 +86,7 @@ import { Feature } from "./feature"
 
 
 export const FeatureCarousel = () => {
-
+    
     const [activeFeature, setActiveFeature] = useDebounceValue(1, 50)
     const [scrollProgress, setScrollProgress] = useState(0)
 
@@ -128,7 +132,7 @@ export const FeatureCarousel = () => {
         let id = parseInt(e.currentTarget.dataset.id as string);
         let n: number = 0;
         n = ( id - 1 ) * featureElClientWidth;
-
+        
         featureTrack?.scrollTo( { left: n , top: 0, behavior: 'smooth' } )
     }
 
@@ -150,7 +154,7 @@ export const FeatureCarousel = () => {
                         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." 
                     />
                 ))}
-            </div>
+            </Callout>
             <div 
                 className="relative grid grid-cols-4 w-full text-center border-collapse overflow-clip"
             >
@@ -170,10 +174,9 @@ export const FeatureCarousel = () => {
                         onClick={(e) => handleClick(e)}
                     >
                         Feature {i + 1}
-                    </div>
+                    </Callout>
                 ))}
-            </div>
-        </div>
+            </Callout>
     )
 }
 ```
@@ -182,13 +185,16 @@ This component has some pretty cool stuff going on. Let's break it down.
 
 **State Variables**
 
-- We're keeping track of which feature is currently "active" and determining this based on the client's scroll progress.
-- `activeFeature` is debounced with a 50ms delay to help mitigate any potential "jitteriness" when the active feature changes.
-- `scrollProgress` is being stored as a percentage of the total container width which is calculated with the values we receive from the DOM
+* We're keeping track of which feature is currently "active" and determining this based on the client's scroll progress.
+    
+* `activeFeature` is debounced with a 50ms delay to help mitigate any potential "jitteriness" when the active feature changes.
+    
+* `scrollProgress` is being stored as a percentage of the total container width which is calculated with the values we receive from the DOM
+    
 
 **Interacting with the DOM**
 
-```tsx
+```typescript
 if (typeof document !== 'undefined') {
     featureTrack = document.getElementById("FeatureCarouselTrack");
     featureTrackScrollWidth = featureTrack?.scrollWidth as number;
@@ -197,11 +203,11 @@ if (typeof document !== 'undefined') {
 }
 ```
 
-Here we're using the `getElementById()` method of the [Web API Document](https://developer.mozilla.org/en-US/docs/Web/API/Document) interface to get information about the `featureTrack` and `featureEl` elements from the rendered HTML.
+Here we're using the `getElementById()` method of the [Web API Document interface](https://developer.mozilla.org/en-US/docs/Web/API/Document) to get information about the `featureTrack` and `featureEl` elements from the rendered HTML.
 
-Then once we've stored those elements, we use the `scrollWidth` and `clientWidth` properties of the [Web API Element](https://developer.mozilla.org/en-US/docs/Web/API/Element) interface to get the the width of our `featureTrack` element and our individual `featureEl` element.
+Then once we've stored those elements, we use the `scrollWidth` and `clientWidth` properties of the [Web API Element interface](https://developer.mozilla.org/en-US/docs/Web/API/Element) to get the the width of our `featureTrack` element and our individual `featureEl` element.
 
-```tsx
+```typescript
 const onTrackScroll = (e: React.UIEvent<HTMLElement>) => {
     let progress = Number(( e.currentTarget.scrollLeft / e.currentTarget.scrollWidth ).toPrecision(2)) * 100;
     setScrollProgress(progress);
@@ -210,7 +216,7 @@ const onTrackScroll = (e: React.UIEvent<HTMLElement>) => {
 
 In this code, we're calculating where we're at in the feature track. When we're at the beginning of the feature track (all the way to the left), our `scrollLeft` value is 0 so we know our scroll progress is 0; however, as we scroll to the right, the `scrollLeft` value becomes larger and increases our scroll progress linearly.
 
-```tsx
+```typescript
 useEffect(() => {
     switch (true) {
         case scrollProgress < 25:
@@ -234,24 +240,24 @@ useEffect(() => {
 
 Next up, we have a `useEffect` hook with a `scrollProgress` dependency. Whenever the scroll progress value changes, it is passed to a switch statement which sets the current active feature.
 
-```tsx
+```typescript
 const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     console.log(e, '<== e clicked')
     let id = parseInt(e.currentTarget.dataset.id as string);
     let n: number = 0;
     n = ( id - 1 ) * featureElClientWidth;
-
+        
     featureTrack?.scrollTo( { left: n , top: 0, behavior: 'smooth' } )
 }
 ```
 
 Lastly, our `handleClick` function allows the user to skip directly to a specific feature without scrolling. From the MouseEvent, we extract the data-id we assigned to each "button" and then use that to calculate where we need to scroll within the feature track.
 
-#### Content Component
+### Content Component
 
 The actual feature component is pretty basic, but I'll include the code below.
 
-```tsx
+```typescript
 // @/components/marketing/feature.tsx
 
 import Image from "next/image";
@@ -265,34 +271,29 @@ export const Feature = ({
     title: string;
     description: string;
 }) => {
-
+      
     return (
         <div id="Feature" data-key={number} className="min-w-full h-fit snap-start grid grid-cols-1 items-center gap-16 px-4 lg:px-16">
             <div className="grid lg:grid-cols-2 grid-cols-1 items-center gap-8">
                 <div className="">
-                    <div className="text-6xl">{title}</div>
-                </div>
+                    <div className="text-6xl">{title}</Callout>
                 <div className="">
                     {description}
-                </div>
-            </div>
+                </Callout>
             <div className="grid lg:grid-cols-2 grid-cols-1 items-center gap-8">
                 <div className="grid grid-cols-1 items-start gap-8">
                     <div className="space-y-4">
-                        <div className="font-semibold lg:pr-32">Lorem ipsum.</div>
+                        <div className="font-semibold lg:pr-32">Lorem ipsum.</Callout>
                         <div className="text-muted-foreground lg:pr-32 ">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
                             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                        </div>
-                    </div>
+                        </Callout>
                     <div className="space-y-4">
-                        <div className="font-semibold lg:pr-32">Lorem ipsum.</div>
+                        <div className="font-semibold lg:pr-32">Lorem ipsum.</Callout>
                         <div className="text-muted-foreground lg:pr-32">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
                             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                        </div>
-                    </div>
-                </div>
+                        </Callout>
                 <div>
                     <Image 
                         src="/placeholder-browser.svg"
@@ -300,9 +301,7 @@ export const Feature = ({
                         width={600}
                         height={400}
                     />
-                </div>
-            </div>
-        </div>
+                </Callout>
     )
   }
 ```
@@ -311,6 +310,6 @@ export const Feature = ({
 
 Here is the final product:
 
-![](/assets/posts/feature-slider-demo.gif)
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1713229157249/40b6bdc5-3801-4758-8b3d-9637172cf659.gif)
 
 The DOM is a treasure trove of valuable information when you want to build interactivity into your components. As you can see, once you know where to look it really doesn't take a whole lot of effort to build your own components from scratch!
