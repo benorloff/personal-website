@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 
-// import { getPost, getAllPosts } from "@/lib/content";
 import { Mdx } from "@/components/mdx-components";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,12 +10,6 @@ import { humanDate } from "@/lib/utils";
 import { remark } from "remark";
 import { headingTree } from "@/lib/heading-tree";
 import { TableOfContents } from "@/components/table-of-contents";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { getHashnodePost } from "@/lib/hashnode";
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remark2Rehype from "remark-rehype";
-import rehypeStringify from "rehype-stringify";
 
 export async function generateStaticParams() {
     return allPosts.map((post) => ({
@@ -47,14 +40,6 @@ const PostPage = async ({
 }) => {
 
     const post: Post | undefined = allPosts.find((post) => post._raw.flattenedPath === `posts/${params.slug}`)
-
-    const hashnodePost = await getHashnodePost({ slug: params.slug });
-
-    const processed = await unified()
-        .use(remarkParse)
-        .use(remark2Rehype, { allowDangerousHtml: true })
-        .use(rehypeStringify)
-        .process(hashnodePost.content.markdown);
 
     if (!post) {
         return notFound();
