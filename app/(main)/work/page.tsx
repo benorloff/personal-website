@@ -11,7 +11,7 @@ export default function WorkPage () {
     const projects = allProjects.sort();
 
     return (
-        <>
+        <div className='h-full w-full overflow-y-scroll'>
             <div className='flex flex-col h-full w-full justify-center items-center'>
                 <h1 className='text-xl text-muted-foreground font-normal uppercase'>Work</h1>
                 <h1 className='text-8xl text-center text-pretty pb-10 '>
@@ -29,6 +29,6 @@ export default function WorkPage () {
                 ))}
             </div>
             <TestimonialCarousel />
-        </>
+        </div>
     )
 };

@@ -10,7 +10,7 @@ import { useRafLoop } from "react-use";
 import { useWindowSize } from "usehooks-ts";
 
 const config = {
-    speed: 0.75,
+    speed: 0.50,
     threshold: 0.014,
     wheelFactor: 1.8,
     dragFactor: 1.2,
@@ -146,7 +146,7 @@ const Marquee = ({events}: any) => {
         } else {
             x.current = Math.max(x.current, 0);
         }
-        speed.set(2 + x.current);
+        speed.set(0.5 + x.current);
     };
 
     useRafLoop(loop, true);

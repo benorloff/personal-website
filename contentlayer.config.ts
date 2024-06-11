@@ -7,6 +7,27 @@ import { customTOC } from "./components/custom-toc";
 import { HashnodePost, getHashnodePosts } from "./lib/hashnode";
 import fs from "fs/promises";
 
+const services = [
+    'Front End Development', 
+    'Back End Development', 
+    'Design',
+    'Strategy',
+];
+
+const tech = [
+    'Next.js',
+    'CSS3',
+    'HTML5',
+    'JavaScript',
+    'TypeScript',
+    'Framer Motion',
+    'Tailwind CSS',
+    'Prisma',
+    'PostgreSQL',
+    'Supabase',
+    'WordPress',
+];
+
 const ProjectImage = defineNestedType(() => ({
     name: 'ProjectImage',
     fields: {
@@ -44,13 +65,19 @@ export const Project = defineDocumentType(() => ({
             type: 'string',
             required: true,
         },
-        category: {
+        services: {
             type: 'list',
-            of: { type: 'string'},
+            of: { 
+                type: 'enum', 
+                options: services,
+            },
         },
-        tags: {
+        tech: {
             type: 'list',
-            of: { type: 'string' },
+            of: {
+                type: 'enum',
+                options: tech,
+            },
         },
         images: {
             type: 'list',
@@ -133,11 +160,14 @@ const syncContentFromHashnode = async () => {
         // Get the content of the post
         const content = post.content.markdown;
         // Remove align attributes from images
-        const processedContent = content.replace(/( align="(left|center|right)"|<div data-node-type="callout-emoji">.*?<\/div>|style=".*?"|<\/div>\s+(?=<\/div>)|<div data-node-type="callout-text">)/g, '')
+        const processedContent = content.replace(
+            /( align="(left|center|right)"|<div data-node-type="callout-emoji">.*?<\/div>|style=".*?"|<\/div>\s+(?=<\/div>)|<div data-node-type="callout-text">)/g, ''
+        )
         const calloutContent = processedContent.replace(/<div data-node-type="callout">\s+/g, '<Callout type="info">');
         const closingCallout = calloutContent.replace(/<\/div>/g, '</Callout>');
         const filePath = `./content/posts/${post.slug}.mdx`;
         await fs.writeFile(filePath, [frontMatter, closingCallout].join('\n'));
+
         console.log(`Content synced for post: ${post.title}`);
     }
 };

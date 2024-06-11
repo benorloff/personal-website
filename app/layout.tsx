@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Cursor } from "@/components/cursor";
 import { ParticlesProvider } from "@/components/providers/particles-provider";
+import { KbarProvider } from "@/components/providers/kbar-provider";
 
 const workSans = Work_Sans({ subsets: ["latin"] });
 
@@ -29,9 +30,11 @@ export default function RootLayout({
             enableColorScheme
             themes={["dark-red", "light-red", "dark-green", "light-green", "dark-blue", "light-blue"]}
           >
-            <Cursor />
-            <ParticlesProvider />
-            {children}
+            <KbarProvider>
+              <Cursor />
+              <ParticlesProvider />
+              {children}
+            </KbarProvider>
           </ThemeProvider>
         </body>
     </html>

@@ -126,14 +126,14 @@ export const ProjectCard = ({
                             <h2 className='text-4xl text-pretty'>
                                 {project.title}
                             </h2>
-                            <div className='flex gap-2'>
-                                {project.tags?.map((tag, i) => (
+                            <div className='flex flex-wrap gap-2'>
+                                {project.tech?.map((tech, i) => (
                                     <Badge 
                                         key={i} 
                                         variant='outline' 
                                         className='p-2 px-4 text-muted-foreground border-muted-foreground'
                                     >
-                                        {tag}
+                                        {tech}
                                     </Badge>
                                 ))}
                             </div>

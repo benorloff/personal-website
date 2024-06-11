@@ -112,7 +112,7 @@ export function Model({
                     <group name="Main" 
                         scale={0.25}
                     >
-                        <Center position={[0,-45,0]} rotation={[1.5,0,0]}>
+                        {/* <Center position={[0,-45,0]} rotation={[1.5,0,0]}>
                                 <Text3D
                                     curveSegments={32}
                                     bevelEnabled
@@ -126,7 +126,7 @@ export function Model({
                                     {`Creative\nDeveloper`}
                                     <meshNormalMaterial />
                                 </Text3D>
-                        </Center>
+                        </Center> */}
                         <group name="_SpaceStation" 
                             position={[-11.855, 9.914, 4.498]} 
                             scale={0.006}
