@@ -6,6 +6,10 @@ import rehypeSlug from "rehype-slug"
 import { customTOC } from "./components/custom-toc";
 import { HashnodePost, getHashnodePosts } from "./lib/hashnode";
 import fs from "fs/promises";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkParse from "remark-parse";
+import remark2Rehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
 
 const services = [
     'Front End Development', 
@@ -145,6 +149,9 @@ const syncContentFromHashnode = async () => {
         console.error(error);
     }
 
+    // Hashnode response includes erroneous HTML tags in content.markdown,
+    // which need to be stripped out before writing to file
+
     for (const post of posts) {
         // Set the front matter for the post
         const frontMatter = 
@@ -161,18 +168,64 @@ const syncContentFromHashnode = async () => {
         const content = post.content.markdown;
         // Remove align attributes from images
         const processedContent = content.replace(
-            /( align="(left|center|right)"|<div data-node-type="callout-emoji">.*?<\/div>|style=".*?"|<\/div>\s+(?=<\/div>)|<div data-node-type="callout-text">)/g, ''
+            /( align="(left|center|right)"|<div data-node-type="callout-emoji">.*?<\/div>|style=".*?")/g, ''
         )
-        const calloutContent = processedContent.replace(/<div data-node-type="callout">\s+/g, '<Callout type="info">');
-        const closingCallout = calloutContent.replace(/<\/div>/g, '</Callout>');
+        // const calloutContent = processedContent.replace(/<div data-node-type="callout">\s+/g, '<Callout type="info">');
+        // const closingCallout = calloutContent.replace(/<\/div>/g, '</Callout>');
         const filePath = `./content/posts/${post.slug}.mdx`;
-        await fs.writeFile(filePath, [frontMatter, closingCallout].join('\n'));
+        await fs.writeFile(filePath, [frontMatter, processedContent].join('\n'));
 
         console.log(`Content synced for post: ${post.title}`);
     }
 };
 
 syncContentFromHashnode();
+
+// export default makeSource({
+//     syncFiles: syncContentFromHashnode,
+//     contentDirPath: 'content',
+//     documentTypes: [Project, Post],
+//     disableImportAliasWarning: true,
+//     markdown: (builder: any) => {
+//         builder.use(remarkFrontmatter)
+//         builder.use(remarkParse)
+//         builder.use(remark2Rehype, { allowDangerousHtml: true })
+//         builder.use(rehypeStringify)
+//         builder.use(() => (tree) => {
+//             visit(tree, (node) => {
+//                 if (node?.type === "element" && node?.tagName === "pre") {
+//                     const [codeEl] = node.children;
+        
+//                     if (codeEl.tagName !== "code") return;
+        
+//                     node.raw = codeEl.children?.[0].value;
+//                 }
+//             });
+//         })
+//         builder.use(rehypePrettyCode, {
+//             theme: {
+//                 dark: "one-dark-pro",
+//                 light: "github-light",
+//             },
+//         })
+//         builder.use(rehypeSlug)
+//         builder.use(() => (tree) => {
+//             visit(tree, (node) => {
+//                 if (node?.type === "element" && node?.tagName === "figure") {
+//                     if (!("data-rehype-pretty-code-figure" in node.properties)) {
+//                         return;
+//                     }
+        
+//                     for (const child of node.children) {
+//                         if (child.tagName === "pre") {
+//                             child.properties["raw"] = node.raw;
+//                         }
+//                     }
+//                 }
+//             });   
+//         })
+//     },
+// })
 
 export default makeSource({
     syncFiles: syncContentFromHashnode,
