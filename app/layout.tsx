@@ -28,7 +28,14 @@ export default function RootLayout({
             defaultTheme="dark-red"
             enableSystem={false}
             enableColorScheme
-            themes={["dark-red", "light-red", "dark-green", "light-green", "dark-blue", "light-blue"]}
+            themes={[
+              "dark-red", 
+              "light-red", 
+              "dark-green", 
+              "light-green", 
+              "dark-blue", 
+              "light-blue"
+            ]}
           >
             <KbarProvider>
               <Cursor />

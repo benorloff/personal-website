@@ -52,7 +52,6 @@ export default function Home() {
 
   const Loader = () => {
     const { active, progress, errors, item, loaded, total } = useProgress()
-    console.log(progress, 'progress')
     return (
       <Html center className="text-4xl">
         Igniting boosters...

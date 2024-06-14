@@ -201,7 +201,7 @@ export default makeSource({
                     },                },
             ],
             [rehypeSlug],
-            [rehypeToc, { customizeTOC: customTOC }],
+            // [rehypeToc, { customizeTOC: customTOC }],
             () => (tree) => {
                 visit(tree, (node) => {
                     if (node?.type === "element" && node?.tagName === "figure") {

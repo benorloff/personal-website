@@ -37,7 +37,7 @@ const Content = ({events}: any) => {
                         /> */}
                         <div className="flex gap-1">
                             <Github size={16}/>
-                            <ActivityIcon />
+                            {/* <ActivityIcon /> */}
                         </div>
                         <div>
                             {event.actor.display_login}
