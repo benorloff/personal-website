@@ -1,0 +1,828 @@
+---
+title: Build an Interactive Code Preview
+excerpt: How to create a component preview featuring automated code-block generation with Next.js and Typescript
+featuredImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1714415255707/f7a3e865-4b65-4b0f-8e00-b3b9f9834f2d.png
+tags:
+- React
+- TypeScript
+- UI
+- components
+- Next.js
+- guide
+- Tutorial
+date: 2024-04-29T18:29:14.420Z
+updated: 2024-06-08T02:52:06.659Z
+category: Guide
+---
+
+## Introduction
+
+## Project Overview
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1714413715419/cd29e778-e4a7-43cf-99a1-57f42fa07a8c.png)
+
+In this article, we're going to be building a component preview featuring:
+
+* Tabs to switch between visual preview and source code
+    
+* Drag-to-resize handles
+    
+* Real-time component dimensions
+    
+* Auto-generated source code
+    
+* Dark/light mode support
+    
+
+Let's get started!
+
+## Getting Started
+
+### Setup
+
+If you'd like to code along, create a Next.js project with the following command. If you're using [Yarn](https://yarnpkg.com/), [pnpm](https://pnpm.io/), or [Bun](https://bun.sh/package-manager) as your package manager, see [here](https://nextjs.org/docs/pages/api-reference/create-next-app#interactive) for their equivalent commands.
+
+```bash
+npx create-next-app@latest
+```
+
+During the interactive installation, you'll be prompted to answer a few questions. I recommend the following configuration:
+
+* What is your project named? **code-preview**
+    
+* Would you like to use TypeScript? **Yes**
+    
+* Would you like to use ESLint? **Yes**
+    
+* Would you like to use Tailwind CSS? **Yes**
+    
+* Would you like to use `src/` directory? **No**
+    
+* Would you like to use App Router? (recommended) **Yes**
+    
+* Would you like to customize the default import alias (@/\*)? **No**
+    
+
+### Install Dependencies
+
+We're going to be using a few external packages during the course of this project:
+
+* [Tailwind Container Queries](https://github.com/tailwindlabs/tailwindcss-container-queries)
+    
+* [Bright](https://bright.codehike.org/)
+    
+* [Lucide](https://lucide.dev/icons/)
+    
+* [Next Themes](https://github.com/pacocoursey/next-themes)
+    
+* [React Resizable Panels](https://github.com/bvaughn/react-resizable-panels)
+    
+* [Usehooks-ts](https://usehooks-ts.com/)
+    
+
+Let's install them with the following command:
+
+```bash
+npm i @tailwindcss/container-queries bright lucide-react next-themes react-resizable-panels usehooks-ts
+```
+
+While we're in the terminal, let's also install the UI components we'll be using from shadcn/ui:
+
+```bash
+npx shadcn-ui@latest init
+npx shadcn-ui@latest add accordion button card sonner tabs
+```
+
+### Project Structure
+
+In case it is helpful, here is what our project structure will look like when we are done. This is the general structure that I tend to follow in all of my Next.js projects.
+
+```bash
+.
+├── app
+│   ├── layout.tsx
+│   └── page.tsx
+├── components
+│   ├── demo
+│   │   └── accordion-demo.tsx
+│   ├── providers
+│   │   └── theme-provider.tsx
+│   ├── ui
+│   │   ├── accordion.tsx
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── sonner.tsx
+│   │   └── tabs.tsx
+│   ├── demo-code.tsx
+│   ├── demo-preview.tsx
+│   ├── demo-toolbar.tsx
+│   ├── demo.tsx
+│   ├── site-header.tsx
+│   └── theme-toggle.tsx
+├── lib
+│   └── ...
+├── public
+│   └── ...
+├── README.md
+├── components.json
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── tailwind.config.ts
+└── tsconfig.json
+```
+
+## Implementation
+
+### Site Header
+
+For this project, we're only going to be using the site header to display the theme toggle which will enable users to switch between light and dark modes.
+
+Create the theme toggle component in the root of the `@/components/` directory:
+
+```typescript
+// @/components/theme-toggle.tsx
+
+"use client"
+
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+
+import { Button } from "@/components/ui/button"
+
+export const ThemeToggle = () => {
+  const { setTheme, theme } = useTheme()
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+    >
+      <Sun className="h-[1.5rem] w-[1.3rem] dark:hidden" />
+      <Moon className="hidden h-5 w-5 dark:block" />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  )
+}
+```
+
+Create a new file named `site-header.tsx` in the root of the `@/components/` directory:
+
+```typescript
+// @/components/site-header.tsx
+
+"use client"
+
+import { ThemeToggle } from "@/components/theme-toggle";
+
+export const SiteHeader = () => {
+    return (
+        <header className="fixed w-full top-0 z-50 bg-background border-b">
+            <div className="container max-w-screen-2xl flex h-16 items-center justify-between">
+                <div className="text-2xl">Code Preview</div>
+                <ThemeToggle />
+            </div>
+        </header>
+    )
+}
+```
+
+### Theme Provider
+
+Even though we have now created the theme toggle and site header components, they won't be very useful unless they have a way to interact with the theme context.
+
+To do that, let's create a theme provider which we'll use in just a moment to wrap our root layout.
+
+Create the new directory `@/components/providers/` and then in that directory create a new file named `theme-provider.tsx`:
+
+```typescript
+// @/components/providers/theme-provider.tsx
+
+"use client"
+
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { type ThemeProviderProps } from "next-themes/dist/types"
+
+export function ThemeProvider({ 
+  children, ...props 
+}: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+```
+
+### Root Layout
+
+We can now add the theme provider to our root layout located at `@/app/layout.tsx` and also add our toast provider so that we can display ephemeral notifications to our users:
+
+```typescript
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "@/styles/globals.css";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { SiteHeader } from "@/components/site-header";
+import { Toaster } from "@/components/ui/sonner";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Code Preview",
+  description: "An interactive code preview built with Next.js and Typescript.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body 
+        className={cn(
+          "min-h-screen bg-background",
+          inter.className
+        )}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          disableTransitionOnChange
+        >
+          <SiteHeader />
+          <main className="w-full max-w-screen-2xl mx-auto">
+              <div className="relative pt-16 h-full flex flex-row gap-4">
+                 {children}
+              </div>
+          </main>
+          <Toaster position="top-center"/>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### Display Component
+
+This is the component or UI element that we want to display in our demo. I'm going to use an extended accordion component, but you can display whatever you'd like here!
+
+```typescript
+// @/components/demo/accordion-demo.tsx
+
+"use client"
+
+import { useState } from "react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { 
+    Accordion, 
+    AccordionContent, 
+    AccordionItem, 
+    AccordionTrigger 
+} from "@/components/ui/accordion";
+
+const AccordionDemo = () => {
+    const [active, setActive] = useState<number | null>(1);
+
+    return (
+        <div className="@container grid grid-cols-3 grid-rows-2 @3xl:grid-rows-1 items-stretch bg-background">
+            <div className="relative h-auto w-auto col-span-3 @3xl:col-span-2">
+                {[1, 2, 3].map((n) => (
+                    <Image
+                        key={n}
+                        src={`/unsplash-abstract-${n}.jpeg`}
+                        alt="placeholder"
+                        fill
+                        className={cn(
+                            active === n ? "opacity-100" : "opacity-0",
+                            "absolute inset-0 object-cover transition-opacity duration-500 ease-in-out",
+                        )}
+                    />
+                ))}
+            </div>
+            <div className="col-span-3 @3xl:col-span-1">
+                <Accordion 
+                    type="single" 
+                    defaultValue="1" 
+                    className="flex flex-col items-stretch h-full border-t border-x"
+                >
+                    {[1, 2, 3].map((n) => (
+                        <AccordionItem 
+                            key={n}
+                            value={n.toString()}
+                            className={cn(
+                                "relative grow flex flex-col justify-center text-lg group", 
+                                "before:content[''] before:w-[2px] before:absolute before:top-0 before:left-0", 
+                                "before:bg-foreground before:transition-all before:ease-in-out before:duration-500 ",
+                                active === n 
+                                    ? "before:h-full before:opacity-100"
+                                    : "before:h-0 before:opacity-0"
+                            )}
+                        >
+                            <AccordionTrigger
+                                onClick={() => setActive(n)}
+                                className="text-muted-foreground data-[state=open]:text-foreground p-6 
+                                group-hover:text-foreground !no-underline transition-colors ease-in-out duration-500"
+                            >
+                                Accordion {n}
+                            </AccordionTrigger>
+                            <AccordionContent
+                                className="p-6 pt-0"
+                            >
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
+                                sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
+        </div>
+    )
+}
+
+export default AccordionDemo;
+```
+
+### Demo Component
+
+This is the main demo component which is going to serve as a wrapper for both the Demo Code and Demo Preview components. It is responsible for importing the appropriate component for the preview, as well as reading the source code from the component file. I'll elaborate on both of these functionalities below.
+
+```typescript
+// @/components/demo.tsx
+
+import fs from "fs";
+import path from "path";
+import { lazy, useMemo } from "react";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger
+} from "@/components/ui/tabs";
+import { DemoCode } from "@/components/demo-code";
+import { DemoPreview } from "@/components/demo-preview";
+import { DemoToolbar } from "@/components/demo-toolbar";
+
+interface DemoProps{
+    name: string,
+}
+
+export const Demo = async ({
+    name,
+}: DemoProps) => {
+    
+    const Preview = useMemo(() => {
+        const Component = lazy(() => import("@/components/demo/accordion-demo"))
+
+        if (!Component) {
+            return (
+                <p className="text-muted-foreground">
+                    Component{" "}
+                    <code className="relative rounded bg-muted p-1 font-mono">
+                        {name}
+                    </code>{" "}
+                    not found.
+                </p>
+            )
+        }
+
+        return <Component />
+    }, [name])
+
+    let Code;
+
+    try {
+        const src = "components/demo/accordion-demo.tsx"
+        const filePath = path.join(process.cwd(), src)
+        Code = fs.readFileSync(filePath, "utf8")
+    } catch (error) {
+        console.error(error)
+    }
+
+    return (
+        <div className="flex h-full w-full py-10 m-auto items-start justify-start">
+            <Tabs defaultValue="preview" className="w-full">
+                <div className="flex items-center justify-between gap-4">
+                    <TabsList>
+                        <TabsTrigger value="preview">Preview</TabsTrigger>
+                        <TabsTrigger value="code">Code</TabsTrigger>
+                    </TabsList>
+                    <DemoToolbar copyText={Code || ""} />
+                </div>
+                <TabsContent value="preview">
+                    <DemoPreview>
+                        {Preview}
+                    </DemoPreview>
+                </TabsContent>
+                <TabsContent value="code" className="w-full border rounded-md max-h-[500px] overflow-y-auto">
+                    <DemoCode
+                        title={`${name}.tsx`}
+                        lang="tsx"
+                        code={Code || "Failed to load code"}
+                        lineNumbers={true}
+                        className="!my-0"
+                    />
+                </TabsContent>
+            </Tabs>
+        </div>
+    )
+}
+```
+
+**Importing the Preview Component**
+
+Rather than importing `accordion-demo.tsx` in the top-level file imports, we are using a useMemo hook to retrieve and the file and cache the result between re-renders. This is a more extensible pattern in the event that your project has many different components to choose from for the preview.
+
+```typescript
+const Preview = useMemo(() => {
+    const Component = lazy(() => import("@/components/demo/accordion-demo"))
+
+    // error handling
+
+    return <Component />
+}, [name])
+```
+
+The nice thing about this pattern is that you can easily abstract it. Say you have a folder for all of the components you want to showcase. Simply add an index file where you define the name and file path for each component. Then you can refactor the above code to:
+
+```typescript
+import { Index } from "@/components";
+
+// ...
+
+const Preview = useMemo(() => {
+    const Component = Index[name].component
+
+    // error handling
+
+    return <Component />
+}, [name])
+
+// ...
+```
+
+**Generating the Source Code**
+
+Since this is a server-side component, we can use fs to read the contents of the display component file and pass the resulting string to our Demo Code component in a later step.
+
+```typescript
+// ...
+
+let Code;
+
+try {
+    const src = "components/demo/accordion-demo.tsx"
+    const filePath = path.join(process.cwd(), src)
+    Code = fs.readFileSync(filePath, "utf8")
+} catch (error) {
+    console.error(error)
+}
+
+// ...
+```
+
+Again, this pattern can be abstracted when dealing with multiple display components. Since `name` is a required prop for the `Demo` component, we can use this prop to reference a key in an index file and return a file path. The refactored code would look something like this:
+
+```typescript
+import { Index } from "@/components"
+
+// ...
+
+let Code;
+
+try {
+    const src = "components/demo/accordion-demo.tsx"
+    const filePath = path.join(process.cwd(), src)
+    Code = fs.readFileSync(filePath, "utf8")
+} catch (error) {
+    console.error(error)
+}
+
+// ...
+```
+
+### Demo Preview Component
+
+This is where most of the interactivity takes place. I'll break down the different functions below.
+
+```typescript
+// @/components/demo-preview.tsx
+
+"use client"
+
+import { useEffect, useRef, useState } from "react";
+
+import { useResizeObserver } from "usehooks-ts";
+import { 
+    ImperativePanelGroupHandle, 
+    PanelResizeHandle,
+    PanelGroup, 
+    Panel,
+} from "react-resizable-panels";
+
+import { Button } from "@/components/ui/button";
+import { 
+    Card, 
+    CardContent, 
+    CardHeader 
+} from "@/components/ui/card";
+import { 
+    Laptop, 
+    Smartphone, 
+    Tablet 
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+type Layout = [number, number, number];
+
+interface Size {
+    width?: number;
+    height?: number;
+}
+
+interface Device {
+    name: "desktop" | "tablet" | "smartphone" | undefined;
+    size: Size;
+    layout: Layout;
+    icon: React.ReactNode;
+    disabled: boolean;
+}
+
+const devices: {[key: string]: Device} = {
+    desktop: {
+        name: "desktop",
+        size: { width: 1024 },
+        layout: [0,100,0],
+        icon: <Laptop className="h-4 w-4" />,
+        disabled: false,
+    },
+    tablet: {
+        name: "tablet",
+        size: { width: 768 },
+        layout: [20,60,20],
+        icon: <Tablet className="h-4 w-4" />,
+        disabled: false,
+    },
+    smartphone: {
+        name: "smartphone",
+        size: { width: 384 },
+        layout: [30,40,30],
+        icon: <Smartphone className="h-4 w-4" />,
+        disabled: false,
+    },
+} 
+
+export const DemoPreview = ({
+    children,
+}: {
+    children: React.ReactNode,
+}) => { 
+    
+    const [device, setDevice] = useState<Device["name"]>(undefined);
+    const [panelSize, setPanelSize] = useState<Size>({
+        width: undefined,
+        height: undefined,
+    });
+    const [containerSize, setContainerSize] = useState<Size>({
+        width: undefined,
+        height: undefined,
+    });
+    
+    const panelGroupRef = useRef<ImperativePanelGroupHandle>(null)
+    const panelRef = useRef<HTMLDivElement>(null)
+    const previewContainerRef = useRef<HTMLDivElement>(null)
+    
+    useResizeObserver({
+        ref: previewContainerRef,
+        box: 'content-box',
+        onResize: setContainerSize,
+    })
+
+    useResizeObserver({
+        ref: panelRef,
+        box: 'content-box',
+        onResize: setPanelSize,
+    })
+
+    const calculateLayouts = (containerWidth: number) => {
+        type Width = Size["width"];
+        const smartphonePanel: Width = devices["smartphone"].size.width! / containerWidth * 100;
+        const tabletPanel: Width = devices["tablet"].size.width! / containerWidth * 100
+        const smartphoneLayout: Layout = [
+            (100 - smartphonePanel) / 2,
+            smartphonePanel,
+            (100 - smartphonePanel) / 2,
+        ];
+        const tabletLayout: Layout = [
+            (100 - tabletPanel) / 2,
+            tabletPanel,
+            (100 - tabletPanel) / 2,
+        ];
+        devices["smartphone"].layout = smartphoneLayout;
+        devices["tablet"].layout = tabletLayout;
+    }
+
+    useEffect(() => {
+        const { width, height } = containerSize;
+        if (!width || !height) return;
+        setDevice(undefined);
+        calculateLayouts(width);
+        switch (true) {
+            case ( width <= ( 768 + 24 ) ):
+                devices["tablet"].disabled = true;
+                devices["desktop"].disabled = true;
+                break;
+            case ( width > ( 768 + 24 ) && width <= ( 1024 + 24 ) ):
+                devices["tablet"].disabled = false;
+                devices["desktop"].disabled = true;
+                break;
+            case ( width > ( 1024 + 24 ) ):
+                devices["tablet"].disabled = false;
+                devices["desktop"].disabled = false;
+            default:
+                break;
+        }
+    }, [containerSize])
+
+    const resetLayout = (layout: Layout) => {
+        const panelGroup = panelGroupRef.current;
+        if (!panelGroup) return;
+        panelGroup.setLayout(layout)
+    }
+
+    const handleClick = (device: Exclude<Device["name"], undefined>) => {
+        const layout = devices[device].layout;        
+        resetLayout(layout);
+        setDevice(device);
+    }
+
+    return (
+        <Card className="bg-dot-grid bg-top">
+            <CardHeader className="border-b py-4 px-10 bg-background rounded-t-lg">
+                <div className="flex items-center justify-between">
+                    <div className="space-x-2">  
+                        {Object.keys(devices).map((d) => {
+                            const { name, icon, disabled } = devices[d];
+                            return (
+                                <Button 
+                                    key={name}
+                                    size="icon"
+                                    variant={device === name ? "default" : "outline"}
+                                    onClick={() => handleClick(name!)}
+                                    disabled={disabled}
+                                >
+                                    {icon}
+                                </Button>
+                            )
+                        })}
+                    </div>
+                    <div>
+                        { ( panelSize.width && panelSize.height ) && (
+                            <p>{Math.round(panelSize.width)} x {Math.round(panelSize.height)}</p>
+                        )}
+                    </div>
+                </div>
+            </CardHeader>
+            <CardContent 
+                ref={previewContainerRef}
+                className="py-8 h-[600px] bg-foreground/5"
+            >
+                <PanelGroup
+                    id="panel-group"
+                    ref={panelGroupRef}
+                    direction="horizontal"
+                    className="items-center"
+                    onLayout = {() => setDevice(undefined)}
+                >
+                    <Panel defaultSize={0} />
+                    <PanelResizeHandle 
+                        className="w-1.5 h-8 mr-1.5 my-auto 
+                        bg-muted-foreground rounded-full" 
+                    />
+                    <Panel 
+                        id="main-panel"
+                        defaultSize={100} 
+                        className={cn(
+                            "min-w-96",
+                            device === "tablet" && "min-w-[770px]",
+                        )}
+                    >
+                        <div 
+                            ref={panelRef}
+                            className="max-h-[500px] flex flex-col justify-center 
+                            overflow-auto bg-[url('/dot-grid.svg')] bg-center"
+                        >
+                            <div 
+                                className="@container grow border rounded-md 
+                                bg-background max-h-full overflow-auto"
+                            >
+                                {children}
+                            </div>
+                        </div>
+                    </Panel>
+                    <PanelResizeHandle 
+                        className="w-1.5 h-8 ml-1.5 my-auto 
+                        bg-muted-foreground rounded-full" 
+                    />
+                    <Panel defaultSize={0} />
+                </PanelGroup>
+            </CardContent>
+        </Card>
+    )
+}
+```
+
+**Container Resizing**
+
+The container width is intrinsically tied to the viewport width. This means whenever the viewport width changes, the container will change along with it.
+
+We're using the `useResizeObserver` hook to watch for any resize changes to the container. When a resize is observed, we update the `containerSize` state variable.
+
+Additionally, we are disabling certain device previews based on the container size. If the container is too small to display a certain device, that button becomes disabled.
+
+### Demo Code Component
+
+```typescript
+// @/components/demo-code.tsx
+
+"use server"
+
+import { Code, BrightProps} from "bright";
+
+interface DemoCodeProps {
+    title?: BrightProps["title"];
+    lang?: BrightProps["lang"];
+    lineNumbers?: BrightProps["lineNumbers"];
+    className?: string;
+    code: string;
+}
+
+Code.theme = {
+    dark: 'dark-plus',
+    light: 'light-plus',
+    lightSelector: 'html.light',
+}
+
+export const DemoCode = ({
+    title,
+    lang,
+    lineNumbers,
+    className,
+    code,
+}: DemoCodeProps) => {
+
+    return (
+            <Code 
+                title={title}
+                lang={lang}
+                lineNumbers={lineNumbers}
+                className={className}
+            >
+                {code}
+            </Code>
+    )
+}
+```
+
+### Page Route
+
+```typescript
+// @/app/page.tsx
+
+import { Demo } from "@/components/demo";
+
+const DemoPage = () => {
+  return (
+    <section className="w-full space-y-2">
+      <Demo name="accordion-demo"/>
+    </section>
+  );
+}
+
+export default DemoPage;
+```
+
+## Conclusion
+
+There you have it! A fully featured component preview:
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1714415038574/90c2b00d-1e37-4312-8d1a-7de362069d0a.gif)
+
+Check out the full source code on Github:
+
+[https://github.com/benorloff/code-preview](https://github.com/benorloff/code-preview)
+
+## Acknowledgments
+
+* [Shadcn/ui](https://ui.shadcn.com/) - Beautiful component library
+    
+* [Sonner](https://sonner.emilkowal.ski/) - opinionated toasts
+    
+* [react-resizable-panels](https://github.com/bvaughn/react-resizable-panels)
+    
+* [usehooks-ts](https://usehooks-ts.com/) - React hook library written in Typescript
+    
+* [bright](https://bright.codehike.org/) - server-side syntax highlighting
