@@ -23,6 +23,24 @@ export const customTOC = (toc: any) => {
           ],
         },
         ...(toc.children || []),
+        // {
+        //   type: 'element',
+        //   tagName: 'div',
+        //   properties: { className: 'w-full h-4 flex justify-center items-center' },
+        //   children: [
+        //     {
+        //       type: 'element',
+        //       tagName: 'p',
+        //       properties: { className: 'text-xs text-muted-foreground uppercase' },
+        //       children: [
+        //         {
+        //           type: 'text',
+        //           value: 'Collapse',
+        //         },
+        //       ],
+        //     }
+        //   ]
+        // }
       ],
     };
   };

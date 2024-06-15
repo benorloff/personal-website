@@ -5,6 +5,32 @@ import rehypeToc from "@jsdevtools/rehype-toc"
 import rehypeSlug from "rehype-slug"
 import { customTOC } from "./components/custom-toc";
 import { HashnodePost, getHashnodePosts } from "./lib/hashnode";
+import fs from "fs/promises";
+import remarkFrontmatter from "remark-frontmatter";
+import remarkParse from "remark-parse";
+import remark2Rehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
+
+const services = [
+    'Front End Development', 
+    'Back End Development', 
+    'Design',
+    'Strategy',
+];
+
+const tech = [
+    'Next.js',
+    'CSS3',
+    'HTML5',
+    'JavaScript',
+    'TypeScript',
+    'Framer Motion',
+    'Tailwind CSS',
+    'Prisma',
+    'PostgreSQL',
+    'Supabase',
+    'WordPress',
+];
 
 const ProjectImage = defineNestedType(() => ({
     name: 'ProjectImage',
@@ -43,13 +69,19 @@ export const Project = defineDocumentType(() => ({
             type: 'string',
             required: true,
         },
-        category: {
+        services: {
             type: 'list',
-            of: { type: 'string'},
+            of: { 
+                type: 'enum', 
+                options: services,
+            },
         },
-        tags: {
+        tech: {
             type: 'list',
-            of: { type: 'string' },
+            of: {
+                type: 'enum',
+                options: tech,
+            },
         },
         images: {
             type: 'list',
@@ -109,7 +141,6 @@ export const Post = defineDocumentType(() => ({
 }));
 
 const syncContentFromHashnode = async () => {
-
     let posts: HashnodePost[] = [];
 
     try {
@@ -117,13 +148,87 @@ const syncContentFromHashnode = async () => {
     } catch (error) {
         console.error(error);
     }
-    
-    console.log(posts, 'posts from hashnode');
-}
+
+    // Hashnode response includes erroneous HTML tags in content.markdown,
+    // which need to be stripped out before writing to file
+
+    for (const post of posts) {
+        // Set the front matter for the post
+        const frontMatter = 
+            '---\n' + 
+            `title: ${post.title}\n` +
+            `excerpt: ${post.subtitle}\n` +
+            `featuredImage: ${post.coverImage.url}\n` +
+            `tags:\n${post.tags.map(tag => `- ${tag.name}`).join('\n')}\n` +
+            `date: ${post.publishedAt}\n` +
+            `updated: ${post.updatedAt}\n` +
+            `category: Guide\n` +
+            `---\n`;
+        // Get the content of the post
+        const content = post.content.markdown;
+        // Remove align attributes from images
+        const processedContent = content.replace(
+            /( align="(left|center|right)"|<div data-node-type="callout-emoji">.*?<\/div>|style=".*?")/g, ''
+        )
+        // const calloutContent = processedContent.replace(/<div data-node-type="callout">\s+/g, '<Callout type="info">');
+        // const closingCallout = calloutContent.replace(/<\/div>/g, '</Callout>');
+        const filePath = `./content/posts/${post.slug}.mdx`;
+        await fs.writeFile(filePath, [frontMatter, processedContent].join('\n'));
+
+        console.log(`Content synced for post: ${post.title}`);
+    }
+};
 
 syncContentFromHashnode();
 
+// export default makeSource({
+//     syncFiles: syncContentFromHashnode,
+//     contentDirPath: 'content',
+//     documentTypes: [Project, Post],
+//     disableImportAliasWarning: true,
+//     markdown: (builder: any) => {
+//         builder.use(remarkFrontmatter)
+//         builder.use(remarkParse)
+//         builder.use(remark2Rehype, { allowDangerousHtml: true })
+//         builder.use(rehypeStringify)
+//         builder.use(() => (tree) => {
+//             visit(tree, (node) => {
+//                 if (node?.type === "element" && node?.tagName === "pre") {
+//                     const [codeEl] = node.children;
+        
+//                     if (codeEl.tagName !== "code") return;
+        
+//                     node.raw = codeEl.children?.[0].value;
+//                 }
+//             });
+//         })
+//         builder.use(rehypePrettyCode, {
+//             theme: {
+//                 dark: "one-dark-pro",
+//                 light: "github-light",
+//             },
+//         })
+//         builder.use(rehypeSlug)
+//         builder.use(() => (tree) => {
+//             visit(tree, (node) => {
+//                 if (node?.type === "element" && node?.tagName === "figure") {
+//                     if (!("data-rehype-pretty-code-figure" in node.properties)) {
+//                         return;
+//                     }
+        
+//                     for (const child of node.children) {
+//                         if (child.tagName === "pre") {
+//                             child.properties["raw"] = node.raw;
+//                         }
+//                     }
+//                 }
+//             });   
+//         })
+//     },
+// })
+
 export default makeSource({
+    syncFiles: syncContentFromHashnode,
     contentDirPath: 'content',
     documentTypes: [Project, Post],
     mdx: {
@@ -144,14 +249,12 @@ export default makeSource({
                 rehypePrettyCode, 
                 {
                     theme: {
-                        dark: "github-dark",
+                        dark: "one-dark-pro",
                         light: "github-light",
-                    },
-                    keepBackground: false,
-                },
+                    },                },
             ],
             [rehypeSlug],
-            [rehypeToc, { customizeTOC: customTOC }],
+            // [rehypeToc, { customizeTOC: customTOC }],
             () => (tree) => {
                 visit(tree, (node) => {
                     if (node?.type === "element" && node?.tagName === "figure") {

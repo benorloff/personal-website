@@ -1,5 +1,6 @@
-import { Frame } from "@/components/frame";
+
 import { Suspense } from "react";
+import { Frame } from "@/components/frame";
 
 export default function MainLayout({
     children,

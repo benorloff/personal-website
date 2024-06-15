@@ -21,14 +21,14 @@ export const ColorPicker = () => {
 
     const container = {
         open: { 
-            height: '200px',
+            height: '150px',
             transition: { 
                 duration: 0.5, 
                 type: 'spring' 
             },
         },
         closed: { 
-            height: '48px',
+            height: '47px',
             transition: { 
                 duration: 0.5, 
                 type: 'spring', 
@@ -64,8 +64,8 @@ export const ColorPicker = () => {
         <AnimatePresence mode="sync">
             <motion.div
                 onMouseEnter={() => setIsOpen(true)}
-                onMouseLeave={() => setIsOpen(false)}
-                className="flex min-h-[48px] shrink border-t custom-border-color overflow-hidden"
+                // onMouseLeave={() => setIsOpen(false)}
+                className="flex min-h-[47px] w-full overflow-y-visible"
                 variants={container}
                 animate={isOpen ? 'open' : 'closed'}
             >

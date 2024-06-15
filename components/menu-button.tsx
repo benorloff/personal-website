@@ -4,8 +4,13 @@ import { AlignRight, X } from "lucide-react"
 import { Button } from "./ui/button"
 import { useModal } from "@/hooks/use-modal-store"
 import { motion, AnimatePresence } from "framer-motion";
+import { Weather } from "@/lib/weather";
 
-export const MenuButton = () => {
+export const MenuButton = ({
+    temperature,
+    weatherLabel,
+    weatherCode,
+}: Weather) => {
     const { onOpen, onClose, isOpen, type } = useModal();
     const isModalOpen = isOpen && type === "menu";
 
@@ -25,7 +30,7 @@ export const MenuButton = () => {
                         variant="ghost"
                         className="h-full w-full rounded-none rounded-tr-sm p-1"
                         onClick={() => { !isModalOpen 
-                            ? (onClose(), onOpen("menu")) 
+                            ? (onClose(), onOpen("menu", { temperature, weatherCode, weatherLabel })) 
                             : onClose()
                         }}
                     >
@@ -53,7 +58,7 @@ export const MenuButton = () => {
                         variant="ghost"
                         className="h-full w-full rounded-none rounded-tr-sm p-1"
                         onClick={() => { !isModalOpen 
-                            ? (onClose(), onOpen("menu")) 
+                            ? (onClose(), onOpen("menu", { temperature, weatherCode, weatherLabel })) 
                             : onClose()
                         }}
                     >

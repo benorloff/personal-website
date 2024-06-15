@@ -23,6 +23,7 @@ export interface HashnodePost {
     featured: boolean,
     content: { 
         markdown: string,
+        html: string,
     },
     publishedAt: Date,
     updatedAt: Date,
@@ -164,6 +165,7 @@ export async function getHashnodePost({ slug }: { slug: string }) {
                             updatedAt
                             content {
                                 markdown
+                                html
                             }
                         }
                     }

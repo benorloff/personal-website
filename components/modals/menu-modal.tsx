@@ -15,7 +15,7 @@ const routes = [
 
 export const MenuModal = () => {
 
-    const { onOpen, isOpen, onClose, type } = useModal();
+    const { onOpen, isOpen, onClose, type, data } = useModal();
     const isModalOpen = isOpen && type === "menu";
 
     return (
@@ -36,7 +36,9 @@ export const MenuModal = () => {
                         className="flex-1 min-w-full lg:min-w-0.5 bg-background/75 modal-glass border-r custom-border-color"
                     >
                         <div className="p-10">
-                            <h2 className="text-2xl font-semibold">Menu</h2>
+                            <h2 className="text-lg text-muted-foreground">
+                                Coding with ❤️ in Tucson, Arizona, where the local time is {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} and the weather is currently {data?.weatherLabel || "sunny"} and {data?.temperature || "80"}°F.
+                            </h2>
                         </div>
                     </motion.div>
                     <motion.div 

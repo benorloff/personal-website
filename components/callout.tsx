@@ -1,5 +1,5 @@
 import { CircleAlert, CircleCheck, CircleX, Info } from "lucide-react";
-import { Card, CardContent } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { cn } from "@/lib/utils";
 
 interface CalloutProps {
@@ -17,8 +17,8 @@ const CalloutIcon = ({
 }: CalloutIconProps): React.ReactNode => {
 
         const iconStyle = cn(
-            "absolute h-12 w-12 -top-6 -right-6 rounded-full bg-card backdrop-blur-3xl",
-            type === 'info' && 'text-blue-500 bg-blue-500/20',
+            "h-8 w-8 rounded-full",
+            type === 'info' && 'text-blue-500',
             type === 'warning' && 'text-yellow-500 bg-yellow-500/20',
             type === 'danger' && 'text-red-500 bg-red-500/20',
             type === 'success' && 'text-green-500 bg-green-500/20',
@@ -66,9 +66,15 @@ export const Callout = ({
             )}
         >
             <CardContent>
-                {children}
+                <div className="flex flex-col lg:flex-row gap-4">
+                    <div className="flex-0">
+                        <CalloutIcon type={type} />
+                    </div>
+                    <div className="flex-1">
+                        {children}
+                    </div>
+                </div>
             </CardContent>
-            <CalloutIcon type={type} />
         </Card>
     )
 }

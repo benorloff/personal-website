@@ -100,7 +100,7 @@ export function Model({
         // actions.NucleusAnim!.play().paused = isPaused;
     })
 
-    useCursor(hovered)
+    useCursor(hovered, 'pointer')
 
 
     return (
@@ -112,7 +112,7 @@ export function Model({
                     <group name="Main" 
                         scale={0.25}
                     >
-                        <Center position={[0,-45,0]} rotation={[1.5,0,0]}>
+                        {/* <Center position={[0,-45,0]} rotation={[1.5,0,0]}>
                                 <Text3D
                                     curveSegments={32}
                                     bevelEnabled
@@ -126,7 +126,7 @@ export function Model({
                                     {`Creative\nDeveloper`}
                                     <meshNormalMaterial />
                                 </Text3D>
-                        </Center>
+                        </Center> */}
                         <group name="_SpaceStation" 
                             position={[-11.855, 9.914, 4.498]} 
                             scale={0.006}
@@ -265,6 +265,7 @@ export function Model({
                                 position={[0, 0, -1500]}
                                 scale={30}
                                 onPointerEnter={() => setIsPaused((isPaused) => !isPaused)}
+                                onClick={() => console.log('clicked')}
                             />
                             <group ref={nucleus} name="Nucleus" 
                                 position={[0, 0, -1000]} 
@@ -332,7 +333,10 @@ export function Model({
                                 position={[0, 0, 0.11]}
                                 rotation={[Math.PI / 2, 0, 0]}
                                 />
-                                <group name="InsideVariants" position={[0, 0, -649.145]}>
+                                <group 
+                                    name="InsideVariants" 
+                                    position={[0, 0, -649.145]}
+                                >
                                     <mesh
                                         name="Active"
                                         castShadow
@@ -341,6 +345,7 @@ export function Model({
                                         material={materials.InsideActive}
                                         position={[0, 0, 649.255]}
                                         rotation={[Math.PI / 2, 0, 0]}
+                                        onClick={() => console.log('clicked')}
                                     />
                                     <mesh
                                         name="Inactive"
@@ -350,6 +355,7 @@ export function Model({
                                         material={materials.Inside}
                                         position={[0, 0, 649.255]}
                                         rotation={[Math.PI / 2, 0, 0]}
+                                        onClick={() => console.log('clicked')}
                                     />
                                 </group>
                             </motion.group>
@@ -610,7 +616,7 @@ export function Model({
                     material={materials.Waves}
                     position={[3.9, -6.409, -6.682]}
                     rotation={[3.052, -1.092, 0.286]}
-                    scale={[-0.003, 0.003, 0.003]}
+                    scale={0.003}
                     />
                     <mesh
                     name="Particle_14"

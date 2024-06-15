@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 
-// import { getPost, getAllPosts } from "@/lib/content";
 import { Mdx } from "@/components/mdx-components";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +10,7 @@ import { humanDate } from "@/lib/utils";
 import { remark } from "remark";
 import { headingTree } from "@/lib/heading-tree";
 import { TableOfContents } from "@/components/table-of-contents";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import Image from "next/image";
 
 export async function generateStaticParams() {
     return allPosts.map((post) => ({
@@ -42,8 +41,6 @@ const PostPage = async ({
 }) => {
 
     const post: Post | undefined = allPosts.find((post) => post._raw.flattenedPath === `posts/${params.slug}`)
-
-    // const post = await getPost({ slug: params.slug });
 
     if (!post) {
         return notFound();
@@ -85,12 +82,12 @@ const PostPage = async ({
     return (
         <div className="flex h-full w-full overflow-x-hidden overflow-y-auto">
             <div 
-                className="hidden sticky lg:flex flex-col basis-1/4 justify-center top-0 left-0 h-[calc(100vh-116px)] w-full p-4"
+                className="hidden sticky lg:flex flex-col basis-1/5 justify-center top-0 left-0 h-[calc(100vh-116px)] w-full p-4"
             >
                 <TableOfContents nodes={headings} />
             </div>
             <article 
-                className="flex flex-col basis-3/4 w-full max-w-2xl mx-auto p-4" 
+                className="flex flex-col basis-3/5 w-full max-w-2xl mx-auto p-4" 
                 data-testid="post-article"
             >
                 <h1 
@@ -127,24 +124,11 @@ const PostPage = async ({
                         </Badge>
                     )}
                 </div>
-                {/* <div 
-                    className="pb-4" 
-                    data-testid="post-tags"
-                >
-                    Tags:{' '}
-                    {tags?.map((tag: string) => (
-                        <Badge key={tag} className="mr-2">{tag}</Badge>
-                    ))}
+                <div className="pb-8">
+                    <Mdx code={post.body.code}/>
                 </div>
-                <Badge 
-                    className="h-8 mr-2 rounded-sm" 
-                    data-testid="post-category"
-                    variant="outline"
-                >
-                    {category}
-                </Badge> */}
-                <Mdx code={post.body.code}/>
             </article>
+            <div className="basis-1/5"></div>
         </div>
     )
 }

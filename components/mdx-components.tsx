@@ -88,7 +88,7 @@ const components = {
     a: ({ className, ...props }: React.HTMLAttributes<HTMLAnchorElement>) => (
         <a 
             className={cn(
-                "text-accent underline underline-offset-4 decoration-dotted hover:underline-2 hover:text-accent hover:decoration-solid transition-colors duration-300 ease-in-out",
+                "text-accent underline-0 underline-offset-4 hover:underline-2 hover:text-accent hover:underline transition-colors duration-300 ease-in-out",
                 className
             )}
             {...props}

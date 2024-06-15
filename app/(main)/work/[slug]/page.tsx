@@ -24,7 +24,7 @@ const ProjectPage = ({
     }
 }) => {
 
-    const project = allProjects.find((project) => project._raw.flattenedPath.replace(/projects\/?/, '') === params.slug);
+    const project: Project | undefined = allProjects.find((project) => project._raw.flattenedPath.replace(/projects\/?/, '') === params.slug);
     
     if (!project) {
         return notFound();
@@ -42,15 +42,9 @@ const ProjectPage = ({
 
     return (
         <div ref={contentRef} className="h-full w-full p-4 md:p-6 lg:p-10 overflow-y-scroll no-scrollbar">
-            {/* <Mdx code={project.body.code} /> */}
             <div className='flex flex-col justify-center items-center gap-4 py-36'>
                 <h4>PROJECT</h4>
-                <h1 className='text-8xl font-normal text-center text-pretty tracking-tight'>{project.title}</h1>
-                <div className='flex justify-center items-center gap-2'>
-                    {project.tags?.map((tag) => (
-                        <Badge key={tag} variant="outline" className='text-xs'>{tag}</Badge>
-                    ))}
-                </div>
+                <h1 className='text-center text-pretty tracking-tight'>{project.title}</h1>
             </div>
             <motion.div
                 ref={useRef<HTMLDivElement>(null)}
@@ -80,26 +74,47 @@ const ProjectPage = ({
                         />
                     </motion.div>
             </motion.div>
-            <div className='flex h-full flex-col gap-10 justify-center items-center'>
-                <div 
-                    className='text-2xl md:text-3xl lg:text-4xl'
-                >
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation 
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            <div className='flex flex-col lg:flex-row min-h-screen gap-16 justify-center items-center py-10'>
+                <div className='my-auto space-y-4'>
+                    <p className='text-sm text-muted-foreground uppercase'>Summary</p>
+                    <Mdx code={project.body.code} />
                 </div>
-                <div className='flex flex-wrap w-full gap-x-24 gap-y-8'>
+                <div className='flex flex-col w-full gap-x-24 gap-y-8 my-auto'>
                     <div>
-                        <p className='text-sm text-muted-foreground'>Client</p>
+                        <p className='text-sm text-muted-foreground uppercase'>Client</p>
                         <p>{project.client}</p>
                     </div>
                     <div>
-                        <p className='text-sm text-muted-foreground'>Year</p>
+                        <p className='text-sm text-muted-foreground uppercase'>Year</p>
                         <p>{project.year}</p>
                     </div>
                     <div>
-                        <p className='text-sm text-muted-foreground'>Services</p>
-                        <p>Lorem ipsum dolor.</p>
+                        <p className='text-sm text-muted-foreground uppercase'>Services</p>
+                        <div className='flex flex-wrap gap-2 py-2'>
+                            { project.services && Array.from(project.services).map((service, index) => (
+                                <Badge 
+                                    key={index} 
+                                    variant='outline' 
+                                    className='text-base font-normal w-fit rounded-sm'
+                                >
+                                    {service}
+                                </Badge>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        <p className='text-sm text-muted-foreground uppercase'>Technologies</p>
+                        <div className='flex flex-wrap items-center gap-2 py-2'>
+                            {project.tech && Array.from(project.tech).map((t, index) => (
+                                <Badge 
+                                    key={index} 
+                                    variant='outline' 
+                                    className='text-base font-normal w-fit rounded-sm'
+                                >
+                                    {t}
+                                </Badge>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
