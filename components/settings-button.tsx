@@ -19,7 +19,7 @@ export const SettingsButton = () => {
                     query.toggle()
                 }}
             >
-                <Settings2 className="w-6 h-6"/>
+                <Settings2 className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out"/>
             </Button>
         </div>
     )

@@ -179,8 +179,6 @@ const syncContentFromHashnode = async () => {
     }
 };
 
-syncContentFromHashnode();
-
 // export default makeSource({
 //     syncFiles: syncContentFromHashnode,
 //     contentDirPath: 'content',
@@ -251,7 +249,8 @@ export default makeSource({
                     theme: {
                         dark: "one-dark-pro",
                         light: "github-light",
-                    },                },
+                    },                
+                },
             ],
             [rehypeSlug],
             // [rehypeToc, { customizeTOC: customTOC }],

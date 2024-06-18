@@ -92,12 +92,50 @@ export default function Home() {
           <OrbitControls maxDistance={25} minDistance={1} enablePan={false} makeDefault />
         </Suspense>
       </Canvas>
-      {/* <div className="absolute w-full h-full top-0 left-0 p-10">
-        <div className="absolute w-24 h-24 top-0 left-0 border-4 border-muted-foreground border-r-0 border-b-0 m-10 lg:m-48" />
-        <div className="absolute w-24 h-24 top-0 right-0 border-4 border-muted-foreground border-l-0 border-b-0 m-10 lg:m-48" />
-        <div className="absolute w-24 h-24 bottom-0 left-0 border-4 border-muted-foreground border-r-0 border-t-0 m-10 lg:m-48" />
-        <div className="absolute w-24 h-24 bottom-0 right-0 border-4 border-muted-foreground border-l-0 border-t-0 m-10 lg:m-48" />
-      </div> */}
+      <div className="absolute w-full h-full top-0 left-0 p-10">
+        <div>
+          <div className="absolute w-12 h-12 top-0 left-0 border-2 border-muted-foreground border-r-0 border-b-0 m-10 lg:m-24" />
+          <div className="absolute w-12 h-12 top-0 right-0 border-2 border-muted-foreground border-l-0 border-b-0 m-10 lg:m-24" />
+          <div className="absolute w-12 h-12 bottom-0 left-0 border-2 border-muted-foreground border-r-0 border-t-0 m-10 lg:m-24" />
+          <div className="absolute w-12 h-12 bottom-0 right-0 border-2 border-muted-foreground border-l-0 border-t-0 m-10 lg:m-24" />
+        </div>
+        {/* <div className="flex text-sm text-accent p-24">
+          Location: Unknown<br />
+          Mission: Investigate the anomalous energy signatures.<br />
+          Proceed with caution.
+          Coordinates:
+          Galactic Coordinates: X: 327.85 | Y: -142.67 | Z: 589.21
+          Local Coordinates: X: 15.92 | Y: 78.45 | Z: -23.18
+          Scanner Data:
+          Sphere 1: Energy Output: 8.7 PetaWatts | Composition: Unknown Elements
+          Sphere 2: Energy Output: 12.3 PetaWatts | Composition: Exotic Matter
+          Sphere 3: Energy Output: 6.1 PetaWatts | Composition: Quantum Entangled Particles
+          Pulsating Object Details:
+          Classification: Neutron Star Remnant
+          Mass: 2.7 Solar Masses
+          Rotation Period: 1.3 milliseconds
+          Magnetic Field Strength: 10^12 Gauss
+          Ship Status:
+          Fuel: 87% | Hull Integrity: 100% | Shields: 95%
+          Life Support: Optimal | Gravity: Earth-like
+          Communications: Long-Range Sensors Active
+          Anomaly Readings:
+          Gravitational Distortion: +0.8 milli-G
+          Tachyon Emissions: 4.2 x 10^6 particles/second
+          Dark Matter Density: 1.5 x 10^-27 g/cm³
+          Mission Objectives:
+
+          Scan and analyze the composition of the mysterious spheres
+          Monitor the pulsating object for any changes in energy output
+          Collect samples of exotic matter for further study
+          Investigate the source of the anomalous energy signatures
+
+
+          Time Dilation:
+          Mission Elapsed Time: 72 hours, 15 minutes
+          Earth Elapsed Time: 6 months, 5 days, 12 hours  
+          </div> */}
+      </div>
     </>
   );
 }

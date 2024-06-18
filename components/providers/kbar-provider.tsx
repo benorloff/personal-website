@@ -148,7 +148,7 @@ export const KbarProvider = ({
             id: "blog",
             name: "Search blog posts...",
             section: "Blog",
-            shortcut: ["b"],
+            shortcut: ["s"],
             keywords: "writing articles posts blog guides tutorials",
             icon: <PencilLine className="h-4 w-4"/>,
         },

@@ -16,7 +16,7 @@ export const CommandButton = () => {
                 className="h-full w-full rounded-none rounded-br-sm p-1"
                 onClick={() => query.toggle()}
             >
-                <Command className="w-6 h-6"/>
+                <Command className="w-6 h-6 group-hover:scale-125 transition-transform duration-300 ease-in-out" />
             </Button>
         </div>
     )
