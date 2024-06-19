@@ -225,6 +225,8 @@ const syncContentFromHashnode = async () => {
 //     },
 // })
 
+syncContentFromHashnode();
+
 export default makeSource({
     syncFiles: syncContentFromHashnode,
     contentDirPath: 'content',

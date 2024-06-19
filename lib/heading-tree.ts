@@ -1,6 +1,5 @@
 import { visit } from "unist-util-visit";
 import { toString } from "mdast-util-to-string";
-import { remark } from "remark";
 
 export interface TOCHeading {
     value: string;

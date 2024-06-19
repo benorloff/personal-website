@@ -1,0 +1,901 @@
+---
+title: Build a Next.js Blog with MDX & Contentlayer
+excerpt: How to create a modern, no-CMS blog with remote markdown files
+featuredImage: https://cdn.hashnode.com/res/hashnode/image/upload/v1718752925573/c09b38fd-c0c4-47ed-b75a-2f08576255b3.png
+tags:
+- Next.js
+- Tailwind CSS
+- Blogging
+- APIs
+- GraphQL
+date: 2024-06-18T23:32:51.617Z
+updated: 2024-06-18T23:33:41.371Z
+category: Guide
+---
+
+## Introduction
+
+Traditional CMS platforms like WordPress and Joomla often feel cumbersome and high-maintenance. They require frequent updates, can be difficult to customize, and may struggle with performance issues under heavy loads. In contrast, MDX offers a more modern and streamlined approach. With MDX, you can write in Markdown while embedding React components directly into your posts, giving you full control over your blog's presentation and functionality. This makes it easier to create dynamic, efficient, and highly customized blogs without the bloat and hassle of traditional CMS platforms.
+
+### Project Overview
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1718752990000/22a24800-d2ed-4881-a6cb-63f39bee268e.png)
+
+In this article, I'll walk you through the process of creating a blog using [Next.js](https://nextjs.org/), [MDX](https://mdxjs.com/), and [Contentlayer](https://contentlayer.dev/). By the end, you'll have a fully functional blog that fetches markdown files from the [Hashnode GraphQL API](https://apidocs.hashnode.com/) and renders them beautifully using MDX.
+
+### Why markdown?
+
+Markdown is a lightweight markup language that's easy to write and read. It's perfect for content creation, especially for blogs, as it allows authors to focus on writing without worrying about HTML syntax.
+
+### Disclaimer
+
+Please note that Contentlayer is not actively maintained as of this article's publication date. While the instructions and code provided in this article should work as described, there may be unforeseen issues or changes in dependencies that could affect the project's functionality.
+
+There are talks of a [new maintainer stepping in](https://github.com/contentlayerdev/contentlayer/issues/651) as well as [a comment from the new parent company](https://github.com/contentlayerdev/contentlayer/issues/651#issuecomment-2030335434), but no definitive plans yet.
+
+For more details on the project's status, you can refer to [this GitHub issue.](https://github.com/contentlayerdev/contentlayer/issues/429)
+
+## Project Setup
+
+### Prerequisites
+
+This article assumes that you already have an Next.js project initialized. If that's not the case and you need some help setting up a Next.js project, here are the [official docs](https://nextjs.org/docs/getting-started/installation).
+
+* Node.js 18.17 or later
+    
+* npm or yarn
+    
+* Code editor of your choice
+    
+
+### Install Dependencies
+
+<div data-node-type="callout">
+
+<div data-node-type="callout-text"><strong>As of this article's publication date, there is a dependency conflict when installing Contentlayer with Next.js 14. This is due to the fact that the Contentlayer project has not been actively maintained since mid-2023, prior to the release of Next.js 14. You can either use </strong><a target="_blank" rel="noopener noreferrer nofollow" href="https://github.com/timlrx/contentlayer2" ><strong>the community-maintained fork Contentlayer2</strong></a><strong>, proceed with the original package with the </strong><code>--legacy-peer-deps</code><strong> flag, or use Next.js 13.</strong></div>
+</div>
+
+To get started, let's install the `next-contentlayer` plugin provided by Contentlayer. This plugin comes with helpers specifically designed for Next.js.
+
+```bash
+npm install next-contentlayer --legacy-peer-deps
+```
+
+## Contentlayer
+
+### What is Contentlayer?
+
+[Contentlayer](https://contentlayer.dev/) is a content processing library that seamlessly integrates with modern frameworks like Next.js. It allows you to easily manage and transform markdown files into structured data that can be consumed by your application.
+
+### Initial Setup
+
+In order for Contentlayer to work with Next.js, we'll need to wrap our `next.config.js` file in the `{withContentLayer}` utility. [Learn more about Contentlayer + Next.js.](https://contentlayer.dev/docs/environments/nextjs-dcf8e39e)
+
+```typescript
+// next.config.js
+
+import { withContentlayer } from 'next-contentlayer';
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    // Your configuration
+};
+
+export default withContentlayer(nextConfig);
+```
+
+If you're using Typescript, you'll also want to update your `tsconfig.json` file:
+
+```typescript
+// tsconfig.json
+
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    //  ^^^^^^^^^^^
+    "paths": {
+      "contentlayer/generated": ["./.contentlayer/generated"]
+      // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".contentlayer/generated"
+    // ^^^^^^^^^^^^^^^^^^^^^^
+  ]
+}
+```
+
+Let's add the Contentlayer build data to our `.gitignore` file so that we ensure we have the latest generated data at build-time:
+
+```bash
+# .gitignore
+
+# ...
+
+# contentlayer
+.contentlayer
+```
+
+Lastly, if you're using TailwindCSS, be sure to update `tailwind.config.ts` to include your markdown files:
+
+```typescript
+// tailwind.config.ts
+
+const config = {
+    //...
+    content: [
+        './pages/**/*.{js,ts,tsx}',
+        './components/**/*.{js,ts,tsx}',
+        './app/**/*.{js,ts,tsx}',
+        './src/**/*.{js,ts,tsx}',
+        './content/**/*.{md,mdx}',
+        // ^^^^^^^^^^^^^^^^^^^^^^^^
+	],
+    //...
+}
+```
+
+### Defining Document Models
+
+To get started with Contentlayer, create a `contentlayer.config.ts` file in the root of your project and populate it with your document models. My document models will be Posts and Projects; however, you can customize the models to fit your project requirements. See the [field types reference](https://contentlayer.dev/docs/reference/source-files/field-types-defe41e9) for more info.
+
+```typescript
+// contentlayer.config.ts
+
+import { defineDocumentType, makeSource } from 'contentlayer/source-files'
+
+export const Project = defineDocumentType(() => ({
+    name: 'Project',
+    filePathPattern: `projects/**/*.mdx`,
+    contentType: 'mdx',
+    fields: {
+        // Your fields
+    },
+    computedFields: {
+        url: {
+            type: 'string',
+            resolve: (project) => `/work/${project._raw.flattenedPath.replace(/projects\/?/, '')}`
+        },
+    },
+}));
+
+export const Post = defineDocumentType(() => ({
+    name: 'Post',
+    filePathPattern: `posts/**/*.mdx`,
+    contentType: 'mdx',
+    fields: {
+        // Your fields
+    },
+    computedFields: {
+        url: {
+            type: 'string',
+            resolve: (post) => `/blog/${post._raw.flattenedPath.replace(/posts\/?/, '')}`,
+        },
+    },
+}));
+
+export default makeSource({ 
+    contentDirPath: 'content', 
+    documentTypes: [Project, Post] 
+})
+```
+
+If you plan to host your markdown files locally, then all you have to do now is create a folder in the root of your project named `/content` and within that folder create two folders `/content/posts` and `/content/projects`. This is where your post and project markdown files will live, respectively.
+
+### Remote File Sync
+
+If you plan to host your markdown elsewhere, we'll need to tell Contentlayer how to fetch the content. In this example, I'm going to use Hashnode to write my blog posts and then use the [Hashnode GraphQL API](https://apidocs.hashnode.com/) to fetch them.
+
+<div data-node-type="callout">
+
+<div data-node-type="callout-text">To generate your Hashnode Personal Access Token, log in to the Hashnode dashboard and navigate to Account Settings &gt; Developer &gt; Personal Access Token.</div>
+</div>
+
+Create a new file `@/lib/hashnode.ts` where we'll write our interfaces and functions for fetching data from Hashnode.
+
+Let's define an interface:
+
+```typescript
+// @/lib/hashnode.ts
+
+const apiUrl = process.env.HASHNODE_GRAPHQL_API_URL!;
+
+export interface HashnodePost {
+    id: number,
+    title: string,
+    slug: string,
+    subtitle: string,
+    tags: Array<{ 
+        name: string, 
+    }>,
+    coverImage: { 
+        url: string, 
+    },
+    readTimeInMinutes: number,
+    series: { 
+        id: number,
+        name: string,
+        description: { 
+            html: string, 
+        },
+        slug: string,
+    },
+    featured: boolean,
+    content: { 
+        markdown: string,
+        html: string,
+    },
+    publishedAt: Date,
+    updatedAt: Date,
+}
+```
+
+Now we can write our async function for fetching posts from our Hashnode publication. Since this is a GraphQL API, we can specify which fields we want to receive.
+
+```typescript
+// @/lib/hashnode.ts
+
+// ...
+
+// Get posts from Hashnode
+export async function getHashnodePosts() {
+    const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            query: `#graphql
+                query getPosts {
+                    publication(host: "blog.benorloff.co") {
+                        posts(first: 10) {
+                            edges {
+                                node {
+                                    id
+                                    title
+                                    slug
+                                    subtitle
+                                    tags { name }
+                                    coverImage { url }
+                                    readTimeInMinutes
+                                    series { 
+                                        id
+                                        name
+                                        description { html }
+                                        slug
+                                    }
+                                    featured
+                                    content { markdown }
+                                    publishedAt
+                                    updatedAt
+                                }
+                            }
+                        }
+                    }
+                }
+            `
+        }),
+        // Tell Next that this request should be executed
+        // at most once per hour (3600 seconds)
+        next: { revalidate: 3600 },
+    });
+    
+    // Extract the posts form the response
+    const { 
+        data: { 
+            publication: { 
+                posts: {
+                    edges
+                }
+            }
+        }
+    } = await res.json();
+
+    // Map through the posts array to return only nodes
+    // Add type declarations 
+    const posts: HashnodePost[] = edges.map((edge: { node: HashnodePost }) => edge.node);
+
+    return posts;
+}
+```
+
+Now we can update our `contentlayer.config.js` to fetch our posts, parse them, and write them to our local `@/content/posts` directory:
+
+```typescript
+// contentlayer.config.ts
+
+// ...imports
+import { HashnodePost, getHashnodePosts } from "@/lib/hashnode";
+
+// ...document models
+
+const syncContentFromHashnode = async () => {
+    let posts: HashnodePost[] = [];
+
+    try {
+        posts = await getHashnodePosts();
+    } catch (error) {
+        console.error(error);
+    }
+
+    for (const post of posts) {
+        // Set the front matter for the post
+        const frontMatter = 
+            '---\n' + 
+            `title: ${post.title}\n` +
+            `excerpt: ${post.subtitle}\n` +
+            `featuredImage: ${post.coverImage.url}\n` +
+            `tags:\n${post.tags.map(tag => `- ${tag.name}`).join('\n')}\n` +
+            `date: ${post.publishedAt}\n` +
+            `updated: ${post.updatedAt}\n` +
+            `---\n`;
+        // Get the content of the post
+        const content = post.content.markdown;
+        // Remove styling from images
+        const processedContent = content.replace(
+            /(align="(left|center|right)"|)/g, ''
+        )
+        const filePath = `./content/posts/${post.slug}.mdx`;
+        await fs.writeFile(filePath, [frontMatter, processedContent].join('\n'));
+
+        console.log(`Content synced for post: ${post.title}`);
+    }
+};
+```
+
+Lastly, we need to tell Contentlayer to execute this function to sync our remote source with our local folder:
+
+```typescript
+// contentlayer.config.ts
+
+// ...
+
+export default makeSource({ 
+    syncFiles: syncContentFromHashnode,
+    contentDirPath: 'content', 
+    documentTypes: [Project, Post] 
+})
+```
+
+If you restart your project, you should now see your Hashnode posts in `@/content/posts`.
+
+### Augmenting the Rehype Pipeline
+
+Under the hood, Contentlayer uses [remark](https://github.com/remarkjs/remark) and [rehype](https://github.com/rehypejs/rehype) plugins to process markdown and HTML, respectively. We can customize the remark/rehype pipeline by adding additional plugins or taking over the pipeline entirely. This is useful for situations like syntax highlighting, allowing dangerous HTML within markdown, automatically generating a table of contents, adding links to headings, etc.
+
+We're going to add two plugins, [rehype-pretty-code](https://github.com/rehype-pretty/rehype-pretty-code) and [rehype-slug](https://github.com/rehypejs/rehype-slug), for code block syntax highlighting and adding ids to our headings.
+
+Update `makeSource`:
+
+```typescript
+// contentlayer.config.ts
+
+// ...other imports
+import { visit } from "unist-util-visit";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeSlug from "rehype-slug";
+
+// ...
+
+export default makeSource({
+    syncFiles: syncContentFromHashnode,
+    contentDirPath: 'content',
+    documentTypes: [Project, Post],
+    mdx: {
+        remarkPlugins: [],
+        rehypePlugins: [
+            () => (tree) => {
+                visit(tree, (node) => {
+                    if (node?.type === "element" && node?.tagName === "pre") {
+                        const [codeEl] = node.children;
+            
+                        if (codeEl.tagName !== "code") return;
+            
+                        node.raw = codeEl.children?.[0].value;
+                    }
+                });
+            },
+            [
+                rehypePrettyCode, 
+                {
+                    theme: {
+                        dark: "one-dark-pro",
+                        light: "github-light",
+                    },                
+                },
+            ],
+            [rehypeSlug],
+            () => (tree) => {
+                visit(tree, (node) => {
+                    if (node?.type === "element" && node?.tagName === "figure") {
+                        if (!("data-rehype-pretty-code-figure" in node.properties)) {
+                            return;
+                        }
+            
+                        for (const child of node.children) {
+                            if (child.tagName === "pre") {
+                                child.properties["raw"] = node.raw;
+                            }
+                        }
+                    }
+                });
+                
+            },
+        ],
+    }
+})
+```
+
+The first and last plugins are custom plugins that traverse the [hast](https://github.com/syntax-tree/hast) and add a `raw` property to code blocks containing the code block's raw code (useful if you want to add a "Copy" button to your code blocks). Credit: [shadcn-ui](https://github.com/shadcn-ui/ui)
+
+## Rendering MDX
+
+Now that we have our content fetched and processed with Contentlayer, it's time to bring it to life using MDX. MDX allows you to blend Markdown and JSX, enabling you to write content with the simplicity of Markdown while leveraging the full power of React components. This means you can include interactive elements, custom styling, and even dynamic data directly within your blog posts. In this section, we'll set up MDX in our Next.js project, create custom MDX components, and ensure our content looks polished and professional.
+
+### Create MDX Components
+
+In the `@/components` folder, create a new file named `mdx-components.tsx`. This is where we'll create our custom MDX components for our posts.
+
+```typescript
+// @/components/mdx-components.tsx
+
+import { useMDXComponent } from "next-contentlayer/hooks";
+import { cn } from "@/lib/utils";
+
+interface MdxProps {
+    code: string
+}
+
+const components = {
+    h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+        <h1 
+            className={cn(
+                "text-6xl font-semibold mt-6",
+                className
+            )}
+            {...props}
+        />
+    ),
+    // the rest of your components
+}
+
+export function Mdx({ code }: MdxProps) {
+    const Component = useMDXComponent(code);
+    return (
+        <div>
+            <Component components={components} />
+        </div>
+    )
+}
+```
+
+### Syntax Highlighting
+
+We're using `rehype-pretty-code` for syntax highlighting, which handles most of the challenges of rendering code blocks; however, we still need to apply some styling. This can be done fairly easily with custom MDX components. Just add the following components and adjust the styling to your liking:
+
+```typescript
+// @/components/mdx-components.tsx
+
+// ...
+interface Pre extends React.HTMLAttributes<HTMLPreElement> {
+    raw?: string;
+    ['data-language']?: string;
+}
+// ...
+
+const components = {
+    //... your other components
+    pre: ({ children, raw, className, ...props }: Pre) => {
+        const lang = props["data-language"];
+        return (
+            <pre {...props} className={cn("relative", className)}>
+                <div className="flex items-center justify-between bg-muted px-4 py-2">
+                    <span className="text-muted-foreground">{lang}</span>
+                    <CopyButton text={raw!} />
+                </div>
+                {children}
+            </pre>
+        )
+    },
+    code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement>) => (
+        <code className={cn("overflow-x-auto", className)} {...props}>
+            {children}
+        </code>
+    ),
+}
+// ...
+```
+
+### Table of Contents
+
+The last major UI element that we need to add is the Table of Contents (TOC). We already solved one part of this by adding ids to headings with the `rehype-slug` plugin. Now we just need to render the TOC with clickable links.
+
+There are a couple different approaches to this:
+
+1. Add a plugin like `rehype-toc` ([link](https://github.com/JS-DevTools/rehype-toc)) to our rehype pipeline in `contentlayer.config.ts`. This plugin will read all the headings in your post and automatically generate a TOC with links. The only drawback with this solution is that the TOC is positioned relatively to the post content; therefore, when the user scrolls down the blog post it is no longer visible.
+    
+2. Create a custom TOC component that traverses the [mdast](https://github.com/syntax-tree/mdast), extracts all heading elements, and returns TSX that we can style with a fixed position.
+    
+
+We're going to go with Option 2, which requires a bit more work but will result in a more user-friendly TOC.
+
+Here's how we're going to do this:
+
+* Create a lib file `@/lib/heading-tree.ts` where we'll take the raw markdown and export only the headings
+    
+* Create a `table-of-contents.tsx` component that will accept the headings as a prop and render a fixed TOC
+    
+* Use an IntersectionObserver to highlight the TOC items when they enter the viewport
+    
+
+In our `@/lib` directory, let's create a file named `heading-tree.ts` and add our main function
+
+```typescript
+// @/lib/heading-tree.ts
+
+import { visit } from "unist-util-visit";
+import { toString } from "mdast-util-to-string";
+
+export function headingTree() {
+    return (node: any, file: any) => {
+        file.data.headings = getHeadings(node);
+    }
+}
+```
+
+Then, let's add `getHeadings`, `addID`, and `transformNode` functions to traverse the mdast, add ids to all the headings and update their properties:
+
+```typescript
+function getHeadings(root: any) {
+    const nodes = {};
+    const output: any = [];
+    const indexMap = {};
+    visit(root, "heading", (node) => {
+      addID(node, nodes);
+      transformNode(node, output, indexMap);
+    });
+   
+    return output;
+  }
+
+function addID(node: any, nodes: any) {
+    const id = node.children.map((c: any) => c.value).join('');
+    nodes[id] = (nodes[id] || 0) + 1;
+    node.data = node.data || {
+        hProperties: {
+            id: `${id}${nodes[id] > 1 ? ` ${nodes[id] - 1}` : ""}`
+            .replace(/[^a-zA-Z\d\s-]/g, "")
+            .split(" ")
+            .join("-")
+            .toLowerCase(),
+        },
+    };
+}
+
+function transformNode(node: any, output: any, indexMap: any) {
+    const transformedNode = {
+        value: toString(node),
+        depth: node.depth,
+        data: node.data,
+        children: [],
+    };
+
+    if (node.depth === 2) {
+        output.push(transformedNode);
+        indexMap[node.depth] = transformedNode;
+    } else {
+        const parent = indexMap[node.depth - 1];
+        if (parent) {
+            parent.children.push(transformedNode);
+            indexMap[node.depth] = transformedNode;
+        }
+    }
+}
+```
+
+Next up, we need to create the `table-of-contents.tsx` component to which these headings can be passed as a prop:
+
+```typescript
+// @/components/table-of-contents.tsx
+
+"use client";
+
+import { cn } from "@/lib/utils";
+import { SetStateAction, useEffect, useRef, useState } from "react";
+
+function renderNodes(nodes: any) {
+    return (
+        <ul className="space-y-2">
+            {nodes.map((node: any) => (
+                node.depth <= 3 &&
+                <li key={node.data.hProperties.id} className={cn(
+                  "space-y-2",
+                  node.depth === 3 && "pl-2",
+                )}>
+                    <TOCLink node={node} />
+                    {node.children.length > 0 && renderNodes(node.children)}
+                </li>
+            ))}
+        </ul>
+    )
+}
+
+function useHighlighted(id: string): [
+  boolean,
+  React.Dispatch<SetStateAction<string | null | undefined>>
+] {
+  const observer = useRef<IntersectionObserver>();
+  const [activeId, setActiveId] = useState<string | undefined | null>();
+ 
+  useEffect(() => {
+    const handleObserver = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry?.isIntersecting) {
+          setActiveId(entry.target.id);
+        }
+      });
+    };
+ 
+    observer.current = new IntersectionObserver(handleObserver, {
+      rootMargin: "0% 0% -35% 0px",
+    });
+ 
+    const elements = document.querySelectorAll("h2, h3, h4");
+    elements.forEach((elem) => observer.current?.observe(elem));
+    return () => observer.current?.disconnect();
+  }, []);
+ 
+  return [activeId === id, setActiveId];
+}
+
+
+const TOCLink = ({ node }: { node: any }) => {
+  const fontSizes: { [key: number]: string } = { 2: "sm", 3: "xs", 4: "xs" };
+  const id: string = node.data.hProperties.id;
+  const [highlighted, setHighlighted] = useHighlighted(id)
+  return (
+    <a
+      href={`#${id}`}
+      className={cn(
+        `text-${fontSizes[node.depth]} hover:underline transition-colors duration-300 ease-in-out`,
+        highlighted && "text-accent"
+      )}
+      onClick={(e) => {
+        e.preventDefault();
+        setHighlighted(id);
+        document
+          .getElementById(id)!
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }}
+    >
+      {node.value}
+    </a>
+  )
+}
+
+export const TableOfContents = ({ nodes }: { nodes: any}) => {
+    if (!nodes?.length) {
+      return null;
+    }
+   
+    return (
+      <div className="toc text-sm">
+        <h3 className="text-lg font-semibold pb-2">Table of Contents</h3>
+        {renderNodes(nodes)}
+      </div>
+    );
+  };
+```
+
+Special thanks to [ClarityDev](https://claritydev.net) for these great snippets!
+
+We now have a component that we can use to render a fixed TOC on our blog post page!
+
+## Building the Blog Layout
+
+We have setup and configured Contentlayer to sync our local markdown files with our remote source and created our custom MDX components. All that is left to do now is create the blog page and dynamic blog post routes.
+
+### Blog Page
+
+This is be our blog "feed" where all of our posts are listed. Contentlayer makes it really easy to fetch all the posts, so let's jump right in.
+
+Create the new route `@/app/blog/page.tsx`:
+
+```typescript
+// @/app/blog/page.tsx
+
+import Link from "next/link";
+
+import { allPosts, Post } from "@/.contentlayer/generated";
+import { humanDate } from "@/lib/utils";
+
+interface BlogCardProps extends Post {
+    slug: string;
+}
+
+const BlogCard = async ({ 
+    slug,
+    title,
+    excerpt,
+    date,
+}: BlogCardProps) => {
+    return (
+        <Link href={slug}>
+            <div className="container h-auto py-8 flex flex-col gap-4 hover:bg-foreground/5 border custom-border-color rounded-sm transition-colors duration-300 ease-in-out">
+                <div className="h-full flex flex-col gap-4 justify-between items-start">
+                    <div>
+                        <h2 className="text-2xl text-pretty">
+                            {title}
+                        </h2>
+                        <p className="text-muted-foreground text-pretty">
+                            {excerpt}
+                        </p>
+                    </div>
+                    <p className="uppercase text-sm text-muted-foreground">{humanDate(new Date(date))}</p>
+                </div>
+            </div>
+        </Link>
+    )
+}
+
+const BlogPage = async () => {
+    
+    // Fetch and sort all posts by date from contentlayer generated post index
+    // ./.contentlayer/generated/Post/_index.mjs
+    const posts: Post[] = allPosts.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+
+    return (
+            <div className="w-full h-full overflow-y-auto">
+                <div className="flex flex-col max-w-2xl mx-auto py-8 gap-4 overflow-hidden">
+                        {posts.map((post, i) => (
+                            <BlogCard key={i} {...post} slug={`/blog/${post._raw.flattenedPath.replace(/posts\/?/, '')}`}/>
+                        ))}
+                </div>
+            </div>
+    )
+};
+
+export default BlogPage;
+```
+
+Go to `localhost:3000/blog` and you should see something like this:
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1718751214490/a94dd97a-5feb-4c84-b3a9-5e8ea77ee1e7.png)
+
+### Dynamic Blog Post Route
+
+```typescript
+import { notFound } from "next/navigation";
+
+import { allPosts, type Post } from "@/.contentlayer/generated"
+import readingTime, { ReadTimeResults } from "reading-time";
+import { remark } from "remark";
+
+import { headingTree } from "@/lib/heading-tree";
+
+import { TableOfContents } from "@/components/table-of-contents";
+import { Mdx } from "@/components/mdx-components";
+import { Badge } from "@/components/ui/badge";
+
+export async function generateStaticParams() {
+    return allPosts.map((post) => ({
+        slug: post._raw.flattenedPath,
+    }))
+}
+
+const PostPage = async ({
+    params
+}: {
+    params: {
+        slug: string;
+    }
+}) => {
+
+    const post: Post | undefined = allPosts.find((post) => post._raw.flattenedPath === `posts/${params.slug}`)
+
+    if (!post) {
+        return notFound();
+    }
+
+    const { 
+        title,
+        excerpt,
+        date,
+        updated,
+    } = post;
+
+    const publishDate = new Date(date).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+
+    const updateDate = updated ? new Date(updated).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    }) : null;
+
+    const readTime: ReadTimeResults = readingTime(post.body.raw);
+
+    const getHeadings = async () => { 
+        const processedContent = await remark()
+            .use(headingTree)
+            .process(post.body.raw);
+        return processedContent.data.headings;
+    };
+
+    const headings = await getHeadings();
+
+    return (
+        <div className="flex h-full w-full overflow-x-hidden overflow-y-auto">
+            <div className="hidden sticky lg:flex flex-col basis-1/5 justify-center top-0 left-0 h-[calc(100vh-116px)] w-full p-4">
+                <TableOfContents nodes={headings} />
+            </div>
+            <article className="flex flex-col basis-3/5 w-full max-w-2xl mx-auto p-4">
+                <h1 className="text-4xl font-medium pb-4">
+                    {title}
+                </h1>
+                <h4 className="pb-4 font-medium">
+                    {excerpt}
+                </h4>
+                <div className="flex flex-wrap items-center text-muted-foreground gap-4">
+                    <p>{publishDate}</p>
+                    <span>&bull;</span>
+                    <p>{readTime.text}</p>
+                    { updateDate && (
+                        <Badge 
+                            className="rounded-sm text-base font-normal text-muted-foreground bg-muted"
+                            variant="outline"
+                        >
+                            Last Updated: {updateDate}
+                        </Badge>
+                    )}
+                </div>
+                <div className="pb-8">
+                    <Mdx code={post.body.code}/>
+                </div>
+            </article>
+            <div className="basis-1/5"></div>
+        </div>
+    )
+}
+
+export default PostPage;
+```
+
+If you navigate to any blog post `localhost:3000/blog/[title]`, you should now see something like this:
+
+![](https://cdn.hashnode.com/res/hashnode/image/upload/v1718751941590/97b94d98-b64d-4e7f-a12e-618bdacd4bff.png)
+
+Congrats! Your MDX blog is up and running!
+
+## Conclusion
+
+### Recap of Key Steps
+
+In this tutorial, we've covered the essential steps to create a blog using Next.js, MDX, and Contentlayer. We set up the project, configured Contentlayer, fetched markdown content from the Hashnode API, and rendered it using MDX.
+
+### Resources & Acknowledgments
+
+* [Github Repository](https://github.com/benorloff/personal-website)
+    
+* [Next.js Documentation](https://nextjs.org/docs)
+    
+* [MDX Documentation](https://mdxjs.com/docs/)
+    
+* [Contentlayer Documentation](https://contentlayer.dev/docs)
+    
+* [Hashnode API Documentation](https://apidocs.hashnode.com/)
+    
+* [Shadcn-ui](https://github.com/shadcn-ui/ui) for the MDX inspiration
+    
+
+By following this guide, you now have a powerful and flexible blogging platform that you can extend and customize to your needs. Happy blogging!

@@ -98,7 +98,7 @@ const components = {
         <ul className={cn("my-6 ml-6 list-disc", className)} {...props} />
     ),
     ol: ({ className, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
-        <ol className={cn("my-2 list-none", className)} {...props} />
+        <ol className={cn("my-6 ml-6 list-decimal", className)} {...props} />
     ),
     li: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
         <li className={cn("mt-0 ml-4", className)} {...props} />
