@@ -4,6 +4,7 @@ import { useModal } from "@/hooks/use-modal-store";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { ContactModal } from "./contact-modal";
 
 const routes = [
     { name: "About", href: "/about" },

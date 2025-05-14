@@ -1,16 +1,14 @@
 import { notFound } from "next/navigation";
 
-import { Mdx } from "@/components/mdx-components";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Suspense } from "react";
 import { allPosts, type Post } from "@/.contentlayer/generated"
 import readingTime, { ReadTimeResults } from "reading-time";
-import { humanDate } from "@/lib/utils";
 import { remark } from "remark";
+
 import { headingTree } from "@/lib/heading-tree";
+
 import { TableOfContents } from "@/components/table-of-contents";
-import Image from "next/image";
+import { Mdx } from "@/components/mdx-components";
+import { Badge } from "@/components/ui/badge";
 
 export async function generateStaticParams() {
     return allPosts.map((post) => ({

@@ -92,7 +92,17 @@ export default function Home() {
           <OrbitControls maxDistance={25} minDistance={1} enablePan={false} makeDefault />
         </Suspense>
       </Canvas>
-      <div className="absolute w-full h-full top-0 left-0 p-10">
+      {/* HUD for instructions */}
+      <div 
+        className="absolute top-24 left-24 text-xs p-4 m-1 pointer-events-none z-10"
+        style={{ color: sceneColor }}
+      >
+        <p>Scroll to zoom</p>
+        <p>Click and drag to rotate</p>
+        <p>Press CMD+K for controls</p>
+      </div>
+      {/* Corner borders */}
+      <div className="absolute w-full h-full top-0 left-0 p-10 pointer-events-none">
         <div>
           <div className="absolute w-12 h-12 top-0 left-0 border-2 border-muted-foreground border-r-0 border-b-0 m-10 lg:m-24" />
           <div className="absolute w-12 h-12 top-0 right-0 border-2 border-muted-foreground border-l-0 border-b-0 m-10 lg:m-24" />

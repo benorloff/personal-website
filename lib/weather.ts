@@ -64,7 +64,7 @@ export const getWeather = async (): Promise<Weather> => {
         revalidate: 3600,
       }
     })
-    const {data} = await res.json();
+    const { data } = await res.json();
     weather = {
       temperature: Math.round(data.values.temperature),
       weatherCode: data.values.weatherCode,

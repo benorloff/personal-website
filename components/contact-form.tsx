@@ -85,7 +85,7 @@ export const ContactForm = () => {
                     >
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
-                                <div className="flex flex-col gap-10">
+                                <div className="flex flex-col gap-4">
                                     <div className="flex items-center gap-4">
                                         <h2>Drop me a line</h2>
                                         <motion.span
@@ -177,7 +177,7 @@ export const ContactForm = () => {
                                     />
                                     <Button
                                         type="submit"
-                                        className="w-full h-12"
+                                        className="w-full h-12 mt-4"
                                     >
                                         { !isSubmitting && "Send" }
                                         { isSubmitting && <Loader2 className="animate-spin" /> }

@@ -11,10 +11,7 @@ const BlogCard = async ({
     slug,
     title,
     excerpt,
-    featuredImage,
     date,
-    tags,
-    category,
 }: BlogCardProps) => {
     return (
         <Link href={slug}>
